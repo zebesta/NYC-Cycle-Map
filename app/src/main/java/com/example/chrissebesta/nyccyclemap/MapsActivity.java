@@ -36,6 +36,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        //TODO: Will want to limit markers to only show incidents within  a boundary from the current focused location. SQL query should reflect this
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
