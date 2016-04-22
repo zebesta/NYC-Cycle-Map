@@ -1,9 +1,14 @@
 package com.example.chrissebesta.nyccyclemap;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.chrissebesta.nyccyclemap.data.CycleContract;
+import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
 
 public class MainActivity extends AppCompatActivity {
     public final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -26,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        CycleDbHelper helper = new CycleDbHelper(this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
 
 
 
