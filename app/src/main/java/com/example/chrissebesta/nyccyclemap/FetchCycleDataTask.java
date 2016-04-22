@@ -70,7 +70,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%202");
             //increased limit since it was defaulting to a limit of 1000
-            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=2");
+            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -192,7 +192,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
             contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
             contentValues.put(CycleContract.CycleEntry.COLUMN_BOROUGH, accident.getString(NYC_BOROUGH));
-            Log.d("BUILDTABLE", contentValues.toString());
+            Log.d("CONTENTVALUES", contentValues.toString());
             db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
         }
         Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
