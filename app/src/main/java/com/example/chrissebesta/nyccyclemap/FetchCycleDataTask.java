@@ -3,6 +3,9 @@ package com.example.chrissebesta.nyccyclemap;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,9 +20,12 @@ import java.net.URL;
  */
 public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     public final String LOG_TAG = FetchCycleDataTask.class.getSimpleName();
+    public String jsonResponseString;
 
     @Override
     protected Void doInBackground(String... params) {
+        Log.d(LOG_TAG, "In the do in background phase");
+
         //Right now just hacking this all together in AsyncTask, needs to eventually take place in a SyncAdapter
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -52,7 +58,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json");
             //TODO get query information from user and append to URL properly, allow user to select injuries, deaths, or both, and number of victims
             //TODO OR: use a SQL database to store everything with at least one cyclist injured or killed and then query based on user topics to limit number of internet calls
-            
+
             url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%202");
 
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -79,6 +85,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             }
             nycPublicDataResponseString = buffer.toString();
             Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
+            jsonResponseString = nycPublicDataResponseString;
 
 
 
@@ -103,5 +110,28 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         }
         // This will only happen if there was an error getting or parsing the forecast.
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        Log.d(LOG_TAG, "In the post execute phase");
+
+        try {
+            getCycleDataFromJson(jsonResponseString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        super.onPostExecute(aVoid);
+    }
+
+    public void getCycleDataFromJson(String cycleDataJsonString) throws JSONException{
+        //pull data from JSON request response and put in to JSON array
+        JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
+        for(int i =0; i<accidentJsonArray.length();i++){
+            String arrayData = accidentJsonArray.getString(0);
+            Log.d(LOG_TAG, "The array data at index "+i+" is: "+arrayData);
+        }
+
+
     }
 }
