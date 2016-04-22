@@ -15,7 +15,7 @@ public class CycleProvider extends ContentProvider {
     private CycleDbHelper mOpenHelper;
 
     //Need to set tables for SQL Query Builder (?)
-    private static final SQLiteQueryBuilder sGeoQueryBuilder = new SQLiteQueryBuilder();
+    private static final SQLiteQueryBuilder sCycleQueryBuilder = new SQLiteQueryBuilder();
 
 
 
@@ -30,7 +30,7 @@ public class CycleProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor retCursor;
         retCursor = mOpenHelper.getReadableDatabase().query(
-                CycleContract.GeoEntry.TABLE_NAME,
+                CycleContract.CycleEntry.TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,

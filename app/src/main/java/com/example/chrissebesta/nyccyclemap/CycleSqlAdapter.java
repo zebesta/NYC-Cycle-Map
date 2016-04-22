@@ -39,10 +39,10 @@ package com.example.chrissebesta.nyccyclemap;//package com.example.chrissebesta.
 //        TextView cityTextView = (TextView) locationView.findViewById(R.id.city_text_view);
 //        TextView placeCode = (TextView) locationView.findViewById(R.id.place_code_text_view);
 //
-//        String country = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoEntry.COLUMN_COUNTRY));
-//        String city = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoEntry.COLUMN_CITY_NAME));
-//        String address = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoEntry.COLUMN_ADDRESS));
-//        String place = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoEntry.COLUMN_PLACE_CODE));
+//        String country = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoE.ntry.COLUMN_COUNTRY));
+//        String city = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoE.ntry.COLUMN_CITY_NAME));
+//        String address = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoE.ntry.COLUMN_ADDRESS));
+//        String place = cursor.getString(cursor.getColumnIndexOrThrow(GeoContract.GeoE.ntry.COLUMN_PLACE_CODE));
 //
 //
 //        //Set country and city, set the invisible place code to use for deleting from list

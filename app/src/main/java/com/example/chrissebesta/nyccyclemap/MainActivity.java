@@ -14,17 +14,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button refreshButton = (Button) findViewById(R.id.refreshbutton);
-        final FetchCycleDataTask fetch = new FetchCycleDataTask();
+        //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 
+        assert refreshButton != null;
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //fetch Json data from NYC Data
+                final FetchCycleDataTask fetch = new FetchCycleDataTask();
                 fetch.execute();
 
             }
         });
 
-        fetch.execute();
 
 
     }
