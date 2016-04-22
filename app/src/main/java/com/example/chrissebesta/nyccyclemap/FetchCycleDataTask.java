@@ -49,7 +49,11 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
         URL url = null;
         try {
-            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json");
+            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json");
+            //TODO get query information from user and append to URL properly, allow user to select injuries, deaths, or both, and number of victims
+            //TODO OR: use a SQL database to store everything with at least one cyclist injured or killed and then query based on user topics to limit number of internet calls
+            
+            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%202");
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
