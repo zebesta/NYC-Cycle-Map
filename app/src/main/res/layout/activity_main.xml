@@ -19,4 +19,14 @@
         android:layout_height="wrap_content"
         android:text="Rfresh JSON data"
         android:id="@+id/refreshbutton"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Brooklyn"
+        android:id="@+id/brooklynButton"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear SQL DB"
+        android:id="@+id/clearSQL"/>
 </LinearLayout>

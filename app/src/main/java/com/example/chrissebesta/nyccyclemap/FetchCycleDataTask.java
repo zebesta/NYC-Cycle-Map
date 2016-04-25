@@ -175,6 +175,8 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         CycleDbHelper helper = new CycleDbHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
 
+        ContentValues contentValues = new ContentValues();
+
         for (int i = 0; i < accidentJsonArray.length(); i++) {
             String arrayData = accidentJsonArray.getString(i);
             Log.d(LOG_TAG, "The array data at index " + i + " is: " + arrayData);
@@ -187,13 +189,14 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             Log.d(LOG_TAG, "The lat long data at index " + i + " is: " + latitude + ", " + longitude);
 
 
-            ContentValues contentValues = new ContentValues();
+            //ContentValues contentValues = new ContentValues();
             contentValues.put(CycleContract.CycleEntry.COLUMN_LATITUDE, accident.getDouble(NYC_LATITUDE));
             contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
             contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
             contentValues.put(CycleContract.CycleEntry.COLUMN_BOROUGH, accident.getString(NYC_BOROUGH));
             Log.d("CONTENTVALUES", contentValues.toString());
             db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
+            contentValues.clear();
         }
         Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
 
