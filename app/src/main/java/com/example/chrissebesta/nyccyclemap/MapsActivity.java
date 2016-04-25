@@ -13,7 +13,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -54,6 +56,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Create cursor to cycle through cycle injury databse data
         CycleDbHelper helper = new CycleDbHelper(getBaseContext());
         SQLiteDatabase db = helper.getWritableDatabase();
+
+
+        //TODO START CODE BLOCK this code needs to be implemented when the user moved the current position of the camera:
+        //This will likely require a different callback routine and should not be placed here, OnMapReady is not giving response needed
+        //Currently just focuses on 0,0 because this is done before markers are added and camera is updated
+        //get lat and longitude of current camera position
+        CameraPosition cameraPosition = mMap.getCameraPosition();
+        LatLng latLngCamera = cameraPosition.target;
+        double cpLatitude = latLngCamera.latitude;
+        double cpLongitude = latLngCamera.longitude;
+        Log.d(LOG_TAG, "Current lat/lng for map's camera position is: "+latLngCamera.toString());
+
+        LatLngBounds curScreen = mMap.getProjection()
+                .getVisibleRegion().latLngBounds;
+
+        //TODO END CODE BLOCK
 
         //TODO update this to only query the database for a limited lat and long region around current maps focus to limit work here
         Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
