@@ -29,4 +29,9 @@
         android:layout_height="wrap_content"
         android:text="Clear SQL DB"
         android:id="@+id/clearSQL"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Map Databse"
+        android:id="@+id/mapDatabase"/>
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.chrissebesta.nyccyclemap;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Button refreshButton = (Button) findViewById(R.id.refreshbutton);
         Button brooklynButton = (Button) findViewById(R.id.brooklynButton);
         Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
+        Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 
         assert refreshButton != null;
@@ -60,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = helper.getWritableDatabase();
                 db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
                 Log.d(LOG_TAG, "Clearing Database");
+            }
+        });
+
+        assert mapDatabase != null;
+        mapDatabase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
             }
         });
 
