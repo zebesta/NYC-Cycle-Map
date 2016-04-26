@@ -68,7 +68,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             //TODO OR: use a SQL database to store everything with at least one cyclist injured or killed and then query based on user topics to limit number of internet calls
 
 
-            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100");
+            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
             //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
             //increased limit since it was defaulting to a limit of 1000
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
@@ -177,18 +177,18 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         CycleDbHelper helper = new CycleDbHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        ContentValues contentValues = new ContentValues();
 
         for (int i = 0; i < accidentJsonArray.length(); i++) {
             String arrayData = accidentJsonArray.getString(i);
-            Log.d(LOG_TAG, "The array data at index " + i + " is: " + arrayData);
+            ContentValues contentValues = new ContentValues();
+            //Log.d(LOG_TAG, "The array data at index " + i + " is: " + arrayData);
             JSONObject accident = accidentJsonArray.getJSONObject(i);
 //            String contributingFactor1 = accident.getString(NYC_CONTRIBUTING_FACTOR_VEHISCLE_1);
 //            Log.d(LOG_TAG, "The contibuting factor for event "+i+" is: "+contributingFactor1);
 
-            String latitude = accident.getString(NYC_LATITUDE);
-            String longitude = accident.getString(NYC_LONGITUDE);
-            Log.d(LOG_TAG, "The lat long data at index " + i + " is: " + latitude + ", " + longitude);
+            //String latitude = accident.getString(NYC_LATITUDE);
+            //String longitude = accident.getString(NYC_LONGITUDE);
+            //Log.d(LOG_TAG, "The lat long data at index " + i + " is: " + latitude + ", " + longitude);
 
 
             //ContentValues contentValues = new ContentValues();
@@ -196,7 +196,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
             //contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
             //contentValues.put(CycleContract.CycleEntry.COLUMN_BOROUGH, accident.getString(NYC_BOROUGH));
-            Log.d("CONTENTVALUES", contentValues.toString());
+            //Log.d("CONTENTVALUES", contentValues.toString());
             db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
             contentValues.clear();
         }

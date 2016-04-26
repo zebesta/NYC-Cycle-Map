@@ -67,7 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Currently just focuses on 0,0 because this is done before markers are added and camera is updated
         //get lat and longitude of current camera position
         mMap.moveCamera(CameraUpdateFactory.newLatLng(nycGoogleLabel));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
 
 //        CameraPosition cameraPosition = mMap.getCameraPosition();
