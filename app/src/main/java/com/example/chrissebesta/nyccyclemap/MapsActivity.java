@@ -57,21 +57,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CycleDbHelper helper = new CycleDbHelper(getBaseContext());
         SQLiteDatabase db = helper.getWritableDatabase();
 
+        //Coordinates near Manhattan to Brooklyn Bridges: 40.7111704,-73.9936095
+        //LatLng nycBridges = new LatLng(40.7111704,-73.9936095);
+        //Coordinates where Google Maps places the New York label
+        LatLng nycGoogleLabel = new LatLng(40.7119042,-74.0066549);
 
         //TODO START CODE BLOCK this code needs to be implemented when the user moved the current position of the camera:
         //This will likely require a different callback routine and should not be placed here, OnMapReady is not giving response needed
         //Currently just focuses on 0,0 because this is done before markers are added and camera is updated
         //get lat and longitude of current camera position
-        CameraPosition cameraPosition = mMap.getCameraPosition();
-        LatLng latLngCamera = cameraPosition.target;
-        double cpLatitude = latLngCamera.latitude;
-        double cpLongitude = latLngCamera.longitude;
-        Log.d(LOG_TAG, "Current lat/lng for map's camera position is: "+latLngCamera.toString());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(nycGoogleLabel));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
 
-        LatLngBounds curScreen = mMap.getProjection()
-                .getVisibleRegion().latLngBounds;
+
+//        CameraPosition cameraPosition = mMap.getCameraPosition();
+//        LatLng latLngCamera = cameraPosition.target;
+//        double cpLatitude = latLngCamera.latitude;
+//        double cpLongitude = latLngCamera.longitude;
+//        Log.d(LOG_TAG, "Current lat/lng for map's camera position is: "+latLngCamera.toString());
+//
+//        LatLngBounds curScreen = mMap.getProjection()
+//                .getVisibleRegion().latLngBounds;
 
         //TODO END CODE BLOCK
+
+        //Set on Camera change listener and only load the markers that are within the visible area
+        //TODO based on performance might need to set a max zoom level based on number of values in the cursor
+        //Can also use clustering to reduce load on google maps, but need to determine if simply accessing so many points in the problem
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                LatLng northeast = bounds.northeast;
+                LatLng southwest = bounds.southwest;
+
+                Log.d(LOG_TAG, "The northeast location is: " + northeast + " and the southwest location is: "+southwest);
+            }
+        });
+
+
 
         //TODO update this to only query the database for a limited lat and long region around current maps focus to limit work here
         Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
@@ -87,10 +111,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_bike_white_24dp))
                     .title(boroughName)
                     .position(latLng));
+            //continue cycling through the SQL Cursor
             cursor.moveToNext();
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+            //Move camera to added pin, ideally would not do this in the repeated block and instead only call once for last pin added
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         }
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+        //mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
         cursor.close();
 
     }
