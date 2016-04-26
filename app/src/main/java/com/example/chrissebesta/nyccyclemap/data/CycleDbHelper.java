@@ -27,11 +27,13 @@ public class CycleDbHelper extends SQLiteOpenHelper {
                 CycleContract.CycleEntry._ID + " INTEGER PRIMARY KEY," +
                 //CycleContract.CycleEntry.COLUMN_DATE + " REAL NOT NULL, "+
                 //CycleContract.CycleEntry.COLUMN_TIME + " TEXT NOT NULL, "+
-                CycleContract.CycleEntry.COLUMN_BOROUGH + " TEXT NOT NULL, " +
+                //CycleContract.CycleEntry.COLUMN_BOROUGH + " TEXT NOT NULL, " +
                 //CycleContract.CycleEntry.COLUMN_ZIP_CODE + " TEXT NOT NULL, " +
                 CycleContract.CycleEntry.COLUMN_LATITUDE + " REAL NOT NULL, " +
-                CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL, " +
-                CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " REAL NOT NULL"+");"; //, " +
+                CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL"+");"; //, " +
+
+//              CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL, " +
+//              CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " REAL NOT NULL"+");"; //, " +
 
                 //CycleContract.CycleEntry.COLUMN_CONTRIBUTING_FACTOR_VEHICLE_1 + " TEXT NOT NULL, " +
                 //CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + " REAL NOT NULL, " +

@@ -55,12 +55,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Create cursor to cycle through cycle injury databse data
         CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
+        final SQLiteDatabase db = helper.getWritableDatabase();
 
         //Coordinates near Manhattan to Brooklyn Bridges: 40.7111704,-73.9936095
         //LatLng nycBridges = new LatLng(40.7111704,-73.9936095);
         //Coordinates where Google Maps places the New York label
-        LatLng nycGoogleLabel = new LatLng(40.7119042,-74.0066549);
+        LatLng nycGoogleLabel = new LatLng(40.7119042, -74.0066549);
 
         //TODO START CODE BLOCK this code needs to be implemented when the user moved the current position of the camera:
         //This will likely require a different callback routine and should not be placed here, OnMapReady is not giving response needed
@@ -87,38 +87,74 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
+                //get new visible map bounds
                 LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
                 LatLng northeast = bounds.northeast;
+                String boundLat = String.valueOf(northeast.latitude);
+                String boundLong = String.valueOf(northeast.longitude);
                 LatLng southwest = bounds.southwest;
+                String boundLat2 = String.valueOf(southwest.latitude);
+                String boundLong2 = String.valueOf(southwest.longitude);
+                Log.d(LOG_TAG, "The northeast location is: " + northeast + " and the southwest location is: " + southwest);
 
-                Log.d(LOG_TAG, "The northeast location is: " + northeast + " and the southwest location is: "+southwest);
+
+                //clear old markers from map
+                mMap.clear();
+                // or if your a using cluster manager:
+                //mClusterManager.clearItems();
+                //String[] fields = new String[]{"name", "latitude", "longitude"};
+                String[] args = new String[]{boundLat, boundLong, boundLat2, boundLong2,};
+
+                //Cursor cursor = db.query("markers", fields, "latitude<=? AND longitude<=? AND latitude>=? AND longitude>=?");
+                //query the SQL DB for only the items that are in the visible field
+                Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "latitude<=? AND longitude<=? AND latitude>=? AND longitude>=?", args, null, null, null, null);
+                Log.d(LOG_TAG, "Queried the database and received this many samples: "+ cursor.getCount());
+
+                //populate the map with the markers
+                if (cursor.moveToFirst()) {
+                    do {
+                        //Get the LatLng of the next item to be added
+                        LatLng latLng = new LatLng(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)), cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)));
+                        mMap.addMarker(new MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_bike_white_24dp))
+                                        //.title(boroughName)
+                                .position(latLng));
+                        //TODO implement cluster manager here
+
+                    } while (cursor.moveToNext());
+
+                    //if using cluster manager add :
+                    //mClusterManager.cluster();
+                }
+                cursor.close();
             }
+
+
         });
 
 
-
-        //TODO update this to only query the database for a limited lat and long region around current maps focus to limit work here
-        Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
-        cursor.moveToFirst();
-
-        //Add locations for each point in the
-        for (int i = 0; i < cursor.getCount(); i++) {
-            String boroughName = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_BOROUGH));
-            //String contributingFactor = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_CONTRIBUTING_FACTOR_VEHICLE_1));
-            LatLng latLng = new LatLng(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)), cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)));
-            Log.d(LOG_TAG, "Adding point to map at: " + latLng.toString());
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_bike_white_24dp))
-                    .title(boroughName)
-                    .position(latLng));
-            //continue cycling through the SQL Cursor
-            cursor.moveToNext();
-
-            //Move camera to added pin, ideally would not do this in the repeated block and instead only call once for last pin added
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        }
+//        //TODO update this to only query the database for a limited lat and long region around current maps focus to limit work here
+//        Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
+//        cursor.moveToFirst();
+//
+//        //Add locations for each point in the
+//        for (int i = 0; i < cursor.getCount(); i++) {
+//            //String boroughName = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_BOROUGH));
+//            //String contributingFactor = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_CONTRIBUTING_FACTOR_VEHICLE_1));
+//            LatLng latLng = new LatLng(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)), cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)));
+//            Log.d(LOG_TAG, "Adding point to map at: " + latLng.toString());
+//            mMap.addMarker(new MarkerOptions()
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_bike_white_24dp))
+//                            //.title(boroughName)
+//                    .position(latLng));
+//            //continue cycling through the SQL Cursor
+//            cursor.moveToNext();
+//
+//            //Move camera to added pin, ideally would not do this in the repeated block and instead only call once for last pin added
+//            //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//        }
         //mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-        cursor.close();
+//        cursor.close();
 
     }
 }
