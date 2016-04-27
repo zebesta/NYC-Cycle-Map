@@ -3,6 +3,7 @@ package com.example.chrissebesta.nyccyclemap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.example.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
 import com.example.chrissebesta.nyccyclemap.data.MyItem;
 import com.example.chrissebesta.nyccyclemap.data.MyItemReader;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,17 +34,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void readItems() {
         List<MyItem> items = new MyItemReader(getBaseContext()).read();
         mClusterManager.addItems(items);
-
-//        for (int i = 0; i < 10; i++) {
-//            double offset = i / 60d;
-//            for (MyItem item : items) {
-//                LatLng position = item.getPosition();
-//                double lat = position.latitude + offset;
-//                double lng = position.longitude + offset;
-//                MyItem offsetItem = new MyItem(lat, lng);
-//                mClusterManager.addItem(offsetItem);
-//            }
-//        }
     }
 
 
@@ -62,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 15));
 
         mClusterManager = new ClusterManager<MyItem>(this, mMap);
+        mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
 
         mMap.setOnCameraChangeListener(mClusterManager);
 
@@ -104,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 ////        LatLngBounds curScreen = mMap.getProjection()
 ////                .getVisibleRegion().latLngBounds;
 //
-//        //TODO END CODE BLOCK
+//        //END CODE BLOCK
 //
 //        //Set on Camera change listener and only load the markers that are within the visible area
 //        //TODO based on performance might need to set a max zoom level based on number of values in the cursor
