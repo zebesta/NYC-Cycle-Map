@@ -68,7 +68,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             //TODO OR: use a SQL database to store everything with at least one cyclist injured or killed and then query based on user topics to limit number of internet calls
 
 
-            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
+            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=50");
             //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
             //increased limit since it was defaulting to a limit of 1000
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
@@ -100,6 +100,12 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
             jsonResponseString = nycPublicDataResponseString;
 
+            try {
+                getCycleDataFromJson(jsonResponseString);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -128,11 +134,11 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         Log.d(LOG_TAG, "In the post execute phase");
 
-        try {
-            getCycleDataFromJson(jsonResponseString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            getCycleDataFromJson(jsonResponseString);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         super.onPostExecute(aVoid);
     }
 

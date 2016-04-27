@@ -3,11 +3,14 @@ package com.example.chrissebesta.nyccyclemap;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.chrissebesta.nyccyclemap.data.CycleContract;
 import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
@@ -24,7 +27,11 @@ public class MainActivity extends AppCompatActivity {
         Button brooklynButton = (Button) findViewById(R.id.brooklynButton);
         Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
+//        final FetchCycleDataTask fetch = new FetchCycleDataTask();
+//        fetch.mContext = getBaseContext();
 
         assert refreshButton != null;
         refreshButton.setOnClickListener(new View.OnClickListener() {
@@ -34,6 +41,22 @@ public class MainActivity extends AppCompatActivity {
                 final FetchCycleDataTask fetch = new FetchCycleDataTask();
                 fetch.mContext = getBaseContext();
                 fetch.execute();
+                assert progressBar != null;
+                progressBar.setVisibility(View.VISIBLE);
+                loadingText.setVisibility(View.VISIBLE);
+
+                if (fetch.getStatus() == AsyncTask.Status.RUNNING) {
+                    // My AsyncTask is currently doing work in doInBackground()
+                    Log.d(LOG_TAG, "Still working on Async task");
+                }
+                if (fetch.getStatus() == AsyncTask.Status.FINISHED) {
+                    // My AsyncTask is done and onPostExecute was called
+                    Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
+                    progressBar.setVisibility(View.INVISIBLE);
+                    loadingText.setVisibility(View.INVISIBLE);
+                }
+
+
 //                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
 //                SQLiteDatabase db = helper.getReadableDatabase();
 //                Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
@@ -47,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 CycleDbHelper helper = new CycleDbHelper(getBaseContext());
                 SQLiteDatabase db = helper.getReadableDatabase();
                 Log.d(LOG_TAG, "Querying db for Brooklyn results");
-                Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME + " WHERE "+ CycleContract.CycleEntry.COLUMN_BOROUGH + "='BROOKLYN'", null);
+                Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME + " WHERE " + CycleContract.CycleEntry.COLUMN_BOROUGH + "='BROOKLYN'", null);
                 String cursorString = helper.cursorToString(cursor);
                 Log.d(LOG_TAG, cursorString);
                 cursor.close();
@@ -74,9 +97,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
+//        if(fetch.getStatus() == AsyncTask.Status.RUNNING){
+//            // My AsyncTask is currently doing work in doInBackground()
+//            Log.d(LOG_TAG, "Still working on Async task");
+//
+//        }
+//        if(fetch.getStatus() == AsyncTask.Status.FINISHED){
+//            // My AsyncTask is done and onPostExecute was called
+//            Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
+//            progressBar.setVisibility(View.INVISIBLE);
+//            loadingText.setVisibility(View.INVISIBLE);
+//        }
     }
 }
