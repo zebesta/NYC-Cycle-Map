@@ -18,6 +18,10 @@ package com.example.chrissebesta.nyccyclemap.data;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
+/**
+ * Created by chrissebesta on 4/26/16.
+ * Custom Item as required for the clustering in google maps API 2.0
+ */
 
 public class MyItem implements ClusterItem {
     private final LatLng mPosition;
