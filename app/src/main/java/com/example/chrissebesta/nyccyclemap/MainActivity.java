@@ -13,8 +13,12 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.appyvet.rangebar.RangeBar;
 import com.example.chrissebesta.nyccyclemap.data.CycleContract;
 import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     public final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -31,23 +35,35 @@ public class MainActivity extends AppCompatActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         SeekBar seekBarDates = (SeekBar) findViewById(R.id.seekBarDateSearch);
+        com.edmodo.rangebar.RangeBar rangeBar = (com.edmodo.rangebar.RangeBar) findViewById(R.id.rangeBarDates);
+        final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        fetch.mContext = getBaseContext();
-        seekBarDates.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        materialRangeBar.setPinRadius(25);
+        materialRangeBar.setTickEnd(2016);
+        materialRangeBar.setTickStart(2012);
+        materialRangeBar.setTickInterval(1);
+        try {
+            URL urlToUse = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+materialRangeBar.getLeftPinValue()+"-01-01T10:00:00%27%20and%20%27"+materialRangeBar.getRightPinValue()+"-12-31T23:59:00%27");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        //Build URL based on range bar values here, can modify later
+        materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d("SEEK", "The progress has been changed as is currently: "+progress);
-            }
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
+                String urlString = "http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+leftPinValue+"-01-01T10:00:00%27%20and%20%27"+rightPinValue+"-12-31T23:59:00%27";
+                Log.d("RANGEBAR","The URL would be: "+urlString);
+                try {
+                    URL urlToUse = new URL(urlString);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                //URL http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%272016-01-10T14:00:00%27%20and%20%272016-04-10T14:00:00%27
             }
         });
 
@@ -62,6 +78,16 @@ public class MainActivity extends AppCompatActivity {
                 fetch.mContext = getBaseContext();
                 fetch.mProgressBar = progressBar;
                 fetch.mTextView = loadingText;
+                try {
+                    fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+materialRangeBar.getLeftPinValue()+"-01-01T10:00:00%27%20and%20%27"+materialRangeBar.getRightPinValue()+"-12-31T23:59:00%27");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    fetch.mUrlCycleData = new URL("");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
                 fetch.execute();
                 assert progressBar != null;
                 progressBar.setVisibility(View.VISIBLE);

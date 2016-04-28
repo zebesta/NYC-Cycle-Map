@@ -36,6 +36,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     public Context mContext;
     public ProgressBar mProgressBar;
     public TextView mTextView;
+    public URL mUrlCycleData;
 
     @Override
     protected Void doInBackground(String... params) {
@@ -75,11 +76,14 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             //TODO OR: use a SQL database to store everything with at least one cyclist injured or killed and then query based on user topics to limit number of internet calls
 
 
-            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
+            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date%20between%20%272016-03-10T12:00:00%27%20and%20%272016-04-11T14:00:00%27");
+            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date between '2015-01-10T12:00:00' and '2015-01-11T14:00:00'");
+            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
             //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
             //increased limit since it was defaulting to a limit of 1000
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
 
+            url=mUrlCycleData;
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
