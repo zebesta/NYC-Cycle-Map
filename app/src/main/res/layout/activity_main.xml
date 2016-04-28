@@ -59,4 +59,19 @@
             android:text="Loading data from the web..."
             android:visibility="gone"/>
     </LinearLayout>
+    <SeekBar
+        android:id="@+id/seekBarDateSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        />
+    <com.edmodo.rangebar.RangeBar
+        android:id="@+id/rangeBarDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <com.appyvet.rangebar.RangeBar
+        android:id="@+id/materialRangeBarWithDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

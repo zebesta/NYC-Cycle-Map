@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.chrissebesta.nyccyclemap.data.CycleContract;
@@ -29,9 +30,26 @@ public class MainActivity extends AppCompatActivity {
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
+        SeekBar seekBarDates = (SeekBar) findViewById(R.id.seekBarDateSearch);
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        fetch.mContext = getBaseContext();
+        seekBarDates.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d("SEEK", "The progress has been changed as is currently: "+progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         assert refreshButton != null;
         refreshButton.setOnClickListener(new View.OnClickListener() {
