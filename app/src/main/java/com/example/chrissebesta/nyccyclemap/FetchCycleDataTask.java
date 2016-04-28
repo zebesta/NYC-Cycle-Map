@@ -75,7 +75,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             //TODO OR: use a SQL database to store everything with at least one cyclist injured or killed and then query based on user topics to limit number of internet calls
 
 
-            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=50");
+            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
             //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
             //increased limit since it was defaulting to a limit of 1000
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
@@ -188,7 +188,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
         CycleDbHelper helper = new CycleDbHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
-        db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+        //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
 
 
         for (int i = 0; i < accidentJsonArray.length(); i++) {
