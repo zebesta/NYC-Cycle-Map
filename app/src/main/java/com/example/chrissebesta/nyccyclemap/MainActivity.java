@@ -39,7 +39,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //fetch Json data from NYC Data
                 final FetchCycleDataTask fetch = new FetchCycleDataTask();
+                //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
+                //Pass UI effecting variable to the Asyc task
                 fetch.mContext = getBaseContext();
+                fetch.mProgressBar = progressBar;
+                fetch.mTextView = loadingText;
                 fetch.execute();
                 assert progressBar != null;
                 progressBar.setVisibility(View.VISIBLE);

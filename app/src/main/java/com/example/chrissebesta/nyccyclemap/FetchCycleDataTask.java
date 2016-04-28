@@ -5,6 +5,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.data.CycleContract;
 import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
@@ -24,11 +28,14 @@ import java.net.URL;
 
 /**
  * Created by chrissebesta on 4/21/16.
+ * Async task to load the bicycle injury/death fdata from the NYC open data platform and load it in to a local SQLite database
  */
 public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     public final String LOG_TAG = FetchCycleDataTask.class.getSimpleName();
     public String jsonResponseString;
     public Context mContext;
+    public ProgressBar mProgressBar;
+    public TextView mTextView;
 
     @Override
     protected Void doInBackground(String... params) {
@@ -133,12 +140,11 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         Log.d(LOG_TAG, "In the post execute phase");
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mTextView.setVisibility(View.INVISIBLE);
+        Toast toast = Toast.makeText(mContext, "Done loading data from web", Toast.LENGTH_SHORT);
+        toast.show();
 
-//        try {
-//            getCycleDataFromJson(jsonResponseString);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         super.onPostExecute(aVoid);
     }
 
@@ -182,6 +188,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
         CycleDbHelper helper = new CycleDbHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
+        db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
 
 
         for (int i = 0; i < accidentJsonArray.length(); i++) {
