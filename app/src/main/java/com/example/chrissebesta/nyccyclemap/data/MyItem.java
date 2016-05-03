@@ -21,6 +21,7 @@ import com.google.maps.android.clustering.ClusterItem;
 /**
  * Created by chrissebesta on 4/26/16.
  * Custom Item as required for the clustering in google maps API 2.0
+ * Also adds a date that is used for the title of the rendered Markers
  */
 
 public class MyItem implements ClusterItem {

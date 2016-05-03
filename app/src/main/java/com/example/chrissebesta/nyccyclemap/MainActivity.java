@@ -1,6 +1,8 @@
 package com.example.chrissebesta.nyccyclemap;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -23,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     public final String LOG_TAG = MainActivity.class.getSimpleName();
 
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -34,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
+        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getString(R.string.mindate), 0);
+        editor.putInt(getString(R.string.maxdate), 2020);
+        editor.commit();
+
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        fetch.mContext = getBaseContext();
@@ -54,11 +61,17 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
                 String urlString = "http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+leftPinValue+"-01-01T10:00:00%27%20and%20%27"+rightPinValue+"-12-31T23:59:00%27";
                 Log.d("RANGEBAR","The URL would be: "+urlString);
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(getString(R.string.mindate), Integer.parseInt(leftPinValue));
+                editor.putInt(getString(R.string.maxdate), Integer.parseInt(rightPinValue));
+                editor.commit();
                 try {
                     URL urlToUse = new URL(urlString);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
+
 
                 //URL http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%272016-01-10T14:00:00%27%20and%20%272016-04-10T14:00:00%27
             }

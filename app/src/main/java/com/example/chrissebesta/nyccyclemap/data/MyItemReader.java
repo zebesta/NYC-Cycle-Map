@@ -1,9 +1,12 @@
 package com.example.chrissebesta.nyccyclemap.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.example.chrissebesta.nyccyclemap.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,8 +44,18 @@ public class MyItemReader {
         //Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
         //40.7096637,-73.9662333
         int startYear = 2015;
-        String[] args = new String[]{"-73.9662333", String.valueOf(startYear)};
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "longitude>=? AND date <?", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
+
+
+        //get min and max date from shared Preferences
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        int minDate = sharedPreferences.getInt(mContext.getString(R.string.mindate), 0); //default min year is 0
+        int maxDate = sharedPreferences.getInt(mContext.getString(R.string.maxdate), 3000);//default max year is 3000
+        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: "+minDate+" and "+maxDate);
+
+        //set args for SQL Query
+        String[] args = new String[]{String.valueOf(minDate), String.valueOf(maxDate)};
+
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <=?", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added
