@@ -31,7 +31,10 @@ public class MyItemReader {
         CycleDbHelper helper = new CycleDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
         //TODO adjust SQL request here to search only the events that the user has opted for
-        Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
+        //Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
+        //40.7096637,-73.9662333
+        String[] args = new String[]{"-73.9662333"};
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "longitude>=?", args, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added
