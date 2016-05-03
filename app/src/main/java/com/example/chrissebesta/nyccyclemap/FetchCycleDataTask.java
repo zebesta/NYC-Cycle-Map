@@ -77,13 +77,14 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
 
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date%20between%20%272016-03-10T12:00:00%27%20and%20%272016-04-11T14:00:00%27");
-            url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date between '2015-01-10T12:00:00' and '2015-01-11T14:00:00'");
-            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
+            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date between '2015-01-10T12:00:00' and '2015-01-11T14:00:00'");
+            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20%3C%20%272017-01-10T14:00:00%27%20&$limit=500");
             //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
             //increased limit since it was defaulting to a limit of 1000
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
 
-            url=mUrlCycleData;
+            //url=mUrlCycleData;
+            //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200");
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -210,6 +211,8 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
             //ContentValues contentValues = new ContentValues();
             contentValues.put(CycleContract.CycleEntry.COLUMN_DATE, accident.getString(NYC_DATE));
+            contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED, accident.getString(NYC_NUMBER_OF_CYCLIST_INJURED));
+            contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED, accident.getString(NYC_NUMBER_OF_CYCLIST_KILLED));
             contentValues.put(CycleContract.CycleEntry.COLUMN_LATITUDE, accident.getDouble(NYC_LATITUDE));
             contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
             //contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));

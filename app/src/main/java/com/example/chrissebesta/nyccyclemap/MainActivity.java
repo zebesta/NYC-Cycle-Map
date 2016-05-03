@@ -35,11 +35,11 @@ public class MainActivity extends AppCompatActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
-        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(getString(R.string.mindate), 0);
-        editor.putInt(getString(R.string.maxdate), 2020);
-        editor.commit();
+//        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putInt(getString(R.string.mindate), 0);
+//        editor.putInt(getString(R.string.maxdate), 2020);
+//        editor.commit();
 
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        final FetchCycleDataTask fetch = new FetchCycleDataTask();

@@ -26,6 +26,8 @@ public class CycleDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_CYCLE_TABLE = "CREATE TABLE " + CycleContract.CycleEntry.TABLE_NAME + " (" +
                 CycleContract.CycleEntry._ID + " INTEGER PRIMARY KEY," +
                 CycleContract.CycleEntry.COLUMN_DATE + " TEXT NOT NULL, "+
+                CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + " REAL NOT NULL, " +
+                CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + " REAL NOT NULL, " +
                 //CycleContract.CycleEntry.COLUMN_TIME + " TEXT NOT NULL, "+
                 //CycleContract.CycleEntry.COLUMN_BOROUGH + " TEXT NOT NULL, " +
                 //CycleContract.CycleEntry.COLUMN_ZIP_CODE + " TEXT NOT NULL, " +

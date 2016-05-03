@@ -52,10 +52,13 @@ public class MyItemReader {
         int maxDate = sharedPreferences.getInt(mContext.getString(R.string.maxdate), 3000);//default max year is 3000
         Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: "+minDate+" and "+maxDate);
 
+        //increment max date by one year and look for dates that are lower than it (effectively, looks at everything less than year 2013 if max date is 2012, catches all dates in 2012
+        maxDate++;
+
         //set args for SQL Query
         String[] args = new String[]{String.valueOf(minDate), String.valueOf(maxDate)};
 
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <=?", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <?", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added

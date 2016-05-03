@@ -38,7 +38,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Map Databse" />
-
+    <CheckedTextView
+        android:id="@+id/injuredCheckedTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Injured Cyclists"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:checked="true"
+        />
+    <CheckedTextView
+        android:id="@+id/killedCheckedView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Killed Cyclists"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:checked="true"
+        />
+    <com.appyvet.rangebar.RangeBar
+        android:id="@+id/materialRangeBarWithDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,9 +78,5 @@
             android:text="Loading data from the web..."
             android:visibility="gone"/>
     </LinearLayout>
-    <com.appyvet.rangebar.RangeBar
-        android:id="@+id/materialRangeBarWithDates"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>
