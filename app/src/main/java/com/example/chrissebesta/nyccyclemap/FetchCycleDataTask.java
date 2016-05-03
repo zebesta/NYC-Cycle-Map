@@ -209,6 +209,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
 
             //ContentValues contentValues = new ContentValues();
+            contentValues.put(CycleContract.CycleEntry.COLUMN_DATE, accident.getString(NYC_DATE));
             contentValues.put(CycleContract.CycleEntry.COLUMN_LATITUDE, accident.getDouble(NYC_LATITUDE));
             contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
             //contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));

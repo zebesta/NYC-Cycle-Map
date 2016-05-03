@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.appyvet.rangebar.RangeBar;
@@ -34,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
-        SeekBar seekBarDates = (SeekBar) findViewById(R.id.seekBarDateSearch);
-        com.edmodo.rangebar.RangeBar rangeBar = (com.edmodo.rangebar.RangeBar) findViewById(R.id.rangeBarDates);
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        final FetchCycleDataTask fetch = new FetchCycleDataTask();
