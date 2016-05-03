@@ -25,9 +25,11 @@ import com.google.maps.android.clustering.ClusterItem;
 
 public class MyItem implements ClusterItem {
     private final LatLng mPosition;
+    public final String date;
 
-    public MyItem(double lat, double lng) {
+    public MyItem(double lat, double lng, String date) {
         mPosition = new LatLng(lat, lng);
+        this.date = date;
     }
 
     @Override

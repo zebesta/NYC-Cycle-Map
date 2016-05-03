@@ -40,13 +40,15 @@ public class MyItemReader {
         //TODO adjust SQL request here to search only the events that the user has opted for
         //Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
         //40.7096637,-73.9662333
-        String[] args = new String[]{"-73.9662333"};
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "longitude>=?", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
+        int startYear = 2015;
+        String[] args = new String[]{"-73.9662333", String.valueOf(startYear)};
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "longitude>=? AND date <?", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added
                 items.add(new MyItem(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)),
-                        cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE))));
+                        cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)),
+                        cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE))));
             } while (cursor.moveToNext());
 
             //if using cluster manager add :

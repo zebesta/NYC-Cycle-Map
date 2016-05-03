@@ -23,5 +23,6 @@ public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
         // Change the icon to be a Bike
         //TODO adjust the icon based on if person was injured or killed
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
+        markerOptions.title(item.date);
     }
 }
