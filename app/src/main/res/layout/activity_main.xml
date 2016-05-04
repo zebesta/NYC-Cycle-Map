@@ -10,22 +10,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.chrissebesta.nyccyclemap.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
 
     <Button
         android:id="@+id/refreshbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rfresh JSON data" />
+        android:text="Refresh NYC Cycle Data" />
 
-    <Button
-        android:id="@+id/brooklynButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Brooklyn" />
+    <!--<Button-->
+        <!--android:id="@+id/brooklynButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Brooklyn" />-->
 
     <Button
         android:id="@+id/clearSQL"
@@ -38,24 +34,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Map Databse" />
-    <CheckedTextView
-        android:id="@+id/injuredCheckedTextView"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/injuredcyclists"
-        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-        android:checked="true"
-        android:padding="4dp"
-        />
-    <CheckedTextView
-        android:id="@+id/killedCheckedView"
+        android:layout_gravity="center">
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_weight="0"
+            android:src="@drawable/redwhitebike"
+            />
+        <CheckedTextView
+            android:id="@+id/injuredCheckedTextView"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/injuredcyclists"
+            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+            android:checked="true"
+            android:padding="4dp"
+            />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/killedcyclists"
-        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-        android:checked="true"
-        android:padding="4dp"
-        />
+        android:layout_gravity="center">
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_weight="0"
+            android:src="@drawable/blackwhitebike"/>
+        <CheckedTextView
+            android:id="@+id/killedCheckedView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/killedcyclists"
+            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+            android:checked="true"
+            android:padding="4dp"
+            />
+    </LinearLayout>
+
     <com.appyvet.rangebar.RangeBar
         android:id="@+id/materialRangeBarWithDates"
         android:layout_width="match_parent"
@@ -74,8 +95,9 @@
         <TextView
             android:id="@+id/loadingTextView"
             android:padding="16dp"
+            android:singleLine="false"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/loadingmessage"
             android:visibility="gone"/>

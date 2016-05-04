@@ -3,7 +3,6 @@ package com.example.chrissebesta.nyccyclemap;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button refreshButton = (Button) findViewById(R.id.refreshbutton);
-        Button brooklynButton = (Button) findViewById(R.id.brooklynButton);
         Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -116,8 +114,12 @@ public class MainActivity extends AppCompatActivity {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+                SQLiteDatabase db = helper.getWritableDatabase();
+                db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+                Log.d(LOG_TAG, "Clearing Database");
+
                 //fetch all the data from starting year to the current year
-                int endYear = Calendar.getInstance().get(Calendar.YEAR);
                 Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
                 for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
                     fetchCycleData(i);
@@ -163,19 +165,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        assert brooklynButton != null;
-        brooklynButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-                SQLiteDatabase db = helper.getReadableDatabase();
-                Log.d(LOG_TAG, "Querying db for Brooklyn results");
-                Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME + " WHERE " + CycleContract.CycleEntry.COLUMN_BOROUGH + "='BROOKLYN'", null);
-                String cursorString = helper.cursorToString(cursor);
-                Log.d(LOG_TAG, cursorString);
-                cursor.close();
-            }
-        });
 
         assert clearSqlDb != null;
         clearSqlDb.setOnClickListener(new View.OnClickListener() {
@@ -218,8 +207,10 @@ public class MainActivity extends AppCompatActivity {
         fetch.mProgressBar = mProgressBar;
         fetch.mTextView = mLoadingText;
         try {
-            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+            //URL for both injured and killed cyclists
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+            //URL for only killed cyclists (useful for testing as it is much much faster)
+            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
