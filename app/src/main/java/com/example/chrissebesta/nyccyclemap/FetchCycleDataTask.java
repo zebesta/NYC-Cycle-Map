@@ -154,7 +154,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        Log.d(LOG_TAG, "In the post execute phase");
+        Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: "+lastThread);
         if (lastThread) {
             mProgressBar.setVisibility(View.INVISIBLE);
             mTextView.setVisibility(View.INVISIBLE);

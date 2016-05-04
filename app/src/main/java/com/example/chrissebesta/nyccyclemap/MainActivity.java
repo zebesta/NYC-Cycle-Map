@@ -79,27 +79,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
                 Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
-                String urlString = "http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+leftPinValue+"-01-01T10:00:00%27%20and%20%27"+rightPinValue+"-12-31T23:59:00%27";
-                Log.d("RANGEBAR","The URL would be: "+urlString);
+
+                //update shared preferences for Query when user maps new data
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(getString(R.string.mindate), Integer.parseInt(leftPinValue));
                 editor.putInt(getString(R.string.maxdate), Integer.parseInt(rightPinValue));
                 editor.commit();
-                try {
-                    URL urlToUse = new URL(urlString);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-
-                //URL http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%272016-01-10T14:00:00%27%20and%20%272016-04-10T14:00:00%27
             }
         });
 
         injuredCheckedTextView.setOnClickListener(new CheckedTextView.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //update check box and shared preferences for Query when user maps new data
                 injuredCheckedTextView.setChecked(!injuredCheckedTextView.isChecked());
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -110,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         killedCheckedTextView.setOnClickListener(new CheckedTextView.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //update check box and shared preferences for Query when user maps new data
                 killedCheckedTextView.setChecked(!killedCheckedTextView.isChecked());
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -125,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 //fetch all the data from starting year to the current year
                 int endYear = Calendar.getInstance().get(Calendar.YEAR);
                 Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
-                for (int i = STARTING_YEAR_OF_DATA; i<endingYearOfData;i++){
+                for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
                     fetchCycleData(i);
                 }
 
@@ -224,7 +218,9 @@ public class MainActivity extends AppCompatActivity {
         fetch.mProgressBar = mProgressBar;
         fetch.mTextView = mLoadingText;
         try {
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
