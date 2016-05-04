@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,9 +20,17 @@ import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public final String LOG_TAG = MainActivity.class.getSimpleName();
+    //The starting year of the data in the NYC Open Data library
+    public final int STARTING_YEAR_OF_DATA = 2012;
+    public final int endingYearOfData = Calendar.getInstance().get(Calendar.YEAR);
+    //Views that need to be accessible outside of onCreate
+    ProgressBar mProgressBar;
+    TextView mLoadingText;
+    RangeBar mMaterialRangeBar;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +41,11 @@ public class MainActivity extends AppCompatActivity {
         Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar = progressBar;
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
+        mLoadingText = loadingText;
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
+        mMaterialRangeBar = materialRangeBar;
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
@@ -112,38 +122,45 @@ public class MainActivity extends AppCompatActivity {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //fetch Json data from NYC Data
-                final FetchCycleDataTask fetch = new FetchCycleDataTask();
-                //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
-                //Pass UI effecting variable to the Asyc task
-                fetch.mContext = getBaseContext();
-                fetch.mProgressBar = progressBar;
-                fetch.mTextView = loadingText;
-                try {
-                    fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+materialRangeBar.getLeftPinValue()+"-01-01T10:00:00%27%20and%20%27"+materialRangeBar.getRightPinValue()+"-12-31T23:59:00%27");
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                //fetch all the data from starting year to the current year
+                int endYear = Calendar.getInstance().get(Calendar.YEAR);
+                Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
+                for (int i = STARTING_YEAR_OF_DATA; i<endingYearOfData;i++){
+                    fetchCycleData(i);
                 }
-                try {
-                    fetch.mUrlCycleData = new URL("");
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-                fetch.execute();
-                assert progressBar != null;
-                progressBar.setVisibility(View.VISIBLE);
-                loadingText.setVisibility(View.VISIBLE);
 
-                if (fetch.getStatus() == AsyncTask.Status.RUNNING) {
-                    // My AsyncTask is currently doing work in doInBackground()
-                    Log.d(LOG_TAG, "Still working on Async task");
-                }
-                if (fetch.getStatus() == AsyncTask.Status.FINISHED) {
-                    // My AsyncTask is done and onPostExecute was called
-                    Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
-                    progressBar.setVisibility(View.INVISIBLE);
-                    loadingText.setVisibility(View.INVISIBLE);
-                }
+                //fetch Json data from NYC Data
+//                final FetchCycleDataTask fetch = new FetchCycleDataTask();
+//                //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
+//                //Pass UI effecting variable to the Asyc task
+//                fetch.mContext = getBaseContext();
+//                fetch.mProgressBar = progressBar;
+//                fetch.mTextView = loadingText;
+//                try {
+//                    fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+materialRangeBar.getLeftPinValue()+"-01-01T10:00:00%27%20and%20%27"+materialRangeBar.getRightPinValue()+"-12-31T23:59:00%27");
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    fetch.mUrlCycleData = new URL("");
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                }
+//                fetch.execute();
+//                assert progressBar != null;
+//                progressBar.setVisibility(View.VISIBLE);
+//                loadingText.setVisibility(View.VISIBLE);
+//
+//                if (fetch.getStatus() == AsyncTask.Status.RUNNING) {
+//                    // My AsyncTask is currently doing work in doInBackground()
+//                    Log.d(LOG_TAG, "Still working on Async task");
+//                }
+//                if (fetch.getStatus() == AsyncTask.Status.FINISHED) {
+//                    // My AsyncTask is done and onPostExecute was called
+//                    Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
+//                    progressBar.setVisibility(View.INVISIBLE);
+//                    loadingText.setVisibility(View.INVISIBLE);
+//                }
 
 
 //                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
@@ -196,6 +213,45 @@ public class MainActivity extends AppCompatActivity {
 //            Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
 //            progressBar.setVisibility(View.INVISIBLE);
 //            loadingText.setVisibility(View.INVISIBLE);
+//        }
+    }
+
+    private void fetchCycleData(int year){
+        final FetchCycleDataTask fetch = new FetchCycleDataTask();
+        //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
+        //Pass UI effecting variable to the Asyc task
+        fetch.mContext = getBaseContext();
+        fetch.mProgressBar = mProgressBar;
+        fetch.mTextView = mLoadingText;
+        try {
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        //set the last threat flag to true if this is the last fetch task to be run
+        if(year == endingYearOfData){
+            fetch.lastThread = true;
+        }
+//        try {
+//            fetch.mUrlCycleData = new URL("");
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+        fetch.execute();
+        Log.d("FETCH", "Fetching cycle data between "+year + " and "+(year+1));
+        assert mProgressBar != null;
+        mProgressBar.setVisibility(View.VISIBLE);
+        mLoadingText.setVisibility(View.VISIBLE);
+
+//        if (fetch.getStatus() == AsyncTask.Status.RUNNING) {
+//            // My AsyncTask is currently doing work in doInBackground()
+//            Log.d(LOG_TAG, "Still working on Async task");
+//        }
+//        if (fetch.getStatus() == AsyncTask.Status.FINISHED) {
+//            // My AsyncTask is done and onPostExecute was called
+//            Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
+//            mProgressBar.setVisibility(View.INVISIBLE);
+//            mLoadingText.setVisibility(View.INVISIBLE);
 //        }
     }
 }

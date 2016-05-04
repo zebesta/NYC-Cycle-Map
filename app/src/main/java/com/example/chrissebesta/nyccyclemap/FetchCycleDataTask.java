@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.data.CycleContract;
 import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
@@ -37,10 +36,20 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     public ProgressBar mProgressBar;
     public TextView mTextView;
     public URL mUrlCycleData;
+    public boolean lastThread = false;
+
+//    @Override
+//    protected void onPreExecute() {
+//        mProgressBar.setVisibility(View.VISIBLE);
+//        mTextView.setVisibility(View.VISIBLE);
+//        Log.d(LOG_TAG, "In the pre execute phase");
+//        super.onPreExecute();
+//    }
 
     @Override
     protected Void doInBackground(String... params) {
         Log.d(LOG_TAG, "In the do in background phase");
+
 
         //Right now just hacking this all together in AsyncTask, needs to eventually take place in a SyncAdapter
         HttpURLConnection urlConnection = null;
@@ -82,11 +91,11 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
             //increased limit since it was defaulting to a limit of 1000
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
-
-            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20%3E%20%272015-01-01T00:00:00%27%20&$limit=1000");
-            //url=mUrlCycleData;
+            //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20%3E%20%272015-01-01T00:00:00%27%20&$limit=1000");
+            url = mUrlCycleData;
             //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200");
 
+            Log.d("FETCH", "Fetching cycle data with URL: " + mUrlCycleData);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -146,10 +155,12 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         Log.d(LOG_TAG, "In the post execute phase");
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mTextView.setVisibility(View.INVISIBLE);
-        Toast toast = Toast.makeText(mContext, "Done loading data from web", Toast.LENGTH_SHORT);
-        toast.show();
+        if (lastThread) {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mTextView.setVisibility(View.INVISIBLE);
+        }
+//        Toast toast = Toast.makeText(mContext, "Done loading data from web", Toast.LENGTH_SHORT);
+//        toast.show();
 
         super.onPostExecute(aVoid);
     }
