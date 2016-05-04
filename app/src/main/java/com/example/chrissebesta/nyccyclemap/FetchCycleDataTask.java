@@ -78,11 +78,12 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date%20between%20%272016-03-10T12:00:00%27%20and%20%272016-04-11T14:00:00%27");
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date between '2015-01-10T12:00:00' and '2015-01-11T14:00:00'");
-            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20%3C%20%272017-01-10T14:00:00%27%20&$limit=500");
+            //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20%3C%20%272017-01-10T14:00:00%27%20&$limit=2000");
             //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
             //increased limit since it was defaulting to a limit of 1000
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
 
+            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20%3E%20%272015-01-01T00:00:00%27%20&$limit=1000");
             //url=mUrlCycleData;
             //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200");
 

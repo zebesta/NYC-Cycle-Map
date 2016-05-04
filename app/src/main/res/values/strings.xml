@@ -4,4 +4,6 @@
     <string name="maxdate">maxdate</string>
     <string name="mindate">mindate</string>
     <string name="sharedpreference">sharedpreference</string>
+    <string name="killedcyclists">Killed Cyclists</string>
+    <string name="injuredcyclists">Injured Cyclists</string>
 </resources>

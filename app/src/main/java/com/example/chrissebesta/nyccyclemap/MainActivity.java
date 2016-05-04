@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
+        final CheckedTextView injured = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
+        final CheckedTextView killed = (CheckedTextView) findViewById(R.id.killedCheckedView);
 //        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
 //        editor.putInt(getString(R.string.mindate), 0);
@@ -74,6 +77,27 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //URL http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%272016-01-10T14:00:00%27%20and%20%272016-04-10T14:00:00%27
+            }
+        });
+
+        injured.setOnClickListener(new CheckedTextView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                injured.setChecked(!injured.isChecked());
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean(getString(R.string.injuredcyclists), injured.isChecked());
+                editor.commit();
+            }
+        });
+        killed.setOnClickListener(new CheckedTextView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                killed.setChecked(!killed.isChecked());
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean(getString(R.string.killedcyclists), killed.isChecked());
+                editor.commit();
             }
         });
 

@@ -50,15 +50,29 @@ public class MyItemReader {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
         int minDate = sharedPreferences.getInt(mContext.getString(R.string.mindate), 0); //default min year is 0
         int maxDate = sharedPreferences.getInt(mContext.getString(R.string.maxdate), 3000);//default max year is 3000
-        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: "+minDate+" and "+maxDate);
-
+        boolean injured = sharedPreferences.getBoolean(mContext.getString(R.string.injuredcyclists), true);
+        boolean killed = sharedPreferences.getBoolean(mContext.getString(R.string.killedcyclists), true);
+        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: "+minDate+" and "+maxDate + " and injured is "+injured+" while killed is "+killed);
+        String injuredArgs;
+        String killedArgs;
         //increment max date by one year and look for dates that are lower than it (effectively, looks at everything less than year 2013 if max date is 2012, catches all dates in 2012
         maxDate++;
+        //set args to properly include or exclude injured or killed cyclists
+        if(injured){
+            injuredArgs = "0";
+        }else injuredArgs = "100";
+        if(killed){
+            killedArgs = "0";
+        }else killedArgs = "100";
 
         //set args for SQL Query
-        String[] args = new String[]{String.valueOf(minDate), String.valueOf(maxDate)};
+        String[] args = new String[]{String.valueOf(minDate), String.valueOf(maxDate), injuredArgs, killedArgs};
+        Log.d(LOG_TAG, "InjuredArgs is: "+ injuredArgs + " and killedArgs is: "+killedArgs);
 
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <?", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
+        Log.d(LOG_TAG, "The query statement is: "+"date>=? AND date <? AND ("+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + "? OR "+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED+"?)");
+
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <? AND ("+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR "+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED+">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
+        Log.d(LOG_TAG, "The query statement is: "+"date>=? AND date <? AND ("+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR "+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED+">?)");
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added

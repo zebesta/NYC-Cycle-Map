@@ -42,17 +42,19 @@
         android:id="@+id/injuredCheckedTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Injured Cyclists"
+        android:text="@string/injuredcyclists"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         android:checked="true"
+        android:padding="4dp"
         />
     <CheckedTextView
         android:id="@+id/killedCheckedView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Killed Cyclists"
+        android:text="@string/killedcyclists"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         android:checked="true"
+        android:padding="4dp"
         />
     <com.appyvet.rangebar.RangeBar
         android:id="@+id/materialRangeBarWithDates"
