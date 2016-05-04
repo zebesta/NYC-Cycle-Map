@@ -27,10 +27,12 @@ import com.google.maps.android.clustering.ClusterItem;
 public class MyItem implements ClusterItem {
     private final LatLng mPosition;
     public final String date;
+    public final boolean killed;
 
-    public MyItem(double lat, double lng, String date) {
+    public MyItem(double lat, double lng, String date, boolean killed) {
         mPosition = new LatLng(lat, lng);
         this.date = date;
+        this.killed = killed;
     }
 
     @Override

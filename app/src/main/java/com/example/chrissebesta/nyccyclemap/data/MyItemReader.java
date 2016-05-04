@@ -76,9 +76,15 @@ public class MyItemReader {
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added
+                boolean killedBoolean;
+                int killedInt = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED));
+                if(killedInt>0){
+                    killedBoolean =true;
+                }else killedBoolean=false;
                 items.add(new MyItem(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)),
                         cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)),
-                        cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE))));
+                        cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE)),
+                        killedBoolean));
             } while (cursor.moveToNext());
 
             //if using cluster manager add :
