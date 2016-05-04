@@ -5,16 +5,12 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by chrissebesta on 4/26/16.
@@ -52,35 +48,35 @@ public class MyItemReader {
         int maxDate = sharedPreferences.getInt(mContext.getString(R.string.maxdate), 3000);//default max year is 3000
         boolean injured = sharedPreferences.getBoolean(mContext.getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(mContext.getString(R.string.killedcyclists), true);
-        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: "+minDate+" and "+maxDate + " and injured is "+injured+" while killed is "+killed);
+        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: " + minDate + " and " + maxDate + " and injured is " + injured + " while killed is " + killed);
         String injuredArgs;
         String killedArgs;
         //increment max date by one year and look for dates that are lower than it (effectively, looks at everything less than year 2013 if max date is 2012, catches all dates in 2012
         maxDate++;
         //set args to properly include or exclude injured or killed cyclists
-        if(injured){
+        if (injured) {
             injuredArgs = "0";
-        }else injuredArgs = "100";
-        if(killed){
+        } else injuredArgs = "100";
+        if (killed) {
             killedArgs = "0";
-        }else killedArgs = "100";
+        } else killedArgs = "100";
 
         //set args for SQL Query
         String[] args = new String[]{String.valueOf(minDate), String.valueOf(maxDate), injuredArgs, killedArgs};
-        Log.d(LOG_TAG, "InjuredArgs is: "+ injuredArgs + " and killedArgs is: "+killedArgs);
+        Log.d(LOG_TAG, "InjuredArgs is: " + injuredArgs + " and killedArgs is: " + killedArgs);
 
-        Log.d(LOG_TAG, "The query statement is: "+"date>=? AND date <? AND ("+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + "? OR "+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED+"?)");
+        Log.d(LOG_TAG, "The query statement is: " + "date>=? AND date <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + "? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + "?)");
 
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <? AND ("+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR "+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED+">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
-        Log.d(LOG_TAG, "The query statement is: "+"date>=? AND date <? AND ("+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR "+CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED+">?)");
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " ASC", null);
+        Log.d(LOG_TAG, "The query statement is: " + "date>=? AND date <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added
                 boolean killedBoolean;
                 int killedInt = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED));
-                if(killedInt>0){
-                    killedBoolean =true;
-                }else killedBoolean=false;
+                if (killedInt > 0) {
+                    killedBoolean = true;
+                } else killedBoolean = false;
                 items.add(new MyItem(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)),
                         cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)),
                         cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE)),
@@ -89,24 +85,26 @@ public class MyItemReader {
 
             //if using cluster manager add :
             //mClusterManager.cluster();
+        }else{
+            Toast.makeText(mContext, "No items to show on map!", Toast.LENGTH_LONG).show();
         }
-        cursor.moveToFirst();
-        String dateString = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE));
-        Log.d(LOG_TAG, "The raw date string is: " + dateString);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
-        try {
-            Date date = fmt.parse(dateString);
-            Log.d(LOG_TAG, "The date's date is : "+ date);
-            Log.d(LOG_TAG, "The time is: "+date.getTime());
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            Log.d(LOG_TAG, "The year is: " + cal.get(Calendar.YEAR));
-            //return fmt.format(date);
-        }
-        catch(ParseException pe) {
-
-           // return "Date";
-        }
+//        if (cursor.moveToFirst()){
+//            String dateString = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE));
+//            Log.d(LOG_TAG, "The raw date string is: " + dateString);
+//            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+//            try {
+//                Date date = fmt.parse(dateString);
+//                Log.d(LOG_TAG, "The date's date is : " + date);
+//                Log.d(LOG_TAG, "The time is: " + date.getTime());
+//                Calendar cal = Calendar.getInstance();
+//                cal.setTime(date);
+//                Log.d(LOG_TAG, "The year is: " + cal.get(Calendar.YEAR));
+//                //return fmt.format(date);
+//            } catch (ParseException pe) {
+//
+//                // return "Date";
+//            }
+//        }
         cursor.close();
 
         return items;
