@@ -77,6 +77,12 @@
             />
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:id="@+id/yearMappingTextView" />
+
     <com.appyvet.rangebar.RangeBar
         android:id="@+id/materialRangeBarWithDates"
         android:layout_width="match_parent"

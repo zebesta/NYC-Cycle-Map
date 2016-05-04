@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar = progressBar;
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         mLoadingText = loadingText;
+        final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
         mMaterialRangeBar = materialRangeBar;
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
@@ -53,6 +54,13 @@ public class MainActivity extends AppCompatActivity {
         boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
         injuredCheckedTextView.setChecked(injured);
         killedCheckedTextView.setChecked(killed);
+        //set text view to indicate which years are going to be mapped by user
+        final int startDate = sharedPreferences.getInt(getString(R.string.mindate), STARTING_YEAR_OF_DATA);
+        final int endDate = sharedPreferences.getInt(getString(R.string.maxdate), endingYearOfData);
+        final String[] textForYearsToBeMapped = {"Mapping data for years: " + startDate + " - " + endDate};
+        yearMappingTextView.setText(textForYearsToBeMapped[0]);
+
+
 //        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
 //        editor.putInt(getString(R.string.mindate), 0);
@@ -62,10 +70,12 @@ public class MainActivity extends AppCompatActivity {
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        fetch.mContext = getBaseContext();
-        materialRangeBar.setPinRadius(25);
-        materialRangeBar.setTickEnd(2016);
-        materialRangeBar.setTickStart(2012);
+        materialRangeBar.setPinRadius(30);
+        materialRangeBar.setTickHeight(4);
+        materialRangeBar.setTickEnd(endingYearOfData);
+        materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
         materialRangeBar.setTickInterval(1);
+        materialRangeBar.setBarWeight(8);
         try {
             URL urlToUse = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+materialRangeBar.getLeftPinValue()+"-01-01T10:00:00%27%20and%20%27"+materialRangeBar.getRightPinValue()+"-12-31T23:59:00%27");
         } catch (MalformedURLException e) {
@@ -83,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(getString(R.string.mindate), Integer.parseInt(leftPinValue));
                 editor.putInt(getString(R.string.maxdate), Integer.parseInt(rightPinValue));
+                textForYearsToBeMapped[0] = "Mapping data for years: "+leftPinValue +" - "+rightPinValue;
+                yearMappingTextView.setText(textForYearsToBeMapped[0]);
                 editor.commit();
             }
         });
