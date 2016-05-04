@@ -36,8 +36,15 @@ public class MainActivity extends AppCompatActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
-        final CheckedTextView injured = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
-        final CheckedTextView killed = (CheckedTextView) findViewById(R.id.killedCheckedView);
+        final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
+        final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
+
+        //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
+        SharedPreferences sharedPreferences =getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        boolean injured = sharedPreferences.getBoolean(getString(R.string.injuredcyclists), true);
+        boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
+        injuredCheckedTextView.setChecked(injured);
+        killedCheckedTextView.setChecked(killed);
 //        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
 //        editor.putInt(getString(R.string.mindate), 0);
@@ -80,23 +87,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        injured.setOnClickListener(new CheckedTextView.OnClickListener() {
+        injuredCheckedTextView.setOnClickListener(new CheckedTextView.OnClickListener() {
             @Override
             public void onClick(View v) {
-                injured.setChecked(!injured.isChecked());
+                injuredCheckedTextView.setChecked(!injuredCheckedTextView.isChecked());
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(getString(R.string.injuredcyclists), injured.isChecked());
+                editor.putBoolean(getString(R.string.injuredcyclists), injuredCheckedTextView.isChecked());
                 editor.commit();
             }
         });
-        killed.setOnClickListener(new CheckedTextView.OnClickListener() {
+        killedCheckedTextView.setOnClickListener(new CheckedTextView.OnClickListener() {
             @Override
             public void onClick(View v) {
-                killed.setChecked(!killed.isChecked());
+                killedCheckedTextView.setChecked(!killedCheckedTextView.isChecked());
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(getString(R.string.killedcyclists), killed.isChecked());
+                editor.putBoolean(getString(R.string.killedcyclists), killedCheckedTextView.isChecked());
                 editor.commit();
             }
         });
