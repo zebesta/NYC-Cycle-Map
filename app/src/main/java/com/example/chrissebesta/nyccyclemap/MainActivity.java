@@ -124,15 +124,21 @@ public class MainActivity extends AppCompatActivity {
 
         assert refreshButton != null;
         refreshButton.setOnClickListener(new View.OnClickListener() {
+            //TODO need to check the existing SQL database for the latest date currently stored and then when the database URL is built, add this date constraint
+            //Goal is to allow users to only have the large update once, and any updates conducted later just pull new data that has been added to NYC Open maps
+
+
             @Override
             public void onClick(View v) {
                 CycleDbHelper helper = new CycleDbHelper(getBaseContext());
                 SQLiteDatabase db = helper.getWritableDatabase();
+                //TODO will want to modify this to no longer delete DB
                 db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
                 Log.d(LOG_TAG, "Clearing Database");
 
                 //fetch all the data from starting year to the current year
                 Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
+                //TODO need to change this to only pull from the years that are not currently in the DB
                 for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
                     fetchCycleData(i);
                 }
