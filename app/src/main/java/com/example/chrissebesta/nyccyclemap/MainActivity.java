@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = helper.getWritableDatabase();
                 //TODO will want to modify this to no longer delete DB
                 //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-                String lastDateInDB = "0";
+                String lastDateInDB = "2000-01-01T00:00:00";
 
                 //get most recent date currently stored in the database, only column necessary is date
                 String [] columns = {CycleContract.CycleEntry.COLUMN_DATE};
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "Clearing Database");
 
                 //fetch all the data from starting year to the current year
-                Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
+                //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
                 //TODO need to change this to only pull from the years that are not currently in the DB
 //                for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
 //                    fetchCycleData(i);

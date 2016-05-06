@@ -154,11 +154,11 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: "+lastThread);
-        if (lastThread) {
-            mProgressBar.setVisibility(View.INVISIBLE);
-            mTextView.setVisibility(View.INVISIBLE);
-        }
+        //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + lastThread);
+        // if (lastThread) {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mTextView.setVisibility(View.INVISIBLE);
+        // }
 //        Toast toast = Toast.makeText(mContext, "Done loading data from web", Toast.LENGTH_SHORT);
 //        toast.show();
 

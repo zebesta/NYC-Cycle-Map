@@ -65,10 +65,9 @@ public class MyItemReader {
         String[] args = new String[]{String.valueOf(minDate), String.valueOf(maxDate), injuredArgs, killedArgs};
         Log.d(LOG_TAG, "InjuredArgs is: " + injuredArgs + " and killedArgs is: " + killedArgs);
 
-        Log.d(LOG_TAG, "The query statement is: " + "date>=? AND date <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + "? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + "?)");
 
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, "date>=? AND date <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", null);
-        Log.d(LOG_TAG, "The query statement is: " + "date>=? AND date <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, CycleContract.CycleEntry.COLUMN_DATE+">=? AND "+ CycleContract.CycleEntry.COLUMN_DATE+" <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", null);
+        Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE+">=? AND "+CycleContract.CycleEntry.COLUMN_DATE+"<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added
