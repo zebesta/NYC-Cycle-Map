@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button refreshButton = (Button) findViewById(R.id.refreshbutton);
+        Button initialDataButton = (Button) findViewById(R.id.initialDataButton);
         Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -160,11 +161,11 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
                 //TODO need to change this to only pull from the years that are not currently in the DB
 //                for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
-//                    fetchCycleData(i);
+//                    fetchUpdatedCycleData(i);
 //                }
 
                 Log.d(LOG_TAG, "Last date in the database is: "+lastDateInDB);
-                fetchCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
+                fetchUpdatedCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
 
                 //fetch Json data from NYC Data
 //                final FetchCycleDataTask fetch = new FetchCycleDataTask();
@@ -206,6 +207,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        assert initialDataButton != null;
+        initialDataButton.setOnClickListener(new View.OnClickListener() {
+            //TODO need to check the existing SQL database for the latest date currently stored and then when the database URL is built, add this date constraint
+            //Goal is to allow users to only have the large update once, and any updates conducted later just pull new data that has been added to NYC Open maps
+
+
+            @Override
+            public void onClick(View v) {
+                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+                SQLiteDatabase db = helper.getWritableDatabase();
+                //TODO will want to modify this to no longer delete DB
+                //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+                String lastDateInDB = "2000-01-01T00:00:00";
+
+                //get most recent date currently stored in the database, only column necessary is date
+                String [] columns = {CycleContract.CycleEntry.COLUMN_DATE};
+                Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", String.valueOf(1));
+                if (cursor.moveToFirst()) {
+                    lastDateInDB = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE));
+                }
+                Log.d(LOG_TAG, "Clearing Database");
+
+                //fetch all the data from starting year to the current year
+                //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
+                //TODO need to change this to only pull from the years that are not currently in the DB
+                for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
+                    fetchInitialCycleData(i);
+                }
+
+                Log.d(LOG_TAG, "Last date in the database is: "+lastDateInDB);
+                fetchUpdatedCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
+
+            }
+        });
+
 
         assert clearSqlDb != null;
         clearSqlDb.setOnClickListener(new View.OnClickListener() {
@@ -240,7 +276,8 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    private void fetchCycleData(int year, String lastDateInDB){
+    //TODO should actually sort by Unique Number here so that even older queries are properly pulled
+    private void fetchUpdatedCycleData(int year, String lastDateInDB){
         final FetchCycleDataTask fetch = new FetchCycleDataTask();
         //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
         //Pass UI effecting variable to the Asyc task
@@ -284,4 +321,36 @@ public class MainActivity extends AppCompatActivity {
 //            mLoadingText.setVisibility(View.INVISIBLE);
 //        }
     }
+
+    private void fetchInitialCycleData(int year){
+        final FetchCycleDataTask fetch = new FetchCycleDataTask();
+        //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
+        //Pass UI effecting variable to the Asyc task
+        fetch.mContext = getBaseContext();
+        fetch.mProgressBar = mProgressBar;
+        fetch.mTextView = mLoadingText;
+        try {
+            //URL for both injured and killed cyclists
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastDateInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
+            //Log.d(LOG_TAG, "The URL being used now is: "+fetch.mUrlCycleData);
+            //URL for only killed cyclists (useful for testing as it is much much faster)
+            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        //set the last threat flag to true if this is the last fetch task to be run
+        if(year == endingYearOfData){
+            fetch.lastThread = true;
+        }
+
+        fetch.execute();
+        Log.d("FETCH", "Fetching cycle data between "+year + " and "+(year+1));
+        assert mProgressBar != null;
+        mProgressBar.setVisibility(View.VISIBLE);
+        mLoadingText.setVisibility(View.VISIBLE);
+
+    }
+
 }
