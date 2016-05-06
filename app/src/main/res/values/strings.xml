@@ -7,4 +7,5 @@
     <string name="killedcyclists">Killed Cyclists</string>
     <string name="injuredcyclists">Injured Cyclists</string>
     <string name="loadingmessage">Loading data from the web, this could take a couple minutes...</string>
+    <string name="action_settings">Settings</string>
 </resources>

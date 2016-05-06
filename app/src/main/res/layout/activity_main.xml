@@ -10,7 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.chrissebesta.nyccyclemap.MainActivity">
 
-
     <Button
         android:id="@+id/refreshbutton"
         android:layout_width="wrap_content"
@@ -18,10 +17,10 @@
         android:text="Refresh NYC Cycle Data" />
 
     <!--<Button-->
-        <!--android:id="@+id/brooklynButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Brooklyn" />-->
+    <!--android:id="@+id/brooklynButton"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Brooklyn" />-->
 
     <Button
         android:id="@+id/clearSQL"
@@ -39,54 +38,57 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_weight="0"
-            android:src="@drawable/redwhitebike"
-            />
+            android:src="@drawable/redwhitebike" />
+
         <CheckedTextView
             android:id="@+id/injuredCheckedTextView"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/injuredcyclists"
+            android:layout_weight="1"
             android:checkMark="?android:attr/listChoiceIndicatorMultiple"
             android:checked="true"
             android:padding="4dp"
-            />
+            android:text="@string/injuredcyclists" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_weight="0"
-            android:src="@drawable/blackwhitebike"/>
+            android:src="@drawable/blackwhitebike" />
+
         <CheckedTextView
             android:id="@+id/killedCheckedView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/killedcyclists"
             android:checkMark="?android:attr/listChoiceIndicatorMultiple"
             android:checked="true"
             android:padding="4dp"
-            />
+            android:text="@string/killedcyclists" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/yearMappingTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:id="@+id/yearMappingTextView" />
+        android:padding="4dp" />
 
     <com.appyvet.rangebar.RangeBar
         android:id="@+id/materialRangeBarWithDates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -98,15 +100,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone" />
+
         <TextView
             android:id="@+id/loadingTextView"
-            android:padding="16dp"
-            android:singleLine="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:padding="16dp"
+            android:singleLine="false"
             android:text="@string/loadingmessage"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>
