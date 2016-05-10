@@ -66,6 +66,7 @@ public class MyItemReader {
 
 
         Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, CycleContract.CycleEntry.COLUMN_DATE+">=? AND "+ CycleContract.CycleEntry.COLUMN_DATE+" <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", null);
+        Toast.makeText(mContext, "Mapping "+cursor.getCount() + " data points!", Toast.LENGTH_SHORT).show();
         Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE+">=? AND "+CycleContract.CycleEntry.COLUMN_DATE+"<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
         if (cursor.moveToFirst()) {
             do {

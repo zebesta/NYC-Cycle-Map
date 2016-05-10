@@ -331,7 +331,9 @@ public class MainActivity extends AppCompatActivity {
         fetch.mTextView = mLoadingText;
         try {
             //URL for both injured and killed cyclists
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27");
+            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27");
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27%20&$limit=2000");
+
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastDateInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
             //Log.d(LOG_TAG, "The URL being used now is: "+fetch.mUrlCycleData);
             //URL for only killed cyclists (useful for testing as it is much much faster)

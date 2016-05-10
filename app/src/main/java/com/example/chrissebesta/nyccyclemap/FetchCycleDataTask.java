@@ -211,26 +211,16 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
                 ContentValues contentValues = new ContentValues();
                 //Log.d(LOG_TAG, "The array data at index " + i + " is: " + arrayData);
                 JSONObject accident = accidentJsonArray.getJSONObject(i);
-//            String contributingFactor1 = accident.getString(NYC_CONTRIBUTING_FACTOR_VEHISCLE_1);
-//            Log.d(LOG_TAG, "The contibuting factor for event "+i+" is: "+contributingFactor1);
-
-                //String latitude = accident.getString(NYC_LATITUDE);
-                //String longitude = accident.getString(NYC_LONGITUDE);
-                //Log.d(LOG_TAG, "The lat long data at index " + i + " is: " + latitude + ", " + longitude);
 
 
-                //ContentValues contentValues = new ContentValues();
                 contentValues.put(CycleContract.CycleEntry.COLUMN_DATE, accident.getString(NYC_DATE));
                 contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED, accident.getString(NYC_NUMBER_OF_CYCLIST_INJURED));
                 contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED, accident.getString(NYC_NUMBER_OF_CYCLIST_KILLED));
                 contentValues.put(CycleContract.CycleEntry.COLUMN_LATITUDE, accident.getDouble(NYC_LATITUDE));
                 contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
                 contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
-                //contentValues.put(CycleContract.CycleEntry.COLUMN_BOROUGH, accident.getString(NYC_BOROUGH));
-                //Log.d("CONTENTVALUES", contentValues.toString());
                 db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
                 contentValues.clear();
-                //Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
 
             }
             //Close SQL database object
