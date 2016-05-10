@@ -33,7 +33,8 @@ public class CycleDbHelper extends SQLiteOpenHelper {
                 //CycleContract.CycleEntry.COLUMN_ZIP_CODE + " TEXT NOT NULL, " +
                 CycleContract.CycleEntry.COLUMN_LATITUDE + " REAL NOT NULL, " +
                 CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL, " +
-                CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " REAL NOT NULL" + ");";
+                //UNIQUE Key needs to be unique so that the same value is not added more than once.
+                CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " REAL NOT NULL UNIQUE" + ");";
 
 //              CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL, " +
 //              CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " REAL NOT NULL"+");"; //, " +

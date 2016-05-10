@@ -29,6 +29,7 @@ import java.net.URL;
  * Created by chrissebesta on 4/21/16.
  * Async task to load the bicycle injury/death fdata from the NYC open data platform and load it in to a local SQLite database
  */
+//TODO: need to make this persist even when the view or layout is changed, need to pull it off of connection to the visible activity
 public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     public final String LOG_TAG = FetchCycleDataTask.class.getSimpleName();
     public String jsonResponseString;
