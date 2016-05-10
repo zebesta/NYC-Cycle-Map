@@ -206,6 +206,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             CycleDbHelper helper = new CycleDbHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
 
+            Log.d(LOG_TAG, "Adding "+ accidentJsonArray.length() + " items to the database");
             for (int i = 0; i < accidentJsonArray.length(); i++) {
                 String arrayData = accidentJsonArray.getString(i);
                 ContentValues contentValues = new ContentValues();
