@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
-        SharedPreferences sharedPreferences =getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
         boolean injured = sharedPreferences.getBoolean(getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
         injuredCheckedTextView.setChecked(injured);
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         materialRangeBar.setTickInterval(1);
         materialRangeBar.setBarWeight(8);
         try {
-            URL urlToUse = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+materialRangeBar.getLeftPinValue()+"-01-01T10:00:00%27%20and%20%27"+materialRangeBar.getRightPinValue()+"-12-31T23:59:00%27");
+            URL urlToUse = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + materialRangeBar.getLeftPinValue() + "-01-01T10:00:00%27%20and%20%27" + materialRangeBar.getRightPinValue() + "-12-31T23:59:00%27");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(getString(R.string.mindate), Integer.parseInt(leftPinValue));
                 editor.putInt(getString(R.string.maxdate), Integer.parseInt(rightPinValue));
-                textForYearsToBeMapped[0] = "Mapping data for years: "+leftPinValue +" - "+rightPinValue;
+                textForYearsToBeMapped[0] = "Mapping data for years: " + leftPinValue + " - " + rightPinValue;
                 yearMappingTextView.setText(textForYearsToBeMapped[0]);
                 editor.commit();
             }
@@ -147,15 +147,14 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = helper.getWritableDatabase();
                 //TODO will want to modify this to no longer delete DB
                 //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-                String lastDateInDB = "2000-01-01T00:00:00";
+                int lastUniqueNumber = 0;
 
-                //get most recent date currently stored in the database, only column necessary is date
-                String [] columns = {CycleContract.CycleEntry.COLUMN_DATE};
-                Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", String.valueOf(1));
+                //get most recent unique number currently stored in the database, only column necessary is date
+                String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
+                Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
                 if (cursor.moveToFirst()) {
-                    lastDateInDB = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE));
+                    lastUniqueNumber = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
                 }
-                Log.d(LOG_TAG, "Clearing Database");
 
                 //fetch all the data from starting year to the current year
                 //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
@@ -164,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
 //                    fetchUpdatedCycleData(i);
 //                }
 
-                Log.d(LOG_TAG, "Last date in the database is: "+lastDateInDB);
-                fetchUpdatedCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
+                Log.d(LOG_TAG, "Last date in the database is: " + lastUniqueNumber);
+                fetchUpdatedCycleData(lastUniqueNumber);
 
                 //fetch Json data from NYC Data
 //                final FetchCycleDataTask fetch = new FetchCycleDataTask();
@@ -221,23 +220,16 @@ public class MainActivity extends AppCompatActivity {
                 //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
                 String lastDateInDB = "2000-01-01T00:00:00";
 
-                //get most recent date currently stored in the database, only column necessary is date
-                String [] columns = {CycleContract.CycleEntry.COLUMN_DATE};
-                Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", String.valueOf(1));
-                if (cursor.moveToFirst()) {
-                    lastDateInDB = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE));
-                }
-                Log.d(LOG_TAG, "Clearing Database");
 
                 //fetch all the data from starting year to the current year
                 //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
                 //TODO need to change this to only pull from the years that are not currently in the DB - USE UNIQUE NUMBERS TO SORT INSETAD
-                for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
+                for (int i = STARTING_YEAR_OF_DATA; i <= endingYearOfData; i++) {
                     fetchInitialCycleData(i);
                 }
 
-                Log.d(LOG_TAG, "Last date in the database is: "+lastDateInDB);
-                fetchUpdatedCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
+                //Log.d(LOG_TAG, "Last date in the database is: "+lastDateInDB);
+                //fetchUpdatedCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
 
             }
         });
@@ -277,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //TODO should actually sort by Unique Number here so that even older queries are properly pulled
-    private void fetchUpdatedCycleData(int year, String lastDateInDB){
+    private void fetchUpdatedCycleData(int lastUniqueNumberInDB) {
         final FetchCycleDataTask fetch = new FetchCycleDataTask();
         //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
         //Pass UI effecting variable to the Asyc task
@@ -287,8 +279,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             //URL for both injured and killed cyclists
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastDateInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
-           Log.d(LOG_TAG, "The URL being used now is: "+fetch.mUrlCycleData);
+            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastUniqueNumberInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB+"&$order=unique_key%20ASC");
+            Log.d(LOG_TAG, "The URL being used now is: " + fetch.mUrlCycleData);
             //URL for only killed cyclists (useful for testing as it is much much faster)
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
 
@@ -296,16 +289,17 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         //set the last threat flag to true if this is the last fetch task to be run
-        if(year == endingYearOfData){
-            fetch.lastThread = true;
-        }
+        //if(year == endingYearOfData){
+        //there will only be one fetch operation for this so set to true
+        fetch.lastThread = true;
+        //}
 //        try {
 //            fetch.mUrlCycleData = new URL("");
 //        } catch (MalformedURLException e) {
 //            e.printStackTrace();
 //        }
         fetch.execute();
-        Log.d("FETCH", "Fetching cycle data between "+year + " and "+(year+1));
+        Log.d("FETCH", "Fetching cycle data with unique key greater than: "+lastUniqueNumberInDB);
         assert mProgressBar != null;
         mProgressBar.setVisibility(View.VISIBLE);
         mLoadingText.setVisibility(View.VISIBLE);
@@ -322,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    private void fetchInitialCycleData(int year){
+    private void fetchInitialCycleData(int year) {
         final FetchCycleDataTask fetch = new FetchCycleDataTask();
         //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
         //Pass UI effecting variable to the Asyc task
@@ -331,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         fetch.mTextView = mLoadingText;
         try {
             //URL for both injured and killed cyclists
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27");
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastDateInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
             //Log.d(LOG_TAG, "The URL being used now is: "+fetch.mUrlCycleData);
             //URL for only killed cyclists (useful for testing as it is much much faster)
@@ -341,12 +335,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         //set the last threat flag to true if this is the last fetch task to be run
-        if(year == endingYearOfData){
+        if (year == endingYearOfData) {
             fetch.lastThread = true;
         }
 
         fetch.execute();
-        Log.d("FETCH", "Fetching cycle data between "+year + " and "+(year+1));
+        Log.d("FETCH", "Fetching cycle data between " + year + " and " + (year + 1));
         assert mProgressBar != null;
         mProgressBar.setVisibility(View.VISIBLE);
         mLoadingText.setVisibility(View.VISIBLE);
