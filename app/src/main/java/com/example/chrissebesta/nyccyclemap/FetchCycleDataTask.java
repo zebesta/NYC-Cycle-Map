@@ -36,7 +36,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     public ProgressBar mProgressBar;
     public TextView mTextView;
     public URL mUrlCycleData;
-    public boolean lastThread = false;
+    public boolean mLastThreadBoolean = false;
 
 //    @Override
 //    protected void onPreExecute() {
@@ -152,13 +152,11 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + lastThread);
-        if (lastThread) {
+        //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + mLastThreadBoolean);
+        if (mLastThreadBoolean) {
             mProgressBar.setVisibility(View.INVISIBLE);
             mTextView.setVisibility(View.INVISIBLE);
         }
-//        Toast toast = Toast.makeText(mContext, "Done loading data from web", Toast.LENGTH_SHORT);
-//        toast.show();
 
         super.onPostExecute(aVoid);
     }
@@ -203,12 +201,10 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
         if (accidentJsonArray.length() == 0) {
             Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
-            lastThread = true;
+            mLastThreadBoolean = true;
         } else {
             CycleDbHelper helper = new CycleDbHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
-            //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-
 
             for (int i = 0; i < accidentJsonArray.length(); i++) {
                 String arrayData = accidentJsonArray.getString(i);
@@ -234,9 +230,11 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
                 //Log.d("CONTENTVALUES", contentValues.toString());
                 db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
                 contentValues.clear();
-                Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
+                //Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
 
             }
+            //Close SQL database object
+            db.close();
         }
     }
 }

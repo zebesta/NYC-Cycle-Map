@@ -103,7 +103,10 @@ public class MyItemReader {
 //                // return "Date";
 //            }
 //        }
+
+        //close cursor and SQL database
         cursor.close();
+        db.close();
 
         return items;
     }

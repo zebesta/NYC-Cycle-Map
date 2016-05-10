@@ -203,6 +203,9 @@ public class MainActivity extends AppCompatActivity {
 //                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
 //                SQLiteDatabase db = helper.getReadableDatabase();
 //                Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
+
+                //Close SQL database
+                db.close();
             }
         });
 
@@ -214,11 +217,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-                SQLiteDatabase db = helper.getWritableDatabase();
-                //TODO will want to modify this to no longer delete DB
-                //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-                String lastDateInDB = "2000-01-01T00:00:00";
+//                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+//                SQLiteDatabase db = helper.getWritableDatabase();
+//                //TODO will want to modify this to no longer delete DB
+//                //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+//                String lastDateInDB = "2000-01-01T00:00:00";
 
 
                 //fetch all the data from starting year to the current year
@@ -243,6 +246,9 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = helper.getWritableDatabase();
                 db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
                 Log.d(LOG_TAG, "Clearing Database");
+
+                //close SQL Database
+                db.close();
             }
         });
 
@@ -290,8 +296,8 @@ public class MainActivity extends AppCompatActivity {
         }
         //set the last threat flag to true if this is the last fetch task to be run
         //if(year == endingYearOfData){
-        //there will only be one fetch operation for this so set to true
-        fetch.lastThread = true;
+        //there will only be one fetch operation for the update cycle so set to true
+        fetch.mLastThreadBoolean = true;
         //}
 //        try {
 //            fetch.mUrlCycleData = new URL("");
@@ -336,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //set the last threat flag to true if this is the last fetch task to be run
         if (year == endingYearOfData) {
-            fetch.lastThread = true;
+            fetch.mLastThreadBoolean = true;
         }
 
         fetch.execute();
