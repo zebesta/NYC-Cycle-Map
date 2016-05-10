@@ -25,22 +25,23 @@ public class CycleDbHelper extends SQLiteOpenHelper {
 //TODO temporarily limiting the number of colums to get it quickly up and running with lat and lng
         final String SQL_CREATE_CYCLE_TABLE = "CREATE TABLE " + CycleContract.CycleEntry.TABLE_NAME + " (" +
                 CycleContract.CycleEntry._ID + " INTEGER PRIMARY KEY," +
-                CycleContract.CycleEntry.COLUMN_DATE + " TEXT NOT NULL, "+
+                CycleContract.CycleEntry.COLUMN_DATE + " TEXT NOT NULL, " +
                 CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + " REAL NOT NULL, " +
                 CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + " REAL NOT NULL, " +
                 //CycleContract.CycleEntry.COLUMN_TIME + " TEXT NOT NULL, "+
                 //CycleContract.CycleEntry.COLUMN_BOROUGH + " TEXT NOT NULL, " +
                 //CycleContract.CycleEntry.COLUMN_ZIP_CODE + " TEXT NOT NULL, " +
                 CycleContract.CycleEntry.COLUMN_LATITUDE + " REAL NOT NULL, " +
-                CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL"+");"; //, " +
+                CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL, " +
+                CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " REAL NOT NULL" + ");";
 
 //              CycleContract.CycleEntry.COLUMN_LONGITUDE + " REAL NOT NULL, " +
 //              CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " REAL NOT NULL"+");"; //, " +
 
-                //CycleContract.CycleEntry.COLUMN_CONTRIBUTING_FACTOR_VEHICLE_1 + " TEXT NOT NULL, " +
-                //CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + " REAL NOT NULL, " +
-                //CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + " REAL NOT NULL"
-                //+");";
+        //CycleContract.CycleEntry.COLUMN_CONTRIBUTING_FACTOR_VEHICLE_1 + " TEXT NOT NULL, " +
+        //CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + " REAL NOT NULL, " +
+        //CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + " REAL NOT NULL"
+        //+");";
 
         sqLiteDatabase.execSQL(SQL_CREATE_CYCLE_TABLE);
         Log.d("SQL STRING IS: ", SQL_CREATE_CYCLE_TABLE);
@@ -88,15 +89,15 @@ public class CycleDbHelper extends SQLiteOpenHelper {
         return tableString;
     }
 
-    public String cursorToString(Cursor cursor){
+    public String cursorToString(Cursor cursor) {
         String cursorString = "";
-        if (cursor.moveToFirst() ){
+        if (cursor.moveToFirst()) {
             String[] columnNames = cursor.getColumnNames();
-            for (String name: columnNames)
+            for (String name : columnNames)
                 cursorString += String.format("%s ][ ", name);
             cursorString += "\n";
             do {
-                for (String name: columnNames) {
+                for (String name : columnNames) {
                     cursorString += String.format("%s ][ ",
                             cursor.getString(cursor.getColumnIndex(name)));
                 }

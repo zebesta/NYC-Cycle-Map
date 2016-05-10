@@ -36,7 +36,6 @@ public class MyItemReader {
 //        }
         CycleDbHelper helper = new CycleDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
-        //TODO adjust SQL request here to search only the events that the user has opted for
         //Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
         //40.7096637,-73.9662333
         int startYear = 2015;

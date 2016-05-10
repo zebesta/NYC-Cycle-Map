@@ -81,8 +81,6 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         URL url = null;
         try {
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json");
-            //TODO get query information from user and append to URL properly, allow user to select injuries, deaths, or both, and number of victims
-            //TODO OR: use a SQL database to store everything with at least one cyclist injured or killed and then query based on user topics to limit number of internet calls
 
 
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date%20between%20%272016-03-10T12:00:00%27%20and%20%272016-04-11T14:00:00%27");
@@ -227,7 +225,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED, accident.getString(NYC_NUMBER_OF_CYCLIST_KILLED));
             contentValues.put(CycleContract.CycleEntry.COLUMN_LATITUDE, accident.getDouble(NYC_LATITUDE));
             contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
-            //contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
+            contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
             //contentValues.put(CycleContract.CycleEntry.COLUMN_BOROUGH, accident.getString(NYC_BOROUGH));
             //Log.d("CONTENTVALUES", contentValues.toString());
             db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);

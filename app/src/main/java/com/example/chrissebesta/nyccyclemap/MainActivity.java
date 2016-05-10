@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //fetch all the data from starting year to the current year
                 //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
-                //TODO need to change this to only pull from the years that are not currently in the DB
+                //TODO need to change this to only pull from the years that are not currently in the DB - USE UNIQUE NUMBERS TO SORT INSETAD
                 for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
                     fetchInitialCycleData(i);
                 }
