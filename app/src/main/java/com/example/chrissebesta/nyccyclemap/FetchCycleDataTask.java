@@ -203,6 +203,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
         if (accidentJsonArray.length() == 0) {
             Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
+            lastThread = true;
         } else {
             CycleDbHelper helper = new CycleDbHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
