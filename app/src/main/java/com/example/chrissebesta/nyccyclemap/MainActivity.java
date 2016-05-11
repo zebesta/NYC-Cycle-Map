@@ -154,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //TODO move this update database idea to a floating settings menu or action bar menu button or something similar
+        //TODO make this be some kind of default action when application is started for the first time or the SQL database is empty
         assert refreshButton != null;
         refreshButton.setOnClickListener(new View.OnClickListener() {
             //TODO need to check the existing SQL database for the latest date currently stored and then when the database URL is built, add this date constraint

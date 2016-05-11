@@ -172,6 +172,8 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             final FetchCycleDataTask fetch = new FetchCycleDataTask();
             //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
             //Pass UI effecting variable to the Asyc task
+            mProgressBar.setVisibility(View.VISIBLE);
+            mTextView.setVisibility(View.VISIBLE);
             fetch.mContext = mContext;
             fetch.mProgressBar = mProgressBar;
             fetch.mTextView = mTextView;
