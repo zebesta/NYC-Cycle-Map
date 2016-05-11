@@ -18,7 +18,7 @@
         android:id="@+id/refreshbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Refresh NYC Cycle Data" />
+        android:text="@string/update" />
 
     <!--<Button-->
     <!--android:id="@+id/brooklynButton"-->
@@ -31,12 +31,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Clear SQL DB" />
-
-    <Button
-        android:id="@+id/mapDatabase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Map Databse" />
 
     <View
         android:layout_width="match_parent"
@@ -68,7 +62,6 @@
             android:checkMark="?android:attr/listChoiceIndicatorMultiple"
             android:checked="true"
             android:padding="4dp"
-            android:textSize="22sp"
             android:layout_gravity="center_vertical"
             android:text="@string/injuredcyclists" />
     </LinearLayout>
@@ -97,7 +90,6 @@
             android:checkMark="?android:attr/listChoiceIndicatorMultiple"
             android:checked="true"
             android:padding="4dp"
-            android:textSize="22sp"
             android:layout_gravity="center_vertical"
             android:text="@string/killedcyclists" />
     </LinearLayout>
@@ -138,6 +130,11 @@
             android:layout_weight="0"/>
     </LinearLayout>
 
+    <Button
+        android:id="@+id/mapDatabase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Map Databse" />
 
     <LinearLayout
         android:layout_width="wrap_content"
