@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     //Views that need to be accessible outside of onCreate
     ProgressBar mProgressBar;
     TextView mLoadingText;
-    Button mInitialButton;
+    //Button mInitialButton;
     RangeBar mMaterialRangeBar;
 
 //    @Override
@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button refreshButton = (Button) findViewById(R.id.refreshbutton);
-        Button initialDataButton = (Button) findViewById(R.id.initialDataButton);
-        mInitialButton = initialDataButton;
+        //Button initialDataButton = (Button) findViewById(R.id.initialDataButton);
+        //mInitialButton = initialDataButton;
         Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -81,11 +81,11 @@ public class MainActivity extends AppCompatActivity {
         injuredCheckedTextView.setChecked(injured);
         killedCheckedTextView.setChecked(killed);
 
-        //If intial database has already been loaded, remove the load initial database button from the view
-        boolean showInitialDatabase = sharedPreferences.getBoolean(getString(R.string.showinitialbutton), true);
-        if(!showInitialDatabase){
-            initialDataButton.setVisibility(View.GONE);
-        }
+//        //If intial database has already been loaded, remove the load initial database button from the view
+//        boolean showInitialDatabase = sharedPreferences.getBoolean(getString(R.string.showinitialbutton), true);
+//        if(!showInitialDatabase){
+//            initialDataButton.setVisibility(View.GONE);
+//        }
         //set text view to indicate which years are going to be mapped by user
         final int startDate = sharedPreferences.getInt(getString(R.string.mindate), STARTING_YEAR_OF_DATA);
         final int endDate = sharedPreferences.getInt(getString(R.string.maxdate), endingYearOfData);
@@ -226,33 +226,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        assert initialDataButton != null;
-        initialDataButton.setOnClickListener(new View.OnClickListener() {
-            //TODO need to check the existing SQL database for the latest date currently stored and then when the database URL is built, add this date constraint
-            //Goal is to allow users to only have the large update once, and any updates conducted later just pull new data that has been added to NYC Open maps
-
-
-            @Override
-            public void onClick(View v) {
-//                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-//                SQLiteDatabase db = helper.getWritableDatabase();
-//                //TODO will want to modify this to no longer delete DB
-//                //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-//                String lastDateInDB = "2000-01-01T00:00:00";
-
-
-                //fetch all the data from starting year to the current year
-                //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
-                //TODO need to change this to only pull from the years that are not currently in the DB - USE UNIQUE NUMBERS TO SORT INSETAD
-                for (int i = STARTING_YEAR_OF_DATA; i <= endingYearOfData; i++) {
-                    fetchInitialCycleData(i);
-                }
-
-                //Log.d(LOG_TAG, "Last date in the database is: "+lastDateInDB);
-                //fetchUpdatedCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
-
-            }
-        });
+//        assert initialDataButton != null;
+//        initialDataButton.setOnClickListener(new View.OnClickListener() {
+//            //TODO need to check the existing SQL database for the latest date currently stored and then when the database URL is built, add this date constraint
+//            //Goal is to allow users to only have the large update once, and any updates conducted later just pull new data that has been added to NYC Open maps
+//
+//
+//            @Override
+//            public void onClick(View v) {
+////                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+////                SQLiteDatabase db = helper.getWritableDatabase();
+////                //TODO will want to modify this to no longer delete DB
+////                //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+////                String lastDateInDB = "2000-01-01T00:00:00";
+//
+//
+//                //fetch all the data from starting year to the current year
+//                //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
+//                //TODO need to change this to only pull from the years that are not currently in the DB - USE UNIQUE NUMBERS TO SORT INSETAD
+//                for (int i = STARTING_YEAR_OF_DATA; i <= endingYearOfData; i++) {
+//                    fetchInitialCycleData(i);
+//                }
+//
+//                //Log.d(LOG_TAG, "Last date in the database is: "+lastDateInDB);
+//                //fetchUpdatedCycleData(STARTING_YEAR_OF_DATA, lastDateInDB);
+//
+//            }
+//        });
 
 
         assert clearSqlDb != null;
@@ -300,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
         fetch.mContext = getBaseContext();
         fetch.mProgressBar = mProgressBar;
         fetch.mTextView = mLoadingText;
-        fetch.mInitialButton = mInitialButton;
         try {
             //URL for both injured and killed cyclists
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
@@ -316,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
         //set the last threat flag to true if this is the last fetch task to be run
         //if(year == endingYearOfData){
         //there will only be one fetch operation for the update cycle so set to true
-        fetch.mLastThreadBoolean = true;
         //}
 //        try {
 //            fetch.mUrlCycleData = new URL("");
@@ -345,38 +343,36 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    private void fetchInitialCycleData(int year) {
-        final FetchCycleDataTask fetch = new FetchCycleDataTask();
-        //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
-        //Pass UI effecting variable to the Asyc task
-        fetch.mContext = getBaseContext();
-        fetch.mProgressBar = mProgressBar;
-        fetch.mTextView = mLoadingText;
-        fetch.mInitialButton = mInitialButton;
-        try {
-            //URL for both injured and killed cyclists
-            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27");
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27%20&$limit=10000");
-
-            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastDateInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
-            //Log.d(LOG_TAG, "The URL being used now is: "+fetch.mUrlCycleData);
-            //URL for only killed cyclists (useful for testing as it is much much faster)
-            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        //set the last threat flag to true if this is the last fetch task to be run
-        if (year == endingYearOfData) {
-            fetch.mLastThreadBoolean = true;
-        }
-
-        fetch.execute();
-        Log.d("FETCH", "Fetching cycle data between " + year + " and " + (year + 1));
-        assert mProgressBar != null;
-        mProgressBar.setVisibility(View.VISIBLE);
-        mLoadingText.setVisibility(View.VISIBLE);
-
-    }
+//    private void fetchInitialCycleData(int year) {
+//        final FetchCycleDataTask fetch = new FetchCycleDataTask();
+//        //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
+//        //Pass UI effecting variable to the Asyc task
+//        fetch.mContext = getBaseContext();
+//        fetch.mProgressBar = mProgressBar;
+//        fetch.mTextView = mLoadingText;
+//        try {
+//            //URL for both injured and killed cyclists
+//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27");
+//            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27%20&$limit=10000");
+//
+//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastDateInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
+//            //Log.d(LOG_TAG, "The URL being used now is: "+fetch.mUrlCycleData);
+//            //URL for only killed cyclists (useful for testing as it is much much faster)
+//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+//
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+//        //set the last threat flag to true if this is the last fetch task to be run
+//        if (year == endingYearOfData) {
+//        }
+//
+//        fetch.execute();
+//        Log.d("FETCH", "Fetching cycle data between " + year + " and " + (year + 1));
+//        assert mProgressBar != null;
+//        mProgressBar.setVisibility(View.VISIBLE);
+//        mLoadingText.setVisibility(View.VISIBLE);
+//
+//    }
 
 }

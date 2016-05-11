@@ -9,11 +9,11 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.chrissebesta.nyccyclemap.MainActivity">
-    <Button
-        android:id="@+id/initialDataButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get initial cycle data" />
+    <!--<Button-->
+        <!--android:id="@+id/initialDataButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Get initial cycle data" />-->
     <Button
         android:id="@+id/refreshbutton"
         android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
             android:checkMark="?android:attr/listChoiceIndicatorMultiple"
             android:checked="true"
             android:padding="4dp"
-            android:textSize="24dp"
+            android:textSize="22sp"
             android:layout_gravity="center_vertical"
             android:text="@string/injuredcyclists" />
     </LinearLayout>
@@ -97,7 +97,7 @@
             android:checkMark="?android:attr/listChoiceIndicatorMultiple"
             android:checked="true"
             android:padding="4dp"
-            android:textSize="24dp"
+            android:textSize="22sp"
             android:layout_gravity="center_vertical"
             android:text="@string/killedcyclists" />
     </LinearLayout>

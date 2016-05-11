@@ -2,13 +2,11 @@ package com.example.chrissebesta.nyccyclemap;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,10 +38,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     public Context mContext;
     public ProgressBar mProgressBar;
     public TextView mTextView;
-    public Button mInitialButton;
     public URL mUrlCycleData;
-    public boolean mLastThreadBoolean = false;
-    public int mScreenOrientation;
     public boolean mNoMoreDataToSync = false;
 
 //    @Override
@@ -166,19 +161,7 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + mLastThreadBoolean);
-        if (mLastThreadBoolean) {
-            SharedPreferences sharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean(mContext.getString(R.string.showloading), false);
-            editor.putBoolean(mContext.getString(R.string.showinitialbutton), false);
-            editor.commit();
 
-//            mProgressBar.setVisibility(View.INVISIBLE);
-//            mTextView.setVisibility(View.INVISIBLE);
-            if (mInitialButton != null) {
-                mInitialButton.setVisibility(View.GONE);
-            }
-        }
         if (mNoMoreDataToSync) {
             mProgressBar.setVisibility(View.INVISIBLE);
             mTextView.setVisibility(View.INVISIBLE);
@@ -192,7 +175,6 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             fetch.mContext = mContext;
             fetch.mProgressBar = mProgressBar;
             fetch.mTextView = mTextView;
-            fetch.mInitialButton = mInitialButton;
 
             //get last unique key number in DB
             CycleDbHelper helper = new CycleDbHelper(mContext);
@@ -221,7 +203,6 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            fetch.mLastThreadBoolean = true;
 
             fetch.execute();
         }
@@ -271,7 +252,6 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         if (accidentJsonArray.length() == 0) {
             Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
             mNoMoreDataToSync = true;
-            mLastThreadBoolean = true;
         } else {
             CycleDbHelper helper = new CycleDbHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
