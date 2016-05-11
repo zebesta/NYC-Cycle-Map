@@ -59,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         mLoadingText = loadingText;
         final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
+        TextView startYearTextView = (TextView) findViewById(R.id.startDateTextView);
+        if (startYearTextView != null) {
+            startYearTextView.setText(""+STARTING_YEAR_OF_DATA);
+        }
+        TextView endYearTextView = (TextView) findViewById(R.id.endDateTextView);
+        if (endYearTextView != null) {
+            endYearTextView.setText(""+endingYearOfData);
+        }
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
         mMaterialRangeBar = materialRangeBar;
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);

@@ -4,8 +4,8 @@
     <string name="maxdate">maxdate</string>
     <string name="mindate">mindate</string>
     <string name="sharedpreference">sharedpreference</string>
-    <string name="killedcyclists">Killed Cyclists</string>
-    <string name="injuredcyclists">Injured Cyclists</string>
+    <string name="killedcyclists">Killed cyclists</string>
+    <string name="injuredcyclists">Injured cyclists</string>
     <string name="loadingmessage">Loading data from the web, this could take a couple minutes...</string>
     <string name="action_settings">Settings</string>
     <string name="showloading">showloading</string>
