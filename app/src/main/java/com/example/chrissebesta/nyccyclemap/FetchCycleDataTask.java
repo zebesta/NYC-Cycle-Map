@@ -3,6 +3,7 @@ package com.example.chrissebesta.nyccyclemap;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -172,15 +173,57 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
             editor.putBoolean(mContext.getString(R.string.showinitialbutton), false);
             editor.commit();
 
-            mProgressBar.setVisibility(View.INVISIBLE);
-            mTextView.setVisibility(View.INVISIBLE);
+//            mProgressBar.setVisibility(View.INVISIBLE);
+//            mTextView.setVisibility(View.INVISIBLE);
             if (mInitialButton != null) {
                 mInitialButton.setVisibility(View.GONE);
             }
         }
         if (mNoMoreDataToSync) {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mTextView.setVisibility(View.INVISIBLE);
             Log.d(LOG_TAG, "Databaase is up to date!");
             Toast.makeText(mContext, "Database is up to date!", Toast.LENGTH_SHORT).show();
+        }else{
+            //RECURSIVE CALL TO THIS ASYNC TASK UNTIL ALL DATA IS FETCHED
+            final FetchCycleDataTask fetch = new FetchCycleDataTask();
+            //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
+            //Pass UI effecting variable to the Asyc task
+            fetch.mContext = mContext;
+            fetch.mProgressBar = mProgressBar;
+            fetch.mTextView = mTextView;
+            fetch.mInitialButton = mInitialButton;
+
+            //get last unique key number in DB
+            CycleDbHelper helper = new CycleDbHelper(mContext);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            int lastUniqueNumber = 0;
+
+            //get most recent unique number currently stored in the database, only column necessary is date
+            String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
+            Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
+            if (cursor.moveToFirst()) {
+                lastUniqueNumber = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
+            }
+            //close up DB and cursor
+            db.close();
+            cursor.close();
+
+            try {
+                //URL for both injured and killed cyclists
+                //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+                //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastUniqueNumberInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
+                fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumber+"&$order=unique_key%20ASC");
+                Log.d(LOG_TAG, "The URL being used now is: " + fetch.mUrlCycleData);
+                //URL for only killed cyclists (useful for testing as it is much much faster)
+                //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            fetch.mLastThreadBoolean = true;
+
+            fetch.execute();
         }
 
 
