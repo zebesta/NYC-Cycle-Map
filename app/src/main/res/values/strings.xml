@@ -8,4 +8,6 @@
     <string name="injuredcyclists">Injured Cyclists</string>
     <string name="loadingmessage">Loading data from the web, this could take a couple minutes...</string>
     <string name="action_settings">Settings</string>
+    <string name="showloading">showloading</string>
+    <string name="showinitialbutton">showinitialbutton</string>
 </resources>
