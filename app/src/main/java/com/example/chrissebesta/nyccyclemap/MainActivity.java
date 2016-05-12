@@ -37,24 +37,16 @@ public class MainActivity extends AppCompatActivity {
     //Button mInitialButton;
     RangeBar mMaterialRangeBar;
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater();
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        return super.onOptionsItemSelected(item);
-//    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.update_settings:
+                //update the NYC cycle data dababase
+                fetchUpdatedCycleData();
                 return true;
             case R.id.about_settings:
                 startActivity(new Intent(this, AboutActivity.class));
@@ -189,69 +181,7 @@ public class MainActivity extends AppCompatActivity {
             //Goal is to allow users to only have the large update once, and any updates conducted later just pull new data that has been added to NYC Open maps
             @Override
             public void onClick(View v) {
-                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-                SQLiteDatabase db = helper.getWritableDatabase();
-                //TODO will want to modify this to no longer delete DB
-                //db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-                int lastUniqueNumber = 0;
-
-                //get most recent unique number currently stored in the database, only column necessary is date
-                String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
-                Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
-                if (cursor.moveToFirst()) {
-                    lastUniqueNumber = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
-                }
-
-                //fetch all the data from starting year to the current year
-                //Log.d("FETCH", "Fetching data between "+STARTING_YEAR_OF_DATA + " and " +endingYearOfData);
-                //TODO need to change this to only pull from the years that are not currently in the DB
-//                for (int i = STARTING_YEAR_OF_DATA; i<=endingYearOfData;i++){
-//                    fetchUpdatedCycleData(i);
-//                }
-
-                Log.d(LOG_TAG, "Last date in the database is: " + lastUniqueNumber);
-                fetchUpdatedCycleData(lastUniqueNumber);
-
-                //fetch Json data from NYC Data
-//                final FetchCycleDataTask fetch = new FetchCycleDataTask();
-//                //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
-//                //Pass UI effecting variable to the Asyc task
-//                fetch.mContext = getBaseContext();
-//                fetch.mProgressBar = progressBar;
-//                fetch.mTextView = loadingText;
-//                try {
-//                    fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+materialRangeBar.getLeftPinValue()+"-01-01T10:00:00%27%20and%20%27"+materialRangeBar.getRightPinValue()+"-12-31T23:59:00%27");
-//                } catch (MalformedURLException e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    fetch.mUrlCycleData = new URL("");
-//                } catch (MalformedURLException e) {
-//                    e.printStackTrace();
-//                }
-//                fetch.execute();
-//                assert progressBar != null;
-//                progressBar.setVisibility(View.VISIBLE);
-//                loadingText.setVisibility(View.VISIBLE);
-//
-//                if (fetch.getStatus() == AsyncTask.Status.RUNNING) {
-//                    // My AsyncTask is currently doing work in doInBackground()
-//                    Log.d(LOG_TAG, "Still working on Async task");
-//                }
-//                if (fetch.getStatus() == AsyncTask.Status.FINISHED) {
-//                    // My AsyncTask is done and onPostExecute was called
-//                    Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
-//                    progressBar.setVisibility(View.INVISIBLE);
-//                    loadingText.setVisibility(View.INVISIBLE);
-//                }
-
-
-//                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-//                SQLiteDatabase db = helper.getReadableDatabase();
-//                Log.d("BUILDTABLE", helper.getTableAsString(db, CycleContract.CycleEntry.TABLE_NAME));
-
-                //Close SQL database
-                db.close();
+                fetchUpdatedCycleData();
             }
         });
 
@@ -321,7 +251,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //TODO should actually sort by Unique Number here so that even older queries are properly pulled
-    private void fetchUpdatedCycleData(int lastUniqueNumberInDB) {
+    private void fetchUpdatedCycleData() {
+        //get Last unique number in current SQL database
+        CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int lastUniqueNumberInDB = 0;
+
+        //get most recent unique number currently stored in the database, only column necessary is date
+        String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
+        if (cursor.moveToFirst()) {
+            lastUniqueNumberInDB = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
+        }
+
+        Log.d(LOG_TAG, "Last unique key number in the database is: " + lastUniqueNumberInDB);
+        //Close SQL database
+        db.close();
 
         final FetchCycleDataTask fetch = new FetchCycleDataTask();
         //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
@@ -341,18 +286,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        //set the last threat flag to true if this is the last fetch task to be run
-        //if(year == endingYearOfData){
-        //there will only be one fetch operation for the update cycle so set to true
-        //}
-//        try {
-//            fetch.mUrlCycleData = new URL("");
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
+
         fetch.execute();
         Log.d("FETCH", "Fetching cycle data with unique key greater than: "+lastUniqueNumberInDB);
         assert mProgressBar != null;
+
+        //TODO Use shared preferences to determine to show or not show the loading objects (is htis possible the way I want?)
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.showloading), true);
@@ -360,48 +299,7 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar.setVisibility(View.VISIBLE);
         mLoadingText.setVisibility(View.VISIBLE);
 
-//        if (fetch.getStatus() == AsyncTask.Status.RUNNING) {
-//            // My AsyncTask is currently doing work in doInBackground()
-//            Log.d(LOG_TAG, "Still working on Async task");
-//        }
-//        if (fetch.getStatus() == AsyncTask.Status.FINISHED) {
-//            // My AsyncTask is done and onPostExecute was called
-//            Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
-//            mProgressBar.setVisibility(View.INVISIBLE);
-//            mLoadingText.setVisibility(View.INVISIBLE);
-//        }
-    }
 
-//    private void fetchInitialCycleData(int year) {
-//        final FetchCycleDataTask fetch = new FetchCycleDataTask();
-//        //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
-//        //Pass UI effecting variable to the Asyc task
-//        fetch.mContext = getBaseContext();
-//        fetch.mProgressBar = mProgressBar;
-//        fetch.mTextView = mLoadingText;
-//        try {
-//            //URL for both injured and killed cyclists
-//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27");
-//            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + year + "-01-01T10:00:00%27%20and%20%27" + (year + 1) + "-01-01T10:00:00%27%20&$limit=10000");
-//
-//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastDateInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
-//            //Log.d(LOG_TAG, "The URL being used now is: "+fetch.mUrlCycleData);
-//            //URL for only killed cyclists (useful for testing as it is much much faster)
-//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-//
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-//        //set the last threat flag to true if this is the last fetch task to be run
-//        if (year == endingYearOfData) {
-//        }
-//
-//        fetch.execute();
-//        Log.d("FETCH", "Fetching cycle data between " + year + " and " + (year + 1));
-//        assert mProgressBar != null;
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        mLoadingText.setVisibility(View.VISIBLE);
-//
-//    }
+    }
 
 }
