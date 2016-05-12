@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //set icon
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.redwhitebike);
+        getSupportActionBar().setIcon(R.drawable.toolbar_space);
         //get UI elements
         Button refreshButton = (Button) findViewById(R.id.refreshbutton);
         //Button initialDataButton = (Button) findViewById(R.id.initialDataButton);
