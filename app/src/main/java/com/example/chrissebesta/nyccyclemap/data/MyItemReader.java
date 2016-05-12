@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.R;
@@ -85,7 +87,10 @@ public class MyItemReader {
             //if using cluster manager add :
             //mClusterManager.cluster();
         }else{
-            Toast.makeText(mContext, "No items to show on map!", Toast.LENGTH_LONG).show();
+            Toast toast = Toast.makeText(mContext, "No items to show on map\nUpdate data from the settings menu!", Toast.LENGTH_LONG);
+            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+            if( v != null) v.setGravity(Gravity.CENTER);
+            toast.show();
         }
 //        if (cursor.moveToFirst()){
 //            String dateString = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE));
