@@ -55,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.about_settings:
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -11,4 +11,6 @@
     <string name="showloading">showloading</string>
     <string name="showinitialbutton">showinitialbutton</string>
     <string name="update">Update NYC Cycle Data</string>
+    <string name="abouttext">This is created by a NYC Cyclist for NYC Cyclists using the NYC Open Data.</string>
+    <string name="about">About</string>
 </resources>
