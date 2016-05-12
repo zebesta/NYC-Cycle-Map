@@ -11,6 +11,6 @@
     <string name="showloading">showloading</string>
     <string name="showinitialbutton">showinitialbutton</string>
     <string name="update">Update NYC Cycle Data</string>
-    <string name="abouttext">This is created by a NYC Cyclist for NYC Cyclists using the NYC Open Data.</string>
+    <string name="abouttext">This is created by Chris Sebesta, a NYC Cyclist, for NYC Cyclists.\n\nThis app visualizes motor vehicle collisions that involve injured or killed cyclist so that bicyclists can make informed decisions about the routes they choose and their safety. \n\n This app was built using the NYC Open Data located at: https://data.cityofnewyork.us/Public-Safety/NYPD-Motor-Vehicle-Collisions/h9gi-nx95 \n\nThis is free open source software and the source code can be found at: https://github.com/zebesta/NYC-Cycle-Map</string>
     <string name="about">About</string>
 </resources>
