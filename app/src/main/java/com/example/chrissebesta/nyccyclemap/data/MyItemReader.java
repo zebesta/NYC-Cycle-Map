@@ -92,23 +92,6 @@ public class MyItemReader {
             if( v != null) v.setGravity(Gravity.CENTER);
             toast.show();
         }
-//        if (cursor.moveToFirst()){
-//            String dateString = cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE));
-//            Log.d(LOG_TAG, "The raw date string is: " + dateString);
-//            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
-//            try {
-//                Date date = fmt.parse(dateString);
-//                Log.d(LOG_TAG, "The date's date is : " + date);
-//                Log.d(LOG_TAG, "The time is: " + date.getTime());
-//                Calendar cal = Calendar.getInstance();
-//                cal.setTime(date);
-//                Log.d(LOG_TAG, "The year is: " + cal.get(Calendar.YEAR));
-//                //return fmt.format(date);
-//            } catch (ParseException pe) {
-//
-//                // return "Date";
-//            }
-//        }
 
         //close cursor and SQL database
         cursor.close();

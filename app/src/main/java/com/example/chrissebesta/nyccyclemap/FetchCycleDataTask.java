@@ -61,26 +61,6 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
         // Will contain the raw JSON response as a string.
         String nycPublicDataResponseString = null;
 
-        // Construct the URL for the OpenWeatherMap query
-        // Possible parameters are avaiable at OWM's forecast API page, at
-        // http://openweathermap.org/API#forecast
-//        final String FORECAST_BASE_URL =
-//                "https://data.cityofnewyork.us/resource/qiz3-axqb.json?";
-//        final String QUERY_PARAM = "q";
-//        final String FORMAT_PARAM = "mode";
-//        final String UNITS_PARAM = "units";
-//        final String DAYS_PARAM = "cnt";
-//        final String APP_ID = "APPID";
-//        final String APP_KEY = "99c1da3dd06bf5bda6d3d333273554c8";
-//
-//        Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-//                .appendQueryParameter(QUERY_PARAM, locationQuery + ",USA")
-//                .appendQueryParameter(FORMAT_PARAM, format)
-//                .appendQueryParameter(UNITS_PARAM, units)
-//                .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-//                .appendQueryParameter(APP_ID, APP_KEY)
-//                .build();
-
         URL url = null;
         try {
             //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json");
@@ -161,7 +141,6 @@ public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + mLastThreadBoolean);
-
         if (mNoMoreDataToSync) {
             mProgressBar.setVisibility(View.INVISIBLE);
             mTextView.setVisibility(View.INVISIBLE);
