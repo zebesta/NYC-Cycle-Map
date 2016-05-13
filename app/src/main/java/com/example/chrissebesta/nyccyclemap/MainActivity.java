@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     // The authority for the sync adapter's content provider
     public static final String AUTHORITY = "com.example.android.datasync.provider";
     // An account type, in the form of a domain name
-    public static final String ACCOUNT_TYPE = "example.com";
+    public static final String ACCOUNT_TYPE = "nyccyclemap.example.com";
     // The account name
     public static final String ACCOUNT = "dummyaccount";
     // Instance fields
@@ -350,6 +350,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return newAccount;
     }
-
 
 }
