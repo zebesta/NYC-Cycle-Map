@@ -159,7 +159,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
         if(!mNoMoreDataToSync){
             syncDatabaseNow();
         }
-        
+
         return;
     }
 
@@ -253,9 +253,6 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
             SQLiteDatabase db = helper.getWritableDatabase();
 
             Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
-            if (accidentJsonArray.length() < 1000) {
-                mNoMoreDataToSync = true;
-            }
             for (int i = 0; i < accidentJsonArray.length(); i++) {
                 String arrayData = accidentJsonArray.getString(i);
                 ContentValues contentValues = new ContentValues();
@@ -272,6 +269,9 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
                 db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
                 contentValues.clear();
 
+            }
+            if (accidentJsonArray.length() < 1000) {
+                mNoMoreDataToSync = true;
             }
             //Close SQL database object
             db.close();
