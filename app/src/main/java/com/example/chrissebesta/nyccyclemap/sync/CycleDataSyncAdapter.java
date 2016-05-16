@@ -31,7 +31,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
-    public final String LOG_TAG = CycleDataSyncAdapter.class.getSimpleName();
+    public static final String LOG_TAG = CycleDataSyncAdapter.class.getSimpleName();
     Context mContext;
 
     public CycleDataSyncAdapter(Context context, boolean autoInitialize) {
@@ -41,13 +41,22 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        Log.d(LOG_TAG, "onPerformSync Called.");
         syncDatabaseNow();
         return;
     }
 
     public static void syncImmediately(Context context){
+        Log.d(LOG_TAG, "syncImmediately Called.");
+
+//        ContentResolver.requestSync(getSyncAccount(context),
+//                context.getString(R.string.content_authority), null);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(getSyncAccount(context),
-                context.getString(R.string.content_authority), null);
+                context.getString(R.string.content_authority), bundle);
+
     }
 
     private void syncDatabaseNow() {
@@ -153,6 +162,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
      * @return a fake account.
      */
     public static Account getSyncAccount(Context context) {
+        Log.d(LOG_TAG, "Getting sync account and returning a basic fake account");
         // Get an instance of the Android account manager
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);

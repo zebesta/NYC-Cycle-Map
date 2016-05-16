@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.appyvet.rangebar.RangeBar;
 import com.example.chrissebesta.nyccyclemap.data.CycleContract;
 import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
+import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,7 +59,16 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.update_settings:
                 //update the NYC cycle data dababase
-                fetchUpdatedCycleData();
+                //fetchUpdatedCycleData();
+//                Bundle bundle = new Bundle();
+//                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+//                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                //ContentResolver.requestSync(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), bundle);
+//                ContentResolver.requestSync(mAccount,
+//                        getBaseContext().getString(R.string.content_authority), bundle);
+
+                Log.d(LOG_TAG, "Syncing immediately");
+                CycleDataSyncAdapter.syncImmediately(getApplicationContext());
                 return true;
             case R.id.about_settings:
                 startActivity(new Intent(this, AboutActivity.class));
