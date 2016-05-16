@@ -33,6 +33,7 @@ import java.net.URL;
 public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String LOG_TAG = CycleDataSyncAdapter.class.getSimpleName();
     Context mContext;
+    boolean mNoMoreDataToSync = false;
 
     public CycleDataSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -60,7 +61,9 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void syncDatabaseNow() {
-        Log.d(LOG_TAG, "In the do in background phase");
+        //Reset boolean to check for more data since a new sync was asked for
+        mNoMoreDataToSync = false;
+        Log.d(LOG_TAG, "in syncDatabaseNow and mNoMoreDataToSync is: " + mNoMoreDataToSync);
 
         //get Last unique number in current SQL database
         CycleDbHelper helper = new CycleDbHelper(mContext);
@@ -79,7 +82,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
         db.close();
 
         URL url = null;
-        //Build URL with lated unique Key
+        //Build URL with latest unique Key
         try {
             url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB+"&$order=unique_key%20ASC");
             Log.d("FETCH", "Fetching cycle data with URL: " + url);
@@ -123,6 +126,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
             String jsonResponseString = nycPublicDataResponseString;
 
+            //process the returned JSON string
             try {
                 getCycleDataFromJson(jsonResponseString);
             } catch (JSONException e) {
@@ -149,7 +153,13 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         }
-        // This will only happen if there was an error getting or parsing the forecast.
+        Log.d(LOG_TAG, "Reaching the end of the sync data method or recursive call and mNoMoreDataToSync is: " + mNoMoreDataToSync);
+
+        //if there is still data left to sync, recursively call the method again, this will continue to be called until a JSON is returned with less than the 1000 limit
+        if(!mNoMoreDataToSync){
+            syncDatabaseNow();
+        }
+        
         return;
     }
 
@@ -237,14 +247,14 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
         JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
         if (accidentJsonArray.length() == 0) {
             Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
-            //mNoMoreDataToSync = true;
+            mNoMoreDataToSync = true;
         } else {
             CycleDbHelper helper = new CycleDbHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
 
             Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
             if (accidentJsonArray.length() < 1000) {
-                //mNoMoreDataToSync = true;
+                mNoMoreDataToSync = true;
             }
             for (int i = 0; i < accidentJsonArray.length(); i++) {
                 String arrayData = accidentJsonArray.getString(i);
