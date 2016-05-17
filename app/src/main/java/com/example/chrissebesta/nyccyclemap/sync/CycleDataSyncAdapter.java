@@ -35,6 +35,14 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     Context mContext;
     boolean mNoMoreDataToSync = false;
 
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long MINUTES_PER_HOUR = 60L;
+    public static final long HOURS_PER_DAY = 24L;
+    public static final long SYNC_INTERVAL_IN_DAYS = 1L;
+    //public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_DAYS * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+    //Shortened sync interval for testing
+    public static final long SYNC_INTERVAL = 10;
+
     public CycleDataSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mContext = context;
@@ -43,8 +51,14 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync Called.");
+        Log.d(LOG_TAG, "Account is: "+account+" while authority is: "+authority);
         syncDatabaseNow();
         return;
+    }
+
+    public static void setSyncFrequency(Context context){
+        Log.d(LOG_TAG, "Setting sync frequency");
+        ContentResolver.addPeriodicSync(getSyncAccount(context), context.getString(R.string.content_authority), Bundle.EMPTY, SYNC_INTERVAL);
     }
 
     public static void syncImmediately(Context context){
@@ -203,10 +217,12 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
 
-
-
-
-
+    /**
+     *
+     * @param cycleDataJsonString
+     * @throws JSONException
+     * Method to pull JSON data from NYC Online Data and put it in to the local SQLite database
+     */
     public void getCycleDataFromJson(String cycleDataJsonString) throws JSONException {
         //Strings provided by API for JSON parsing
         final String NYC_DATE = "date"; //floating time stamp

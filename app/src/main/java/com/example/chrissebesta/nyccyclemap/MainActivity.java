@@ -2,7 +2,7 @@ package com.example.chrissebesta.nyccyclemap;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.FragmentManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +37,17 @@ public class MainActivity extends AppCompatActivity {
     public static final String ACCOUNT_TYPE = "nyccyclemap.example.com";
     // The account name
     public static final String ACCOUNT = "dummyaccount";
-    // Instance fields
+    // Sync interval constants
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long MINUTES_PER_HOUR = 60L;
+    public static final long HOURS_PER_DAY = 24L;
+    public static final long SYNC_INTERVAL_IN_DAYS = 1L;
+    //public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_DAYS * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+    //Shortened sync interval for testing
+    public static final long SYNC_INTERVAL = 100L;
+
+    // A content resolver and account for accessing the provider
+    ContentResolver mResolver;
     Account mAccount;
 
     public final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -104,18 +114,36 @@ public class MainActivity extends AppCompatActivity {
         final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
         TextView startYearTextView = (TextView) findViewById(R.id.startDateTextView);
         if (startYearTextView != null) {
-            startYearTextView.setText(""+STARTING_YEAR_OF_DATA);
+            startYearTextView.setText("" + STARTING_YEAR_OF_DATA);
         }
         TextView endYearTextView = (TextView) findViewById(R.id.endDateTextView);
         if (endYearTextView != null) {
-            endYearTextView.setText(""+endingYearOfData);
+            endYearTextView.setText("" + endingYearOfData);
         }
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
         mMaterialRangeBar = materialRangeBar;
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
-        FragmentManager fm = getFragmentManager();
+        //Check if database is empty, if it is, call for a database sync immediately
+        CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String count = "SELECT count(*) FROM "+CycleContract.CycleEntry.TABLE_NAME;
+        Cursor mcursor = db.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        mcursor.close();
+        db.close();
+        //Database is empty, call for a sync immediately
+        if (icount <= 0) {
+            Log.d(LOG_TAG, "Database is empty, call for a sync right away");
+            CycleDataSyncAdapter.syncImmediately(getApplicationContext());
+        }
+
+
+        //Set up automated syncing by allowing it and set the sync frequency here
+        ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
+        CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
 
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
@@ -151,13 +179,8 @@ public class MainActivity extends AppCompatActivity {
         materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
         materialRangeBar.setTickInterval(1);
         materialRangeBar.setBarWeight(8);
-        try {
-            URL urlToUse = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27" + materialRangeBar.getLeftPinValue() + "-01-01T10:00:00%27%20and%20%27" + materialRangeBar.getRightPinValue() + "-12-31T23:59:00%27");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
 
-        //Build URL based on range bar values here, can modify later
+        //Listen to user settings for the range bar here
         materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
@@ -302,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
             //URL for both injured and killed cyclists
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastUniqueNumberInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB+"&$order=unique_key%20ASC");
+            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB + "&$order=unique_key%20ASC");
             Log.d(LOG_TAG, "The URL being used now is: " + fetch.mUrlCycleData);
             //URL for only killed cyclists (useful for testing as it is much much faster)
             //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
@@ -312,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         fetch.execute();
-        Log.d("FETCH", "Fetching cycle data with unique key greater than: "+lastUniqueNumberInDB);
+        Log.d("FETCH", "Fetching cycle data with unique key greater than: " + lastUniqueNumberInDB);
         assert mProgressBar != null;
 
         //TODO Use shared preferences to determine to show or not show the loading objects (is htis possible the way I want?)
@@ -325,7 +348,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
 
     /**
