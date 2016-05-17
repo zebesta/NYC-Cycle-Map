@@ -65,18 +65,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                //TODO make a settings activity to set the sync frequency and anything else that makes sense
                 Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.update_settings:
                 //update the NYC cycle data dababase
-                //fetchUpdatedCycleData();
-//                Bundle bundle = new Bundle();
-//                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-//                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-                //ContentResolver.requestSync(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), bundle);
-//                ContentResolver.requestSync(mAccount,
-//                        getBaseContext().getString(R.string.content_authority), bundle);
-
                 Log.d(LOG_TAG, "Syncing immediately");
                 CycleDataSyncAdapter.syncImmediately(getApplicationContext());
                 return true;
@@ -125,32 +118,17 @@ public class MainActivity extends AppCompatActivity {
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
-
-        //TODO MOVE THIS TO A ONLY RUN ON THE FIRST TIME THE APP IS OPENED TASK
-        //TODO Can also smooth out UI performance by having that first time process run as an AsyncTask
-        //Check if database is empty, if it is, call for a database sync immediately
-//        CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-//        SQLiteDatabase db = helper.getWritableDatabase();
-//        String count = "SELECT count(*) FROM "+CycleContract.CycleEntry.TABLE_NAME;
-//        Cursor mcursor = db.rawQuery(count, null);
-//        mcursor.moveToFirst();
-//        int icount = mcursor.getInt(0);
-//        mcursor.close();
-//        db.close();
-//        //Database is empty, call for a sync immediately
-//        if (icount <= 0) {
-//            Log.d(LOG_TAG, "Database is empty, call for a sync right away");
-//            CycleDataSyncAdapter.syncImmediately(getApplicationContext());
-//        }
-
-        //Set up automated syncing by allowing it and set the sync frequency here
-        ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
-        CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
-
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
         boolean injured = sharedPreferences.getBoolean(getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
+        boolean previouslyStarted = sharedPreferences.getBoolean(getString(R.string.pref_previously_started), false);
+        if (!previouslyStarted) {
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putBoolean(getString(R.string.pref_previously_started), Boolean.TRUE);
+            edit.commit();
+            firstRun();
+        }
         injuredCheckedTextView.setChecked(injured);
         killedCheckedTextView.setChecked(killed);
 
@@ -297,6 +275,19 @@ public class MainActivity extends AppCompatActivity {
 //            progressBar.setVisibility(View.INVISIBLE);
 //            loadingText.setVisibility(View.INVISIBLE);
 //        }
+    }
+
+    /**
+     * Run this method only the first time the app is opened (detected by shared preferences)
+     * This method syncs the database for the first time and sets the sync frequency for the sync adapter to update the database
+     */
+    private void firstRun() {
+        Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
+        CycleDataSyncAdapter.syncImmediately(getApplicationContext());
+        //Set up automated syncing by allowing it and set the sync frequency here
+        ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
+        CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
+
     }
 
     //TODO should actually sort by Unique Number here so that even older queries are properly pulled
