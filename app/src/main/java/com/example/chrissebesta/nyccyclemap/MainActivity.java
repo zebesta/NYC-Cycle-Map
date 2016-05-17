@@ -125,21 +125,23 @@ public class MainActivity extends AppCompatActivity {
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
-        //Check if database is empty, if it is, call for a database sync immediately
-        CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String count = "SELECT count(*) FROM "+CycleContract.CycleEntry.TABLE_NAME;
-        Cursor mcursor = db.rawQuery(count, null);
-        mcursor.moveToFirst();
-        int icount = mcursor.getInt(0);
-        mcursor.close();
-        db.close();
-        //Database is empty, call for a sync immediately
-        if (icount <= 0) {
-            Log.d(LOG_TAG, "Database is empty, call for a sync right away");
-            CycleDataSyncAdapter.syncImmediately(getApplicationContext());
-        }
 
+        //TODO MOVE THIS TO A ONLY RUN ON THE FIRST TIME THE APP IS OPENED TASK
+        //TODO Can also smooth out UI performance by having that first time process run as an AsyncTask
+        //Check if database is empty, if it is, call for a database sync immediately
+//        CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+//        SQLiteDatabase db = helper.getWritableDatabase();
+//        String count = "SELECT count(*) FROM "+CycleContract.CycleEntry.TABLE_NAME;
+//        Cursor mcursor = db.rawQuery(count, null);
+//        mcursor.moveToFirst();
+//        int icount = mcursor.getInt(0);
+//        mcursor.close();
+//        db.close();
+//        //Database is empty, call for a sync immediately
+//        if (icount <= 0) {
+//            Log.d(LOG_TAG, "Database is empty, call for a sync right away");
+//            CycleDataSyncAdapter.syncImmediately(getApplicationContext());
+//        }
 
         //Set up automated syncing by allowing it and set the sync frequency here
         ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);

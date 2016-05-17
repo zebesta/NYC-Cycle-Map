@@ -39,9 +39,9 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final long MINUTES_PER_HOUR = 60L;
     public static final long HOURS_PER_DAY = 24L;
     public static final long SYNC_INTERVAL_IN_DAYS = 1L;
-    //public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_DAYS * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+    public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_DAYS * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
     //Shortened sync interval for testing
-    public static final long SYNC_INTERVAL = 10;
+    //public static final long SYNC_INTERVAL = 10;
 
     public CycleDataSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -52,7 +52,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync Called.");
         Log.d(LOG_TAG, "Account is: "+account+" while authority is: "+authority);
-        syncDatabaseNow();
+        syncDatabase();
         return;
     }
 
@@ -74,10 +74,10 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
 
     }
 
-    private void syncDatabaseNow() {
+    private void syncDatabase() {
         //Reset boolean to check for more data since a new sync was asked for
         mNoMoreDataToSync = false;
-        Log.d(LOG_TAG, "in syncDatabaseNow and mNoMoreDataToSync is: " + mNoMoreDataToSync);
+        Log.d(LOG_TAG, "in syncDatabase and mNoMoreDataToSync is: " + mNoMoreDataToSync);
 
         //get Last unique number in current SQL database
         CycleDbHelper helper = new CycleDbHelper(mContext);
@@ -171,7 +171,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
 
         //if there is still data left to sync, recursively call the method again, this will continue to be called until a JSON is returned with less than the 1000 limit
         if(!mNoMoreDataToSync){
-            syncDatabaseNow();
+            syncDatabase();
         }
 
         return;
