@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     //The starting year of the data in the NYC Open Data library
     public final int STARTING_YEAR_OF_DATA = 2012;
     public final int endingYearOfData = Calendar.getInstance().get(Calendar.YEAR);
+    public final int endingMonthOfData = Calendar.getInstance().get(Calendar.MONTH)+1;
     //Views that need to be accessible outside of onCreate
     ProgressBar mProgressBar;
     TextView mLoadingText;
@@ -155,7 +156,9 @@ public class MainActivity extends AppCompatActivity {
 //        fetch.mContext = getBaseContext();
         materialRangeBar.setPinRadius(30);
         materialRangeBar.setTickHeight(4);
-        materialRangeBar.setTickEnd(endingYearOfData);
+        float tickEnd = (STARTING_YEAR_OF_DATA+(endingYearOfData-STARTING_YEAR_OF_DATA)*12f);
+        Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
+        materialRangeBar.setTickEnd(tickEnd);
         materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
         materialRangeBar.setTickInterval(1);
         materialRangeBar.setBarWeight(8);
@@ -164,14 +167,19 @@ public class MainActivity extends AppCompatActivity {
         materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
-                Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
 
                 //update shared preferences for Query when user maps new data
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(getString(R.string.mindate), Integer.parseInt(leftPinValue));
                 editor.putInt(getString(R.string.maxdate), Integer.parseInt(rightPinValue));
-                textForYearsToBeMapped[0] = "Mapping data for years: " + leftPinValue + " - " + rightPinValue;
+                int startingMonth = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)%12;
+                int endingMonth = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)%12;
+                Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth+1 +"and" +endingMonth+1);
+
+                Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
+
+                textForYearsToBeMapped[0] = "Mapping data between "+String.valueOf(startingMonth+1)+"-" + leftPinValue + " and " +String.valueOf(endingMonth+1)+"-"+ rightPinValue;
                 yearMappingTextView.setText(textForYearsToBeMapped[0]);
                 editor.commit();
             }
@@ -283,11 +291,16 @@ public class MainActivity extends AppCompatActivity {
      */
     private void firstRun() {
         Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
+        Toast.makeText(MainActivity.this, "Syncing with NYC Open Data... ", Toast.LENGTH_SHORT).show();
         CycleDataSyncAdapter.syncImmediately(getApplicationContext());
         //Set up automated syncing by allowing it and set the sync frequency here
         ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
         CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
 
+    }
+
+    public void upToDate(){
+        Toast.makeText(MainActivity.this, "Database is up to date!", Toast.LENGTH_SHORT).show();
     }
 
     //TODO should actually sort by Unique Number here so that even older queries are properly pulled
