@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">NYC Cycle Map</string>
     <string name="title_activity_maps">Map</string>
-    <string name="maxdate">maxdate</string>
-    <string name="mindate">mindate</string>
+    <string name="maxdateyear">maxdate</string>
+    <string name="mindateyear">mindate</string>
     <string name="sharedpreference">sharedpreference</string>
     <string name="killedcyclists">Killed cyclists</string>
     <string name="injuredcyclists">Injured cyclists</string>
@@ -17,5 +17,7 @@
     <string name="sync_account_type">nyccyclemap.example.com</string>
     <string name="content_authority">com.example.chrissebesta.nyccyclemap.app</string>
     <string name="pref_previously_started">previouslystarted</string>
+    <string name="mindatemonth">mindatemonth</string>
+    <string name="maxdatemonth">maxdatemonth</string>
 
 </resources>

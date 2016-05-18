@@ -139,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
 //            initialDataButton.setVisibility(View.GONE);
 //        }
         //set text view to indicate which years are going to be mapped by user
-        final int startDate = sharedPreferences.getInt(getString(R.string.mindate), STARTING_YEAR_OF_DATA);
-        final int endDate = sharedPreferences.getInt(getString(R.string.maxdate), endingYearOfData);
+        final int startDate = sharedPreferences.getInt(getString(R.string.mindateyear), STARTING_YEAR_OF_DATA);
+        final int endDate = sharedPreferences.getInt(getString(R.string.maxdateyear), endingYearOfData);
         final String[] textForYearsToBeMapped = {"Mapping data for years: " + startDate + " - " + endDate};
         yearMappingTextView.setText(textForYearsToBeMapped[0]);
 
@@ -171,15 +171,17 @@ public class MainActivity extends AppCompatActivity {
                 //update shared preferences for Query when user maps new data
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt(getString(R.string.mindate), Integer.parseInt(leftPinValue));
-                editor.putInt(getString(R.string.maxdate), Integer.parseInt(rightPinValue));
+
                 int startingMonth = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)%12+1;
                 int endingMonth = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)%12+1;
                 int startingYear = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
                 int endingYear = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
                 Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth +"and" +endingMonth);
                 Log.d("RANGEBAR", "starting year and ending year are: " + startingYear +"and" +endingYear);
-
+                editor.putInt(getString(R.string.mindateyear), startingYear);
+                editor.putInt(getString(R.string.maxdateyear), endingYear);
+                editor.putInt(getString(R.string.mindatemonth), startingMonth);
+                editor.putInt(getString(R.string.maxdatemonth), endingMonth);
                 Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
 
                 textForYearsToBeMapped[0] = "Mapping data between "+startingMonth+"-" + startingYear + " and " +endingMonth+"-"+ endingYear;

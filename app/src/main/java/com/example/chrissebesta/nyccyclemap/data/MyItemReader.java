@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -45,15 +47,26 @@ public class MyItemReader {
 
         //get min and max date from shared Preferences
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
-        int minDate = sharedPreferences.getInt(mContext.getString(R.string.mindate), 0); //default min year is 0
-        int maxDate = sharedPreferences.getInt(mContext.getString(R.string.maxdate), 3000);//default max year is 3000
+        int minDateYear = sharedPreferences.getInt(mContext.getString(R.string.mindateyear), 0); //default min year is 0
+        int maxDateYear = sharedPreferences.getInt(mContext.getString(R.string.maxdateyear), 3000);//default max year is 3000
+        int minDateMonth = sharedPreferences.getInt(mContext.getString(R.string.mindatemonth), 0); //default min year is 0
+        int maxDateMonth = sharedPreferences.getInt(mContext.getString(R.string.maxdatemonth), 12);
+        //first day in selected start month
+        GregorianCalendar startDate = new GregorianCalendar(minDateYear, minDateMonth-1, 1);
+        //first day in month after selected end month
+        GregorianCalendar endDate = new GregorianCalendar(maxDateYear, maxDateMonth, 1);
+        //Get comparably formated date so that the database can be queried with the right strings
+        String startDateString = new SimpleDateFormat("yyyy-MM-dd").format(startDate.getTime());
+        String endDateString = new SimpleDateFormat("yyyy-MM-dd").format(endDate.getTime());
+        Log.d(LOG_TAG, "starting date is: "+startDate.getTime() + " Formated as: "+startDateString);
+        Log.d(LOG_TAG, "ending date is: "+endDate.getTime()+ " Formated as: "+endDateString);
         boolean injured = sharedPreferences.getBoolean(mContext.getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(mContext.getString(R.string.killedcyclists), true);
-        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: " + minDate + " and " + maxDate + " and injured is " + injured + " while killed is " + killed);
+        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: " + minDateYear + " and " + maxDateYear + " and injured is " + injured + " while killed is " + killed);
         String injuredArgs;
         String killedArgs;
         //increment max date by one year and look for dates that are lower than it (effectively, looks at everything less than year 2013 if max date is 2012, catches all dates in 2012
-        maxDate++;
+        maxDateYear++;
         //set args to properly include or exclude injured or killed cyclists
         if (injured) {
             injuredArgs = "0";
@@ -63,7 +76,10 @@ public class MyItemReader {
         } else killedArgs = "100";
 
         //set args for SQL Query
-        String[] args = new String[]{String.valueOf(minDate), String.valueOf(maxDate), injuredArgs, killedArgs};
+        //String[] args = new String[]{String.valueOf(minDateYear), String.valueOf(maxDateYear), injuredArgs, killedArgs};
+
+        //New month included date query arguments:
+        String[] args = new String[]{startDateString, endDateString, injuredArgs, killedArgs};
         Log.d(LOG_TAG, "InjuredArgs is: " + injuredArgs + " and killedArgs is: " + killedArgs);
 
 
