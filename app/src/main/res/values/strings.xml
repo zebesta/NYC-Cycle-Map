@@ -19,5 +19,6 @@
     <string name="pref_previously_started">previouslystarted</string>
     <string name="mindatemonth">mindatemonth</string>
     <string name="maxdatemonth">maxdatemonth</string>
+    <string name="main_screen_header">Choose parameters for cycling incidents to map</string>
 
 </resources>

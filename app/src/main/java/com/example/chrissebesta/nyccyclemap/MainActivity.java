@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
         final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
         TextView startYearTextView = (TextView) findViewById(R.id.startDateTextView);
         if (startYearTextView != null) {
-            startYearTextView.setText("" + STARTING_YEAR_OF_DATA);
+            startYearTextView.setText(String.valueOf(STARTING_YEAR_OF_DATA));
         }
         TextView endYearTextView = (TextView) findViewById(R.id.endDateTextView);
         if (endYearTextView != null) {
-            endYearTextView.setText("" + endingYearOfData);
+            endYearTextView.setText(String.valueOf(endingYearOfData));
         }
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
         mMaterialRangeBar = materialRangeBar;
@@ -127,10 +127,12 @@ public class MainActivity extends AppCompatActivity {
         if (!previouslyStarted) {
             SharedPreferences.Editor edit = sharedPreferences.edit();
             edit.putBoolean(getString(R.string.pref_previously_started), Boolean.TRUE);
-            edit.commit();
+            edit.apply();
             firstRun();
         }
+        assert injuredCheckedTextView != null;
         injuredCheckedTextView.setChecked(injured);
+        assert killedCheckedTextView != null;
         killedCheckedTextView.setChecked(killed);
 
 //        //If intial database has already been loaded, remove the load initial database button from the view
@@ -138,10 +140,13 @@ public class MainActivity extends AppCompatActivity {
 //        if(!showInitialDatabase){
 //            initialDataButton.setVisibility(View.GONE);
 //        }
-        //set text view to indicate which years are going to be mapped by user
-        final int startDate = sharedPreferences.getInt(getString(R.string.mindateyear), STARTING_YEAR_OF_DATA);
-        final int endDate = sharedPreferences.getInt(getString(R.string.maxdateyear), endingYearOfData);
-        final String[] textForYearsToBeMapped = {"Mapping data for years: " + startDate + " - " + endDate};
+        //set text view to indicate which years and months are going to be mapped by user
+        final int startingYear = sharedPreferences.getInt(getString(R.string.mindateyear), STARTING_YEAR_OF_DATA);
+        final int endingYear = sharedPreferences.getInt(getString(R.string.maxdateyear), endingYearOfData);
+        final int startingMonth = sharedPreferences.getInt(getString(R.string.mindatemonth), 1);
+        final int endingMonth = sharedPreferences.getInt(getString(R.string.maxdatemonth), 12);
+        final String [] textForYearsToBeMapped = {"Mapping data between "+startingMonth+"-" + startingYear + " and " +endingMonth+"-"+ endingYear};
+        assert yearMappingTextView != null;
         yearMappingTextView.setText(textForYearsToBeMapped[0]);
 
 
@@ -154,10 +159,11 @@ public class MainActivity extends AppCompatActivity {
         //final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        final FetchCycleDataTask fetch = new FetchCycleDataTask();
 //        fetch.mContext = getBaseContext();
-        materialRangeBar.setPinRadius(30);
-        materialRangeBar.setTickHeight(4);
+        //materialRangeBar.setPinRadius(30);
+        //materialRangeBar.setTickHeight(4);
         float tickEnd = (STARTING_YEAR_OF_DATA+(endingYearOfData-STARTING_YEAR_OF_DATA)*12f+endingMonthOfData);
         Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
+        assert materialRangeBar != null;
         materialRangeBar.setTickEnd(tickEnd);
         materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
         //materialRangeBar.setTickInterval(1);
@@ -203,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean(getString(R.string.injuredcyclists), injuredCheckedTextView.isChecked());
-                editor.commit();
+                editor.apply();
             }
         });
         killedCheckedTextView.setOnClickListener(new CheckedTextView.OnClickListener() {
@@ -214,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean(getString(R.string.killedcyclists), killedCheckedTextView.isChecked());
-                editor.commit();
+                editor.apply();
             }
         });
 
@@ -281,18 +287,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-//        if(fetch.getStatus() == AsyncTask.Status.RUNNING){
-//            // My AsyncTask is currently doing work in doInBackground()
-//            Log.d(LOG_TAG, "Still working on Async task");
-//
-//        }
-//        if(fetch.getStatus() == AsyncTask.Status.FINISHED){
-//            // My AsyncTask is done and onPostExecute was called
-//            Log.d(LOG_TAG, "Finished the async task and now making load image invisible");
-//            progressBar.setVisibility(View.INVISIBLE);
-//            loadingText.setVisibility(View.INVISIBLE);
-//        }
     }
 
     /**
@@ -307,10 +301,6 @@ public class MainActivity extends AppCompatActivity {
         ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
         CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
 
-    }
-
-    public void upToDate(){
-        Toast.makeText(MainActivity.this, "Database is up to date!", Toast.LENGTH_SHORT).show();
     }
 
     //TODO should actually sort by Unique Number here so that even older queries are properly pulled
