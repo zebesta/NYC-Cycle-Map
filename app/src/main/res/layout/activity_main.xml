@@ -14,11 +14,11 @@
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:text="Get initial cycle data" />-->
-    <Button
-        android:id="@+id/refreshbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/update" />
+    <!--<Button-->
+        <!--android:id="@+id/refreshbutton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/update" />-->
 
     <!--<Button-->
     <!--android:id="@+id/brooklynButton"-->

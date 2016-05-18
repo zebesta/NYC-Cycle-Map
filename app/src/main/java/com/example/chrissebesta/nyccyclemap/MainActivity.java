@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.toolbar_space);
         //get UI elements
-        Button refreshButton = (Button) findViewById(R.id.refreshbutton);
+        //Button refreshButton = (Button) findViewById(R.id.refreshbutton);
         //Button initialDataButton = (Button) findViewById(R.id.initialDataButton);
         //mInitialButton = initialDataButton;
         Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
@@ -160,8 +160,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
         materialRangeBar.setTickEnd(tickEnd);
         materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
-        materialRangeBar.setTickInterval(1);
+        //materialRangeBar.setTickInterval(1);
         materialRangeBar.setBarWeight(8);
+        materialRangeBar.setPinRadius(0);
+        materialRangeBar.setDrawTicks(false);
+        materialRangeBar.setTemporaryPins(false);
 
         //Listen to user settings for the range bar here
         materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
@@ -176,17 +179,19 @@ public class MainActivity extends AppCompatActivity {
                 int endingMonth = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)%12+1;
                 int startingYear = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
                 int endingYear = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
-                Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth +"and" +endingMonth);
-                Log.d("RANGEBAR", "starting year and ending year are: " + startingYear +"and" +endingYear);
+                //Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth +"and" +endingMonth);
+                //Log.d("RANGEBAR", "starting year and ending year are: " + startingYear +"and" +endingYear);
                 editor.putInt(getString(R.string.mindateyear), startingYear);
                 editor.putInt(getString(R.string.maxdateyear), endingYear);
                 editor.putInt(getString(R.string.mindatemonth), startingMonth);
                 editor.putInt(getString(R.string.maxdatemonth), endingMonth);
-                Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
+                //Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
 
                 textForYearsToBeMapped[0] = "Mapping data between "+startingMonth+"-" + startingYear + " and " +endingMonth+"-"+ endingYear;
                 yearMappingTextView.setText(textForYearsToBeMapped[0]);
-                editor.commit();
+                //editor.commit();
+                //handle preference update in the background so it is less obtrusive to UI thread
+                editor.apply();
             }
         });
 
@@ -213,17 +218,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //TODO move this update database idea to a floating settings menu or action bar menu button or something similar
-        //TODO make this be some kind of default action when application is started for the first time or the SQL database is empty
-        assert refreshButton != null;
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            //TODO need to check the existing SQL database for the latest date currently stored and then when the database URL is built, add this date constraint
-            //Goal is to allow users to only have the large update once, and any updates conducted later just pull new data that has been added to NYC Open maps
-            @Override
-            public void onClick(View v) {
-                fetchUpdatedCycleData();
-            }
-        });
+//        //TODO move this update database idea to a floating settings menu or action bar menu button or something similar
+//        //TODO make this be some kind of default action when application is started for the first time or the SQL database is empty
+//        assert refreshButton != null;
+//        refreshButton.setOnClickListener(new View.OnClickListener() {
+//            //TODO need to check the existing SQL database for the latest date currently stored and then when the database URL is built, add this date constraint
+//            //Goal is to allow users to only have the large update once, and any updates conducted later just pull new data that has been added to NYC Open maps
+//            @Override
+//            public void onClick(View v) {
+//                fetchUpdatedCycleData();
+//            }
+//        });
 
 //        assert initialDataButton != null;
 //        initialDataButton.setOnClickListener(new View.OnClickListener() {
