@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 //        fetch.mContext = getBaseContext();
         materialRangeBar.setPinRadius(30);
         materialRangeBar.setTickHeight(4);
-        float tickEnd = (STARTING_YEAR_OF_DATA+(endingYearOfData-STARTING_YEAR_OF_DATA)*12f);
+        float tickEnd = (STARTING_YEAR_OF_DATA+(endingYearOfData-STARTING_YEAR_OF_DATA)*12f+endingMonthOfData);
         Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
         materialRangeBar.setTickEnd(tickEnd);
         materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
@@ -173,13 +173,16 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(getString(R.string.mindate), Integer.parseInt(leftPinValue));
                 editor.putInt(getString(R.string.maxdate), Integer.parseInt(rightPinValue));
-                int startingMonth = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)%12;
-                int endingMonth = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)%12;
-                Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth+1 +"and" +endingMonth+1);
+                int startingMonth = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)%12+1;
+                int endingMonth = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)%12+1;
+                int startingYear = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
+                int endingYear = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
+                Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth +"and" +endingMonth);
+                Log.d("RANGEBAR", "starting year and ending year are: " + startingYear +"and" +endingYear);
 
                 Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
 
-                textForYearsToBeMapped[0] = "Mapping data between "+String.valueOf(startingMonth+1)+"-" + leftPinValue + " and " +String.valueOf(endingMonth+1)+"-"+ rightPinValue;
+                textForYearsToBeMapped[0] = "Mapping data between "+startingMonth+"-" + startingYear + " and " +endingMonth+"-"+ endingYear;
                 yearMappingTextView.setText(textForYearsToBeMapped[0]);
                 editor.commit();
             }
