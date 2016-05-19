@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,13 @@ import com.example.chrissebesta.nyccyclemap.data.CycleContract;
 import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
 import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
@@ -68,6 +76,27 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 //TODO make a settings activity to set the sync frequency and anything else that makes sense
                 Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
+                CycleDbHelper myDbHelper = new CycleDbHelper(this);;
+
+                try {
+
+                    myDbHelper.createDataBase();
+
+                } catch (IOException ioe) {
+
+                    throw new Error("Unable to create database");
+
+                }
+
+                try {
+
+                    myDbHelper.openDataBase();
+
+                }catch(SQLException sqle){
+
+                    throw sqle;
+
+                }
                 return true;
             case R.id.update_settings:
                 //update the NYC cycle data dababase
@@ -296,10 +325,31 @@ public class MainActivity extends AppCompatActivity {
     private void firstRun() {
         Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
         Toast.makeText(MainActivity.this, "Syncing with NYC Open Data... ", Toast.LENGTH_SHORT).show();
-        CycleDataSyncAdapter.syncImmediately(getApplicationContext());
-        //Set up automated syncing by allowing it and set the sync frequency here
-        ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
-        CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
+        //Create database from locally stored asset files
+        CycleDbHelper myDbHelper = new CycleDbHelper(this);;
+        try {
+
+            myDbHelper.createDataBase();
+
+        } catch (IOException ioe) {
+
+            throw new Error("Unable to create database");
+
+        }
+
+        try {
+
+            myDbHelper.openDataBase();
+
+        }catch(SQLException sqle){
+
+            throw sqle;
+
+        }
+//        CycleDataSyncAdapter.syncImmediately(getApplicationContext());
+//        //Set up automated syncing by allowing it and set the sync frequency here
+//        ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
+//        CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
 
     }
 
@@ -387,6 +437,51 @@ public class MainActivity extends AppCompatActivity {
              */
         }
         return newAccount;
+    }
+
+    private void moveFile(String inputPath, String inputFile, String outputPath) {
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+
+            //create output directory if it doesn't exist
+            File dir = new File (outputPath);
+            if (!dir.exists())
+            {
+                dir.mkdirs();
+            }
+
+
+            in = new FileInputStream(inputPath + inputFile);
+            out = new FileOutputStream(outputPath + inputFile);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            in = null;
+
+            // write the output file
+            out.flush();
+            out.close();
+            out = null;
+
+            // delete the original file
+            new File(inputPath + inputFile).delete();
+
+
+        }
+
+        catch (FileNotFoundException fnfe1) {
+            Log.e("tag", fnfe1.getMessage());
+        }
+        catch (Exception e) {
+            Log.e("tag", e.getMessage());
+        }
+
     }
 
 }
