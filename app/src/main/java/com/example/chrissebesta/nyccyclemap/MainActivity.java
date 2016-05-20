@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void firstRun() {
         Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
-        Toast.makeText(MainActivity.this, "Syncing data in background", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "Syncing data in background", Toast.LENGTH_LONG).show();
         CycleDataSyncAdapter.syncImmediately(getApplicationContext());
         //Set up automated syncing by allowing it and set the sync frequency here
         ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
