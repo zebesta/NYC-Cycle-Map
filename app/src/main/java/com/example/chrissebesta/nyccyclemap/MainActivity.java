@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.update_settings:
                 //update the NYC cycle data dababase
                 Log.d(LOG_TAG, "Syncing immediately");
+                Toast.makeText(MainActivity.this, "Updating data in background!", Toast.LENGTH_SHORT).show();
                 CycleDataSyncAdapter.syncImmediately(getApplicationContext());
                 return true;
             case R.id.about_settings:

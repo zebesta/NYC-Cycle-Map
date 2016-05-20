@@ -14,7 +14,7 @@ public class CycleDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     private static final int DATABASE_VERSION = 1;
-    static final String DATABASE_NAME = "geo.db";
+    static final String DATABASE_NAME = "cycle.db";
 
     public CycleDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
