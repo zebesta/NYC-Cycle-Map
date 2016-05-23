@@ -2,7 +2,6 @@ package com.example.chrissebesta.nyccyclemap;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     TextView mLoadingText;
     //Button mInitialButton;
     RangeBar mMaterialRangeBar;
+
+    //Shared preferences
+    SharedPreferences sharedPreferences;
 
 
     @Override
@@ -122,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
-
+        sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        //set shared preference on change listener
         SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new
                 SharedPreferences.OnSharedPreferenceChangeListener() {
                     @Override
@@ -132,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                         // your stuff here
                         Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: "+key);
                         if(key==getString(R.string.syncing)){
+                            //Update the view to show the user whether new data is being loaded in the background or not
                             Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
                             if(showSyncing){
                                 mProgressBar.setVisibility(View.VISIBLE);
@@ -318,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void firstRun() {
         Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
-        Toast.makeText(MainActivity.this, "Syncing data in background", Toast.LENGTH_LONG).show();
+        //Toast.makeText(MainActivity.this, "Syncing data in background", Toast.LENGTH_LONG).show();
         CycleDataSyncAdapter.syncImmediately(getApplicationContext());
         //Set up automated syncing by allowing it and set the sync frequency here
         ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
@@ -411,17 +414,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return newAccount;
     }
-
-    //SyndReceiver to detect if SyncAdapter is syncing in the background or not
-    public class SyncReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                //do something
-            }
-        }
-    }
-
 }
