@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     //The starting year of the data in the NYC Open Data library
     public final int STARTING_YEAR_OF_DATA = 2012;
     public final int endingYearOfData = Calendar.getInstance().get(Calendar.YEAR);
-    public final int endingMonthOfData = Calendar.getInstance().get(Calendar.MONTH)+1;
+    public final int endingMonthOfData = Calendar.getInstance().get(Calendar.MONTH) + 1;
     //Views that need to be accessible outside of onCreate
     ProgressBar mProgressBar;
     TextView mLoadingText;
@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Shared preferences
     SharedPreferences sharedPreferences;
+    //shared preference mListener declaured to avoid garbage collection
+    private SharedPreferences.OnSharedPreferenceChangeListener mListener;
 
 
     @Override
@@ -127,28 +129,27 @@ public class MainActivity extends AppCompatActivity {
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
         //sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        //set shared preference on change listener
-        SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new
-                SharedPreferences.OnSharedPreferenceChangeListener() {
+        //set shared preference on change mListener
+        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                     @Override
                     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                                           String key) {
                         // your stuff here
-                        Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: "+key);
-                        if(key==getString(R.string.syncing)){
+                        Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: " + key);
+                        if (key == getString(R.string.syncing)) {
                             //Update the view to show the user whether new data is being loaded in the background or not
                             Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
-                            if(showSyncing){
+                            if (showSyncing) {
                                 mProgressBar.setVisibility(View.VISIBLE);
                                 mLoadingText.setVisibility(View.VISIBLE);
-                            }else{
+                            } else {
                                 mProgressBar.setVisibility(View.GONE);
                                 mLoadingText.setVisibility(View.GONE);
                             }
                         }
                     }
                 };
-        sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(mListener);
         boolean injured = sharedPreferences.getBoolean(getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
         boolean previouslyStarted = sharedPreferences.getBoolean(getString(R.string.pref_previously_started), false);
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         final int endingYear = sharedPreferences.getInt(getString(R.string.maxdateyear), endingYearOfData);
         final int startingMonth = sharedPreferences.getInt(getString(R.string.mindatemonth), 1);
         final int endingMonth = sharedPreferences.getInt(getString(R.string.maxdatemonth), 12);
-        final String [] textForYearsToBeMapped = {"Mapping data between "+startingMonth+"-" + startingYear + " and " +endingMonth+"-"+ endingYear};
+        final String[] textForYearsToBeMapped = {"Mapping data between " + startingMonth + "-" + startingYear + " and " + endingMonth + "-" + endingYear};
         assert yearMappingTextView != null;
         yearMappingTextView.setText(textForYearsToBeMapped[0]);
 
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 //        fetch.mContext = getBaseContext();
         //materialRangeBar.setPinRadius(30);
         //materialRangeBar.setTickHeight(4);
-        float tickEnd = (STARTING_YEAR_OF_DATA+(endingYearOfData-STARTING_YEAR_OF_DATA)*12f+endingMonthOfData);
+        float tickEnd = (STARTING_YEAR_OF_DATA + (endingYearOfData - STARTING_YEAR_OF_DATA) * 12f + endingMonthOfData);
         Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
         assert materialRangeBar != null;
         materialRangeBar.setTickEnd(tickEnd);
@@ -209,10 +210,10 @@ public class MainActivity extends AppCompatActivity {
                 //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                int startingMonth = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)%12+1;
-                int endingMonth = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)%12+1;
-                int startingYear = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
-                int endingYear = (Integer.parseInt(rightPinValue)-STARTING_YEAR_OF_DATA)/12 + STARTING_YEAR_OF_DATA;
+                int startingMonth = (Integer.parseInt(leftPinValue) - STARTING_YEAR_OF_DATA) % 12 + 1;
+                int endingMonth = (Integer.parseInt(rightPinValue) - STARTING_YEAR_OF_DATA) % 12 + 1;
+                int startingYear = (Integer.parseInt(leftPinValue) - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
+                int endingYear = (Integer.parseInt(rightPinValue) - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
                 //Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth +"and" +endingMonth);
                 //Log.d("RANGEBAR", "starting year and ending year are: " + startingYear +"and" +endingYear);
                 editor.putInt(getString(R.string.mindateyear), startingYear);
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putInt(getString(R.string.maxdatemonth), endingMonth);
                 //Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
 
-                textForYearsToBeMapped[0] = "Mapping data between "+startingMonth+"-" + startingYear + " and " +endingMonth+"-"+ endingYear;
+                textForYearsToBeMapped[0] = "Mapping data between " + startingMonth + "-" + startingYear + " and " + endingMonth + "-" + endingYear;
                 yearMappingTextView.setText(textForYearsToBeMapped[0]);
                 //editor.commit();
                 //handle preference update in the background so it is less obtrusive to UI thread
