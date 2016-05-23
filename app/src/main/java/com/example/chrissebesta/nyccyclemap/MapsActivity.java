@@ -10,6 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -20,15 +21,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public final String LOG_TAG = MapsActivity.class.getSimpleName();
 
     private GoogleMap mMap;
+    private CameraPosition mSavedCameraPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mSavedCameraPosition = savedInstanceState.getParcelable(getString(R.string.cameraposition));
+        }
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(getString(R.string.cameraposition), mMap.getCameraPosition());
+        super.onSaveInstanceState(outState);
     }
 
     private void readItems() {
@@ -49,10 +60,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 14));
+        if (mSavedCameraPosition != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mSavedCameraPosition));
+        } else {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 14));
+        }
 
         mClusterManager = new ClusterManager<MyItem>(this, mMap);
         mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
+
 
         mMap.setOnCameraChangeListener(mClusterManager);
 
