@@ -21,5 +21,6 @@
     <string name="maxdatemonth">maxdatemonth</string>
     <string name="main_screen_header">Choose parameters for cycling incidents to map</string>
     <string name="cameraposition">CameraPosition</string>
+    <string name="syncing">syncing</string>
 
 </resources>

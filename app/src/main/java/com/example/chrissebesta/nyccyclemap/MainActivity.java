@@ -2,6 +2,7 @@ package com.example.chrissebesta.nyccyclemap;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -122,6 +123,27 @@ public class MainActivity extends AppCompatActivity {
 
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+
+        SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new
+                SharedPreferences.OnSharedPreferenceChangeListener() {
+                    @Override
+                    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                                          String key) {
+                        // your stuff here
+                        Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: "+key);
+                        if(key==getString(R.string.syncing)){
+                            Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
+                            if(showSyncing){
+                                mProgressBar.setVisibility(View.VISIBLE);
+                                mLoadingText.setVisibility(View.VISIBLE);
+                            }else{
+                                mProgressBar.setVisibility(View.GONE);
+                                mLoadingText.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                };
+        sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
         boolean injured = sharedPreferences.getBoolean(getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
         boolean previouslyStarted = sharedPreferences.getBoolean(getString(R.string.pref_previously_started), false);
@@ -388,6 +410,18 @@ public class MainActivity extends AppCompatActivity {
              */
         }
         return newAccount;
+    }
+
+    //SyndReceiver to detect if SyncAdapter is syncing in the background or not
+    public class SyncReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                //do something
+            }
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,6 +43,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_DAYS * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
     //Shortened sync interval for testing
     //public static final long SYNC_INTERVAL = 10;
+    private SharedPreferences mSharedPreferences;
 
     public CycleDataSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -52,6 +54,13 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync Called.");
         Log.d(LOG_TAG, "Account is: "+account+" while authority is: "+authority);
+        //Set shared preferences to show that sync is in progress, when in progress its set to true
+        Log.d(LOG_TAG, "Setting shared prefs sync to true");
+        mSharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = mSharedPreferences.edit();
+        edit.putBoolean(mContext.getString(R.string.syncing), Boolean.TRUE);
+        edit.apply();
+
         syncDatabase();
         return;
     }
@@ -264,6 +273,11 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
         if (accidentJsonArray.length() == 0) {
             Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
             mNoMoreDataToSync = true;
+            //Set syncing shared preference to false
+            Log.d(LOG_TAG, "Setting shared prefs sync to false");
+            SharedPreferences.Editor edit = mSharedPreferences.edit();
+            edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
+            edit.apply();
         } else {
             CycleDbHelper helper = new CycleDbHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
@@ -288,6 +302,11 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
             }
             if (accidentJsonArray.length() < 1000) {
                 mNoMoreDataToSync = true;
+                //Set syncing shared preference to false
+                Log.d(LOG_TAG, "Setting shared prefs sync to false");
+                SharedPreferences.Editor edit = mSharedPreferences.edit();
+                edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
+                edit.apply();
             }
             //Close SQL database object
             db.close();
