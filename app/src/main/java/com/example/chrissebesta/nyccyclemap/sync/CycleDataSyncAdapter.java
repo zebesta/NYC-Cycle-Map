@@ -12,6 +12,7 @@ import android.content.SyncResult;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.chrissebesta.nyccyclemap.R;
@@ -56,7 +57,8 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG, "Account is: "+account+" while authority is: "+authority);
         //Set shared preferences to show that sync is in progress, when in progress its set to true
         Log.d(LOG_TAG, "Setting shared prefs sync to true");
-        mSharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        //mSharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor edit = mSharedPreferences.edit();
         edit.putBoolean(mContext.getString(R.string.syncing), Boolean.TRUE);
         edit.apply();

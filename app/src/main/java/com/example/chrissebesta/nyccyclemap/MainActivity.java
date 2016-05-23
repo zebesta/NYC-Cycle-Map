@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -124,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
-        sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        //sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //set shared preference on change listener
         SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = new
                 SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -204,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
 
                 //update shared preferences for Query when user maps new data
-                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+                //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
 
                 int startingMonth = (Integer.parseInt(leftPinValue)-STARTING_YEAR_OF_DATA)%12+1;
@@ -232,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //update check box and shared preferences for Query when user maps new data
                 injuredCheckedTextView.setChecked(!injuredCheckedTextView.isChecked());
-                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+                //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean(getString(R.string.injuredcyclists), injuredCheckedTextView.isChecked());
                 editor.apply();
@@ -243,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //update check box and shared preferences for Query when user maps new data
                 killedCheckedTextView.setChecked(!killedCheckedTextView.isChecked());
-                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+                //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean(getString(R.string.killedcyclists), killedCheckedTextView.isChecked());
                 editor.apply();
@@ -371,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
         assert mProgressBar != null;
 
         //TODO Use shared preferences to determine to show or not show the loading objects (is htis possible the way I want?)
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.showloading), true);
         editor.commit();
