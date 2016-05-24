@@ -22,5 +22,8 @@
     <string name="main_screen_header">Choose parameters for cycling incidents to map</string>
     <string name="cameraposition">CameraPosition</string>
     <string name="syncing">syncing</string>
+    <string name="datehyphen">-</string>
+    <string name="default_start_date">January 2012</string>
+    <string name="default_end_date">December 2016</string>
 
 </resources>

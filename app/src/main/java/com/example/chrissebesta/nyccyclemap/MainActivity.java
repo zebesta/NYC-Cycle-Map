@@ -106,13 +106,15 @@ public class MainActivity extends AppCompatActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar = progressBar;
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
+        final TextView startDatTextView = (TextView) findViewById(R.id.startDateTextView);
+        final TextView endDateTextView = (TextView) findViewById(R.id.endDateTextView);
         mLoadingText = loadingText;
-        final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
-        TextView startYearTextView = (TextView) findViewById(R.id.startDateTextView);
+        //final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
+        TextView startYearTextView = (TextView) findViewById(R.id.startYearTextView);
         if (startYearTextView != null) {
             startYearTextView.setText(String.valueOf(STARTING_YEAR_OF_DATA));
         }
-        TextView endYearTextView = (TextView) findViewById(R.id.endDateTextView);
+        TextView endYearTextView = (TextView) findViewById(R.id.endYearTextView);
         if (endYearTextView != null) {
             endYearTextView.setText(String.valueOf(endingYearOfData));
         }
@@ -176,12 +178,14 @@ public class MainActivity extends AppCompatActivity {
         final int startingYear = sharedPreferences.getInt(getString(R.string.mindateyear), STARTING_YEAR_OF_DATA);
         final int endingYear = sharedPreferences.getInt(getString(R.string.maxdateyear), endingYearOfData);
         final int startingMonth = sharedPreferences.getInt(getString(R.string.mindatemonth), 1);
-        final int endingMonth = sharedPreferences.getInt(getString(R.string.maxdatemonth), 12);
-        String startingMonthString = new DateFormatSymbols().getMonths()[startingMonth - 1];
-        String endingMonthString = new DateFormatSymbols().getMonths()[endingMonth - 1];
-        final String[] textForYearsToBeMapped = {"" + startingMonthString + " " + startingYear + " - " + endingMonthString + " " + endingYear};
-        assert yearMappingTextView != null;
-        yearMappingTextView.setText(textForYearsToBeMapped[0]);
+        final int endingMonth = sharedPreferences.getInt(getString(R.string.maxdatemonth), endingMonthOfData);
+        final String startingMonthString = new DateFormatSymbols().getMonths()[startingMonth - 1];
+        final String endingMonthString = new DateFormatSymbols().getMonths()[endingMonth - 1];
+        //final String[] textForYearsToBeMapped = {"" + startingMonthString + " " + startingYear + " - " + endingMonthString + " " + endingYear};
+//        assert yearMappingTextView != null;
+//        yearMappingTextView.setText(textForYearsToBeMapped[0]);
+        startDatTextView.setText(""+startingMonthString+" "+startingYear);
+        endDateTextView.setText(""+endingMonthString+" "+endingYear);
 
 
 //        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
@@ -217,13 +221,13 @@ public class MainActivity extends AppCompatActivity {
                 //hack to fix error in material range bar where value can be set to greater than its max or min when dragged funny
                 int rightPinValueInt = Integer.parseInt(rightPinValue);
                 if (rightPinValueInt > tickEnd) {
-                    Log.d(LOG_TAG, "Out of bounds on right pin, rangebar is being set to left pin of " + Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of " + (materialRangeBar.getTickEnd()));
+                    //Log.d(LOG_TAG, "Out of bounds on right pin, rangebar is being set to left pin of " + Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of " + (materialRangeBar.getTickEnd()));
                     rightPinValueInt = (int) tickEnd;
                     materialRangeBar.setRangePinsByValue(Float.parseFloat(materialRangeBar.getLeftPinValue()), materialRangeBar.getTickEnd());
                 }
                 int leftPinValueInt = Integer.parseInt(leftPinValue);
                 if (leftPinValueInt < STARTING_YEAR_OF_DATA) {
-                    Log.d(LOG_TAG, "Out of bounds on left pin, rangebar is being set to left pin of " + Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of " + (materialRangeBar.getTickEnd()));
+                    //Log.d(LOG_TAG, "Out of bounds on left pin, rangebar is being set to left pin of " + Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of " + (materialRangeBar.getTickEnd()));
                     leftPinValueInt = STARTING_YEAR_OF_DATA;
                     materialRangeBar.setRangePinsByValue(materialRangeBar.getTickStart(), Float.parseFloat(materialRangeBar.getRightPinValue()));
                 }
@@ -242,10 +246,12 @@ public class MainActivity extends AppCompatActivity {
                 String startingMonthString = new DateFormatSymbols().getMonths()[startingMonth - 1];
                 String endingMonthString = new DateFormatSymbols().getMonths()[endingMonth - 1];
                 //textForYearsToBeMapped[0] = "Mapping data between " + startingMonth + "-" + startingYear + " and " + endingMonth + "-" + endingYear;
-                textForYearsToBeMapped[0] = "" + startingMonthString + " " + startingYear + " - " + endingMonthString + " " + endingYear;
+                //textForYearsToBeMapped[0] = "" + startingMonthString + " " + startingYear + " - " + endingMonthString + " " + endingYear;
 
 
-                yearMappingTextView.setText(textForYearsToBeMapped[0]);
+                //yearMappingTextView.setText(textForYearsToBeMapped[0]);
+                startDatTextView.setText(""+startingMonthString+" "+startingYear);
+                endDateTextView.setText(""+endingMonthString+" "+endingYear);
                 //editor.commit();
                 //handle preference update in the background so it is less obtrusive to UI thread
                 editor.apply();

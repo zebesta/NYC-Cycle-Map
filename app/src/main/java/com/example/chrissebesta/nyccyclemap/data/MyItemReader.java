@@ -53,14 +53,14 @@ public class MyItemReader {
         int minDateMonth = sharedPreferences.getInt(mContext.getString(R.string.mindatemonth), 0); //default min year is 0
         int maxDateMonth = sharedPreferences.getInt(mContext.getString(R.string.maxdatemonth), 12);
         //first day in selected start month
-        GregorianCalendar startDate = new GregorianCalendar(minDateYear, minDateMonth-1, 1);
+        GregorianCalendar startDate = new GregorianCalendar(minDateYear, minDateMonth - 1, 1);
         //first day in month after selected end month
         GregorianCalendar endDate = new GregorianCalendar(maxDateYear, maxDateMonth, 1);
         //Get comparably formated date so that the database can be queried with the right strings
         String startDateString = new SimpleDateFormat("yyyy-MM-dd").format(startDate.getTime());
         String endDateString = new SimpleDateFormat("yyyy-MM-dd").format(endDate.getTime());
-        Log.d(LOG_TAG, "starting date is: "+startDate.getTime() + " Formated as: "+startDateString);
-        Log.d(LOG_TAG, "ending date is: "+endDate.getTime()+ " Formated as: "+endDateString);
+        Log.d(LOG_TAG, "starting date is: " + startDate.getTime() + " Formated as: " + startDateString);
+        Log.d(LOG_TAG, "ending date is: " + endDate.getTime() + " Formated as: " + endDateString);
         boolean injured = sharedPreferences.getBoolean(mContext.getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(mContext.getString(R.string.killedcyclists), true);
         Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: " + minDateYear + " and " + maxDateYear + " and injured is " + injured + " while killed is " + killed);
@@ -84,12 +84,30 @@ public class MyItemReader {
         Log.d(LOG_TAG, "InjuredArgs is: " + injuredArgs + " and killedArgs is: " + killedArgs);
 
 
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, CycleContract.CycleEntry.COLUMN_DATE+">=? AND "+ CycleContract.CycleEntry.COLUMN_DATE+" <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", null);
-        Toast.makeText(mContext, "Mapping "+cursor.getCount() + " data points!", Toast.LENGTH_SHORT).show();
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + " <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", null);
+        if (cursor.getCount() > 0) {
+            Toast.makeText(mContext, "Mapping " + cursor.getCount() + " data points!", Toast.LENGTH_SHORT).show();
+        } else {
+            //No items to show, test if database is completely empty
+            Cursor totalDbCursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, null, null, null, null, null, null);
+            if (totalDbCursor.getCount() > 0) {
+                Toast toast = Toast.makeText(mContext, "No items to show on map\nUpdate map settings!", Toast.LENGTH_LONG);
+                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                if (v != null) v.setGravity(Gravity.CENTER);
+                toast.show();
+            } else {
+                Toast toast = Toast.makeText(mContext, "Database is empty!\nUpdate data from the settings menu!", Toast.LENGTH_LONG);
+                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                if (v != null) v.setGravity(Gravity.CENTER);
+                toast.show();
+            }
+            totalDbCursor.close();
+
+        }
 //        Toast t = Toast.makeText(mContext, "Mapping "+cursor.getCount() + " data points!", Toast.LENGTH_SHORT);
 //        t.setGravity(Gravity.FILL_HORIZONTAL, t.getXOffset(), t.getYOffset());
 //        t.show();
-        Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE+">=? AND "+CycleContract.CycleEntry.COLUMN_DATE+"<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
+        Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + "<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added
@@ -106,11 +124,6 @@ public class MyItemReader {
 
             //if using cluster manager add :
             //mClusterManager.cluster();
-        }else{
-            Toast toast = Toast.makeText(mContext, "No items to show on map\nUpdate data from the settings menu!", Toast.LENGTH_LONG);
-            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-            if( v != null) v.setGravity(Gravity.CENTER);
-            toast.show();
         }
 
         //close cursor and SQL database
