@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar mProgressBar;
     TextView mLoadingText;
     //Button mInitialButton;
-    RangeBar mMaterialRangeBar;
+    //RangeBar mMaterialRangeBar;
 
     //Shared preferences
     SharedPreferences sharedPreferences;
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             endYearTextView.setText(String.valueOf(endingYearOfData));
         }
         final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
-        mMaterialRangeBar = materialRangeBar;
+        //mMaterialRangeBar = materialRangeBar;
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
         final CheckedTextView killedCheckedTextView = (CheckedTextView) findViewById(R.id.killedCheckedView);
 
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
 //        fetch.mContext = getBaseContext();
         //materialRangeBar.setPinRadius(30);
         //materialRangeBar.setTickHeight(4);
-        float tickEnd = (STARTING_YEAR_OF_DATA + (endingYearOfData - STARTING_YEAR_OF_DATA) * 12f + endingMonthOfData);
+        final float tickEnd = (STARTING_YEAR_OF_DATA + (endingYearOfData - STARTING_YEAR_OF_DATA) * 12f + endingMonthOfData);
         Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
         assert materialRangeBar != null;
         materialRangeBar.setTickEnd(tickEnd);
@@ -217,11 +217,24 @@ public class MainActivity extends AppCompatActivity {
                 //update shared preferences for Query when user maps new data
                 //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
+                //hack to fix error in material range bar where value can be set to greater than its max or min when dragged funny
+                int rightPinValueInt = Integer.parseInt(rightPinValue);
+                if(rightPinValueInt > tickEnd){
+                    Log.d(LOG_TAG, "Out of bounds on right pin, rangebar is being set to left pin of "+Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of "+ (materialRangeBar.getTickEnd()));
+                    rightPinValueInt = (int) tickEnd;
+                    materialRangeBar.setRangePinsByValue(Float.parseFloat(materialRangeBar.getLeftPinValue()), materialRangeBar.getTickEnd());
+                }
+                int leftPinValueInt = Integer.parseInt(leftPinValue);
+                if(leftPinValueInt < STARTING_YEAR_OF_DATA){
+                    Log.d(LOG_TAG, "Out of bounds on left pin, rangebar is being set to left pin of "+Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of "+ (materialRangeBar.getTickEnd()));
+                    leftPinValueInt = STARTING_YEAR_OF_DATA;
+                    materialRangeBar.setRangePinsByValue(materialRangeBar.getTickStart(), Float.parseFloat(materialRangeBar.getRightPinValue()));
+                }
 
-                int startingMonth = (Integer.parseInt(leftPinValue) - STARTING_YEAR_OF_DATA) % 12 + 1;
-                int endingMonth = (Integer.parseInt(rightPinValue) - STARTING_YEAR_OF_DATA) % 12 + 1;
-                int startingYear = (Integer.parseInt(leftPinValue) - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
-                int endingYear = (Integer.parseInt(rightPinValue) - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
+                int startingMonth = (leftPinValueInt - STARTING_YEAR_OF_DATA) % 12 + 1;
+                int endingMonth = (rightPinValueInt - STARTING_YEAR_OF_DATA) % 12 + 1;
+                int startingYear = (leftPinValueInt - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
+                int endingYear = (rightPinValueInt - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
                 //Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth +"and" +endingMonth);
                 //Log.d("RANGEBAR", "starting year and ending year are: " + startingYear +"and" +endingYear);
                 editor.putInt(getString(R.string.mindateyear), startingYear);
