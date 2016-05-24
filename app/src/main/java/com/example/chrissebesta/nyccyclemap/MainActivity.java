@@ -6,8 +6,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,15 +17,10 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.appyvet.rangebar.RangeBar;
-import com.example.chrissebesta.nyccyclemap.data.CycleContract;
-import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
 import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,14 +64,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                //TODO make a settings activity to set the sync frequency and anything else that makes sense
-                Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.action_settings:
+//                //TODO make a settings activity to set the sync frequency and anything else that makes sense
+//                Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
+//                return true;
             case R.id.update_settings:
                 //update the NYC cycle data dababase
                 Log.d(LOG_TAG, "Syncing immediately");
-                Toast.makeText(MainActivity.this, "Updating data in background!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Updating data in background!", Toast.LENGTH_SHORT).show();
                 CycleDataSyncAdapter.syncImmediately(getApplicationContext());
                 return true;
             case R.id.about_settings:
@@ -106,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         //Button refreshButton = (Button) findViewById(R.id.refreshbutton);
         //Button initialDataButton = (Button) findViewById(R.id.initialDataButton);
         //mInitialButton = initialDataButton;
-        Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
+        //Button clearSqlDb = (Button) findViewById(R.id.clearSQL);
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar = progressBar;
@@ -315,19 +308,19 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
 
-        assert clearSqlDb != null;
-        clearSqlDb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-                SQLiteDatabase db = helper.getWritableDatabase();
-                db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-                Log.d(LOG_TAG, "Clearing Database");
-
-                //close SQL Database
-                db.close();
-            }
-        });
+//        assert clearSqlDb != null;
+//        clearSqlDb.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+//                SQLiteDatabase db = helper.getWritableDatabase();
+//                db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+//                Log.d(LOG_TAG, "Clearing Database");
+//
+//                //close SQL Database
+//                db.close();
+//            }
+//        });
 
         assert mapDatabase != null;
         mapDatabase.setOnClickListener(new View.OnClickListener() {
@@ -354,56 +347,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //TODO should actually sort by Unique Number here so that even older queries are properly pulled
-    private void fetchUpdatedCycleData() {
-        //get Last unique number in current SQL database
-        CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
-        int lastUniqueNumberInDB = 0;
-
-        //get most recent unique number currently stored in the database, only column necessary is date
-        String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
-        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
-        if (cursor.moveToFirst()) {
-            lastUniqueNumberInDB = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
-        }
-
-        Log.d(LOG_TAG, "Last unique key number in the database is: " + lastUniqueNumberInDB);
-        //Close SQL database
-        db.close();
-
-        final FetchCycleDataTask fetch = new FetchCycleDataTask();
-        //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
-        //Pass UI effecting variable to the Asyc task
-        fetch.mContext = getBaseContext();
-        fetch.mProgressBar = mProgressBar;
-        fetch.mTextView = mLoadingText;
-        try {
-            //URL for both injured and killed cyclists
-            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastUniqueNumberInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
-            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB + "&$order=unique_key%20ASC");
-            Log.d(LOG_TAG, "The URL being used now is: " + fetch.mUrlCycleData);
-            //URL for only killed cyclists (useful for testing as it is much much faster)
-            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        fetch.execute();
-        Log.d("FETCH", "Fetching cycle data with unique key greater than: " + lastUniqueNumberInDB);
-        assert mProgressBar != null;
-
-        //TODO Use shared preferences to determine to show or not show the loading objects (is htis possible the way I want?)
-        //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(getString(R.string.showloading), true);
-        editor.commit();
-        mProgressBar.setVisibility(View.VISIBLE);
-        mLoadingText.setVisibility(View.VISIBLE);
-
-
-    }
+//    private void fetchUpdatedCycleData() {
+//        //get Last unique number in current SQL database
+//        CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+//        SQLiteDatabase db = helper.getWritableDatabase();
+//        int lastUniqueNumberInDB = 0;
+//
+//        //get most recent unique number currently stored in the database, only column necessary is date
+//        String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
+//        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
+//        if (cursor.moveToFirst()) {
+//            lastUniqueNumberInDB = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
+//        }
+//
+//        Log.d(LOG_TAG, "Last unique key number in the database is: " + lastUniqueNumberInDB);
+//        //Close SQL database
+//        db.close();
+//
+//        final FetchCycleDataTask fetch = new FetchCycleDataTask();
+//        //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
+//        //Pass UI effecting variable to the Asyc task
+//        fetch.mContext = getBaseContext();
+//        fetch.mProgressBar = mProgressBar;
+//        fetch.mTextView = mLoadingText;
+//        try {
+//            //URL for both injured and killed cyclists
+//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastUniqueNumberInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
+//            fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB + "&$order=unique_key%20ASC");
+//            Log.d(LOG_TAG, "The URL being used now is: " + fetch.mUrlCycleData);
+//            //URL for only killed cyclists (useful for testing as it is much much faster)
+//            //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
+//
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        fetch.execute();
+//        Log.d("FETCH", "Fetching cycle data with unique key greater than: " + lastUniqueNumberInDB);
+//        assert mProgressBar != null;
+//
+//        //TODO Use shared preferences to determine to show or not show the loading objects (is this possible the way I want?)
+//        //SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putBoolean(getString(R.string.showloading), true);
+//        editor.commit();
+//        mProgressBar.setVisibility(View.VISIBLE);
+//        mLoadingText.setVisibility(View.VISIBLE);
+//
+//
+//    }
 
 
     /**

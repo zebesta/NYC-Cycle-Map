@@ -26,11 +26,11 @@
     <!--android:layout_height="wrap_content"-->
     <!--android:text="Brooklyn" />-->
 
-    <Button
-        android:id="@+id/clearSQL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear SQL DB" />
+    <!--<Button-->
+        <!--android:id="@+id/clearSQL"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Clear SQL DB" />-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
