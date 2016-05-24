@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.appyvet.rangebar.RangeBar;
 import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -133,24 +134,24 @@ public class MainActivity extends AppCompatActivity {
         }
         //set shared preference on change mListener
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-                    @Override
-                    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                                          String key) {
-                        // your stuff here
-                        Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: " + key);
-                        if (key == getString(R.string.syncing)) {
-                            //Update the view to show the user whether new data is being loaded in the background or not
-                            Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
-                            if (showSyncing) {
-                                mProgressBar.setVisibility(View.VISIBLE);
-                                mLoadingText.setVisibility(View.VISIBLE);
-                            } else {
-                                mProgressBar.setVisibility(View.GONE);
-                                mLoadingText.setVisibility(View.GONE);
-                            }
-                        }
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                                  String key) {
+                // your stuff here
+                Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: " + key);
+                if (key == getString(R.string.syncing)) {
+                    //Update the view to show the user whether new data is being loaded in the background or not
+                    Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
+                    if (showSyncing) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mLoadingText.setVisibility(View.VISIBLE);
+                    } else {
+                        mProgressBar.setVisibility(View.GONE);
+                        mLoadingText.setVisibility(View.GONE);
                     }
-                };
+                }
+            }
+        };
         sharedPreferences.registerOnSharedPreferenceChangeListener(mListener);
         boolean injured = sharedPreferences.getBoolean(getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
@@ -176,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
         final int endingYear = sharedPreferences.getInt(getString(R.string.maxdateyear), endingYearOfData);
         final int startingMonth = sharedPreferences.getInt(getString(R.string.mindatemonth), 1);
         final int endingMonth = sharedPreferences.getInt(getString(R.string.maxdatemonth), 12);
-        final String[] textForYearsToBeMapped = {"Mapping data between " + startingMonth + "-" + startingYear + " and " + endingMonth + "-" + endingYear};
+        String startingMonthString = new DateFormatSymbols().getMonths()[startingMonth - 1];
+        String endingMonthString = new DateFormatSymbols().getMonths()[endingMonth - 1];
+        final String[] textForYearsToBeMapped = {"" + startingMonthString + " " + startingYear + " - " + endingMonthString + " " + endingYear};
         assert yearMappingTextView != null;
         yearMappingTextView.setText(textForYearsToBeMapped[0]);
 
@@ -213,14 +216,14 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 //hack to fix error in material range bar where value can be set to greater than its max or min when dragged funny
                 int rightPinValueInt = Integer.parseInt(rightPinValue);
-                if(rightPinValueInt > tickEnd){
-                    Log.d(LOG_TAG, "Out of bounds on right pin, rangebar is being set to left pin of "+Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of "+ (materialRangeBar.getTickEnd()));
+                if (rightPinValueInt > tickEnd) {
+                    Log.d(LOG_TAG, "Out of bounds on right pin, rangebar is being set to left pin of " + Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of " + (materialRangeBar.getTickEnd()));
                     rightPinValueInt = (int) tickEnd;
                     materialRangeBar.setRangePinsByValue(Float.parseFloat(materialRangeBar.getLeftPinValue()), materialRangeBar.getTickEnd());
                 }
                 int leftPinValueInt = Integer.parseInt(leftPinValue);
-                if(leftPinValueInt < STARTING_YEAR_OF_DATA){
-                    Log.d(LOG_TAG, "Out of bounds on left pin, rangebar is being set to left pin of "+Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of "+ (materialRangeBar.getTickEnd()));
+                if (leftPinValueInt < STARTING_YEAR_OF_DATA) {
+                    Log.d(LOG_TAG, "Out of bounds on left pin, rangebar is being set to left pin of " + Float.parseFloat(materialRangeBar.getLeftPinValue()) + " and a right pin of " + (materialRangeBar.getTickEnd()));
                     leftPinValueInt = STARTING_YEAR_OF_DATA;
                     materialRangeBar.setRangePinsByValue(materialRangeBar.getTickStart(), Float.parseFloat(materialRangeBar.getRightPinValue()));
                 }
@@ -236,8 +239,12 @@ public class MainActivity extends AppCompatActivity {
                 editor.putInt(getString(R.string.mindatemonth), startingMonth);
                 editor.putInt(getString(R.string.maxdatemonth), endingMonth);
                 //Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
+                String startingMonthString = new DateFormatSymbols().getMonths()[startingMonth - 1];
+                String endingMonthString = new DateFormatSymbols().getMonths()[endingMonth - 1];
+                //textForYearsToBeMapped[0] = "Mapping data between " + startingMonth + "-" + startingYear + " and " + endingMonth + "-" + endingYear;
+                textForYearsToBeMapped[0] = "" + startingMonthString + " " + startingYear + " - " + endingMonthString + " " + endingYear;
 
-                textForYearsToBeMapped[0] = "Mapping data between " + startingMonth + "-" + startingYear + " and " + endingMonth + "-" + endingYear;
+
                 yearMappingTextView.setText(textForYearsToBeMapped[0]);
                 //editor.commit();
                 //handle preference update in the background so it is less obtrusive to UI thread

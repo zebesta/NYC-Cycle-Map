@@ -139,7 +139,9 @@
         android:id="@+id/mapDatabase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Map Databse" />
+        android:text="View mapped data"
+        android:padding="10dp"
+        android:layout_gravity="center"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
