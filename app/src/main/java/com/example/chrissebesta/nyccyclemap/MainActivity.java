@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appyvet.rangebar.RangeBar;
 import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
@@ -326,6 +327,11 @@ public class MainActivity extends AppCompatActivity {
         mapDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Show user that map is loading while datapoints are being populated on the UI thread (can be time consuming for larger sets)
+                Toast.makeText(MainActivity.this, "Loading map....", Toast.LENGTH_SHORT).show();
+//                Toast t = Toast.makeText(MainActivity.this, "Loading map...", Toast.LENGTH_SHORT);
+//                t.setGravity(Gravity.FILL_HORIZONTAL, t.getXOffset(), t.getYOffset());
+//                t.show();
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(intent);
             }
