@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class MyItemReader {
 
 
         //get min and max date from shared Preferences
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         int minDateYear = sharedPreferences.getInt(mContext.getString(R.string.mindateyear), 0); //default min year is 0
         int maxDateYear = sharedPreferences.getInt(mContext.getString(R.string.maxdateyear), 3000);//default max year is 3000
         int minDateMonth = sharedPreferences.getInt(mContext.getString(R.string.mindatemonth), 0); //default min year is 0

@@ -129,6 +129,14 @@ public class MainActivity extends AppCompatActivity {
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
         //sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        //If sync is already in progress when on create is called (unlikely but possible to force) show loading views and ensure syncing is happening
+        //this will trigger if app was killed while it was loading cycle data
+        Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
+        if (showSyncing) {
+            CycleDataSyncAdapter.syncImmediately(getApplicationContext());
+            mProgressBar.setVisibility(View.VISIBLE);
+            mLoadingText.setVisibility(View.VISIBLE);
+        }
         //set shared preference on change mListener
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                     @Override
