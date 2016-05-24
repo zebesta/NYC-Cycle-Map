@@ -285,6 +285,7 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
             SQLiteDatabase db = helper.getWritableDatabase();
 
             Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
+            db.beginTransaction();
             for (int i = 0; i < accidentJsonArray.length(); i++) {
                 String arrayData = accidentJsonArray.getString(i);
                 ContentValues contentValues = new ContentValues();
@@ -302,6 +303,8 @@ public class CycleDataSyncAdapter extends AbstractThreadedSyncAdapter {
                 contentValues.clear();
 
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
             if (accidentJsonArray.length() < 1000) {
                 mNoMoreDataToSync = true;
                 //Set syncing shared preference to false
