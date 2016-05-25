@@ -7,6 +7,11 @@
         <!--android:title="@string/action_settings"-->
         <!--app:showAsAction="never" />-->
     <item
+        android:id="@+id/clear_database_settings"
+        android:orderInCategory="101"
+        android:title="@string/clear_database"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/update_settings"
         android:orderInCategory="101"
         android:title="@string/update_settings"

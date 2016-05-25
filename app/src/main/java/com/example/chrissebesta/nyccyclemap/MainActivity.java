@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appyvet.rangebar.RangeBar;
+import com.example.chrissebesta.nyccyclemap.data.CycleContract;
+import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
 import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
 import java.text.DateFormatSymbols;
@@ -70,6 +73,16 @@ public class MainActivity extends AppCompatActivity {
 //                //TODO make a settings activity to set the sync frequency and anything else that makes sense
 //                Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
 //                return true;
+            //Clear the database from the settings menu
+            case R.id.clear_database_settings:
+                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+                SQLiteDatabase db = helper.getWritableDatabase();
+                db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+                Log.d(LOG_TAG, "Clearing Database");
+
+                //close SQL Database
+                db.close();
+                return true;
             case R.id.update_settings:
                 //update the NYC cycle data dababase
                 Log.d(LOG_TAG, "Syncing immediately");
