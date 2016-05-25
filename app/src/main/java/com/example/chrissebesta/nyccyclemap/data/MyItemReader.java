@@ -119,7 +119,8 @@ public class MyItemReader {
                 items.add(new MyItem(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)),
                         cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)),
                         cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE)),
-                        killedBoolean));
+                        killedBoolean,
+                        cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY))));
             } while (cursor.moveToNext());
 
             //if using cluster manager add :

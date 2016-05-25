@@ -35,6 +35,7 @@ public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
 
         }
         markerOptions.title(item.date);
+        markerOptions.snippet(String.valueOf(item.uniqueId));
     }
 //
 //    @Override

@@ -28,11 +28,13 @@ public class MyItem implements ClusterItem {
     private final LatLng mPosition;
     public final String date;
     public final boolean killed;
+    public final int uniqueId;
 
-    public MyItem(double lat, double lng, String date, boolean killed) {
+    public MyItem(double lat, double lng, String date, boolean killed, int uniqueId) {
         mPosition = new LatLng(lat, lng);
         this.date = date;
         this.killed = killed;
+        this.uniqueId = uniqueId;
     }
 
     @Override
