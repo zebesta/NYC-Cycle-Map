@@ -9,6 +9,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by chrissebesta on 4/27/16.
  * Custom bike cluster renderer to allow for unique icons while using the default cluster renderer to handlt the clustering
@@ -34,8 +39,19 @@ public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
 
         }
-        markerOptions.title(item.date);
-        markerOptions.snippet(String.valueOf(item.uniqueId));
+        String inputDateStr = item.date;
+        //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
+        Date date = null;
+        try {
+            date = inputFormat.parse(inputDateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String outputDateStr = outputFormat.format(date);
+        markerOptions.title(outputDateStr);
+        markerOptions.snippet("Click for more info.......\nID: "+String.valueOf(item.uniqueId));
     }
 //
 //    @Override

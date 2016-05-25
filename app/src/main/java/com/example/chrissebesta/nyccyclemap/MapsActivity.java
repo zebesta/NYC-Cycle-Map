@@ -1,7 +1,10 @@
 package com.example.chrissebesta.nyccyclemap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
 import com.example.chrissebesta.nyccyclemap.data.MyItem;
@@ -12,11 +15,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements
+        GoogleMap.OnInfoWindowClickListener,
+        OnMapReadyCallback {
     private ClusterManager<MyItem> mClusterManager;
     public final String LOG_TAG = MapsActivity.class.getSimpleName();
 
@@ -63,7 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mSavedCameraPosition != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mSavedCameraPosition));
         } else {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 14));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 8));
         }
 
         mClusterManager = new ClusterManager<MyItem>(this, mMap);
@@ -71,9 +77,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(this);
 
 
         readItems();
 
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        String snippetString = marker.getSnippet();
+        String intValueString = snippetString.replaceAll("[^0-9]", "");
+        int intValue = Integer.parseInt(intValueString);
+        Log.d(LOG_TAG, "The intValueString is: "+intValueString+" and the inValue is: "+intValue+" and the snippet string is: "+snippetString);
+        Toast.makeText(this, "Info window clicked, ID = "+intValueString,
+                Toast.LENGTH_SHORT).show();
+        Log.d(LOG_TAG, "Info window has been clicked!");
+        Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+        intent.putExtra(getString(R.string.unique_id_extra_key), intValue);
+        startActivity(intent);
     }
 }
