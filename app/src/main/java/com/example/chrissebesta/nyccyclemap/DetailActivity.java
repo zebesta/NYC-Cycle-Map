@@ -6,6 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.chrissebesta.nyccyclemap.data.FetchDetailsData;
+
 public class DetailActivity extends AppCompatActivity {
     public final String LOG_TAG = DetailActivity.class.getSimpleName();
 
@@ -25,6 +27,7 @@ public class DetailActivity extends AppCompatActivity {
         if (textView != null) {
             textView.setText("" + uniqueId);
         }
+        new FetchDetailsData().execute(new Integer(uniqueId));
     }
 
 }
