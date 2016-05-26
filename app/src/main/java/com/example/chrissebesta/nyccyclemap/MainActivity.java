@@ -197,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
         //final String[] textForYearsToBeMapped = {"" + startingMonthString + " " + startingYear + " - " + endingMonthString + " " + endingYear};
 //        assert yearMappingTextView != null;
 //        yearMappingTextView.setText(textForYearsToBeMapped[0]);
-        startDatTextView.setText(""+startingMonthString+" "+startingYear);
-        endDateTextView.setText(""+endingMonthString+" "+endingYear);
+        startDatTextView.setText("" + startingMonthString + " " + startingYear);
+        endDateTextView.setText("" + endingMonthString + " " + endingYear);
 
 
 //        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
@@ -222,7 +222,15 @@ public class MainActivity extends AppCompatActivity {
         materialRangeBar.setPinRadius(0);
         materialRangeBar.setDrawTicks(false);
         materialRangeBar.setTemporaryPins(false);
-
+        //set range bar values from preferences after checking they are within range
+        float leftPinValueFromPref = STARTING_YEAR_OF_DATA + (startingYear - STARTING_YEAR_OF_DATA) * 12f + startingMonth;
+        float rightPinValueFromPref = STARTING_YEAR_OF_DATA + (endingYearOfData - STARTING_YEAR_OF_DATA) * 12f + endingMonth;
+        if(leftPinValueFromPref>=materialRangeBar.getTickStart() && rightPinValueFromPref <= materialRangeBar.getTickEnd()) {
+            materialRangeBar.setRangePinsByValue(leftPinValueFromPref, rightPinValueFromPref);
+            materialRangeBar.refreshDrawableState();
+        }else{
+            Log.d(LOG_TAG, "Preferences were out of the range bars allowable range! Trying to set to " + leftPinValueFromPref + " and "+rightPinValueFromPref + " while the range is between "+ materialRangeBar.getTickStart()+ " and "+ materialRangeBar.getTickEnd());
+        }
         //Listen to user settings for the range bar here
         materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
@@ -263,8 +271,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //yearMappingTextView.setText(textForYearsToBeMapped[0]);
-                startDatTextView.setText(""+startingMonthString+" "+startingYear);
-                endDateTextView.setText(""+endingMonthString+" "+endingYear);
+                startDatTextView.setText("" + startingMonthString + " " + startingYear);
+                endDateTextView.setText("" + endingMonthString + " " + endingYear);
                 //editor.commit();
                 //handle preference update in the background so it is less obtrusive to UI thread
                 editor.apply();

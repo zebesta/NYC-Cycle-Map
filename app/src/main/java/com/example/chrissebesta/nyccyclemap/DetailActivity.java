@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -19,11 +21,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 public class DetailActivity extends AppCompatActivity {
     public final String LOG_TAG = DetailActivity.class.getSimpleName();
     TextView textView;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,7 @@ public class DetailActivity extends AppCompatActivity {
         if (textView != null) {
             textView.setText("" + uniqueId);
         }
+        progressBar = (ProgressBar) findViewById(R.id.detail_activity_progressbar);
         FetchDetailsData fetch = new FetchDetailsData();
         new FetchDetailsData().execute(new Integer(uniqueId));
     }
@@ -111,7 +119,10 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
             textView.setText(s);
+            progressBar.setVisibility(View.GONE);
+            textView.setVisibility(View.VISIBLE);
         }
 
         public String getCycleDataFromJson(String cycleDataJsonString) throws JSONException {
@@ -129,8 +140,29 @@ public class DetailActivity extends AppCompatActivity {
                         String key = iter.next();
                         try {
                             Object value = accident.get(key);
+                            //ignore location value to display to user, this is repeated info
+                            if(!key.contains("location")) {
+                                //If it is a date, format it
+                                if(key.contains("date")){
+                                    String inputDateStr = (String) value;
+                                    //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
+                                    DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                                    DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
+                                    Date date = null;
+                                    try {
+                                        date = inputFormat.parse(inputDateStr);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    String outputDateStr = outputFormat.format(date);
+                                    value = outputDateStr;
+
+                                }
+                                //replace underscored with spaces to make keys readable
+                                key = key.replace("_", " ");
+                                result = result + key + ": " + value + "\n";
+                            }
                             Log.d(LOG_TAG, "The key is: "+key+ " and the value is: "+value);
-                            result = result + key+": "+value+"\n";
                         } catch (JSONException e) {
                             // Something went wrong!
                         }

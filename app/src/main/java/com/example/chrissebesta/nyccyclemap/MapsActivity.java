@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
 import com.example.chrissebesta.nyccyclemap.data.MyItem;
@@ -89,9 +88,9 @@ public class MapsActivity extends FragmentActivity implements
         String snippetString = marker.getSnippet();
         String intValueString = snippetString.replaceAll("[^0-9]", "");
         int intValue = Integer.parseInt(intValueString);
-        Log.d(LOG_TAG, "The intValueString is: "+intValueString+" and the inValue is: "+intValue+" and the snippet string is: "+snippetString);
-        Toast.makeText(this, "Info window clicked, ID = "+intValueString,
-                Toast.LENGTH_SHORT).show();
+        Log.d(LOG_TAG, "The intValueString is: " + intValueString + " and the inValue is: " + intValue + " and the snippet string is: " + snippetString);
+//        Toast.makeText(this, "Info window clicked, ID = " + intValueString,
+//                Toast.LENGTH_SHORT).show();
         Log.d(LOG_TAG, "Info window has been clicked!");
         Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
         intent.putExtra(getString(R.string.unique_id_extra_key), intValue);

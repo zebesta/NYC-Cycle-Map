@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">NYC Cycle Map</string>
     <string name="title_activity_maps">Map</string>
-    <string name="maxdateyear">maxdate</string>
-    <string name="mindateyear">mindate</string>
+    <string name="maxdateyear">maxdateyear</string>
+    <string name="mindateyear">mindateyear</string>
     <string name="sharedpreference">sharedpreference</string>
     <string name="killedcyclists">Killed cyclists</string>
     <string name="injuredcyclists">Injured cyclists</string>

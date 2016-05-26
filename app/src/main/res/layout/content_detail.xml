@@ -11,9 +11,16 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.chrissebesta.nyccyclemap.DetailActivity"
     tools:showIn="@layout/activity_detail">
+    <ProgressBar
+        android:id="@+id/detail_activity_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:foregroundGravity="center"/>
     <TextView
         android:id="@+id/detail_activity_text_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </RelativeLayout>
