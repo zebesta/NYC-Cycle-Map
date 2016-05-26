@@ -6,8 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.chrissebesta.nyccyclemap.details.Detail;
+import com.example.chrissebesta.nyccyclemap.details.DetailAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,13 +28,18 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
 public class DetailActivity extends AppCompatActivity {
     public final String LOG_TAG = DetailActivity.class.getSimpleName();
-    TextView textView;
+    //TextView textView;
     ProgressBar progressBar;
+    ListView detailsListView;
+    ArrayList<Detail> details = new ArrayList<Detail>();
+    DetailAdapter detailAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +53,13 @@ public class DetailActivity extends AppCompatActivity {
         //get unique ID from intent
         int uniqueId = getIntent().getIntExtra(getString(R.string.unique_id_extra_key), 0);
         Log.d(LOG_TAG, "The unique ID is: "+uniqueId);
-        textView = (TextView) findViewById(R.id.detail_activity_text_view);
-        if (textView != null) {
-            textView.setText("" + uniqueId);
-        }
+//        textView = (TextView) findViewById(R.id.detail_activity_text_view);
+//        if (textView != null) {
+//            textView.setText("" + uniqueId);
+//        }
         progressBar = (ProgressBar) findViewById(R.id.detail_activity_progressbar);
+        detailAdapter = new DetailAdapter(this, details);
+        detailsListView = (ListView) findViewById(R.id.detail_activity_list_view);
         FetchDetailsData fetch = new FetchDetailsData();
         new FetchDetailsData().execute(new Integer(uniqueId));
     }
@@ -120,9 +131,13 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            textView.setText(s);
+            //textView.setText(s);
             progressBar.setVisibility(View.GONE);
-            textView.setVisibility(View.VISIBLE);
+            //textView.setVisibility(View.VISIBLE);
+            detailsListView.setAdapter(detailAdapter);
+            Log.d(LOG_TAG, "The size of the details array is: " + details.size());
+            Log.d(LOG_TAG, "The size of the list view count is: "+detailsListView.getAdapter().getCount());
+
         }
 
         public String getCycleDataFromJson(String cycleDataJsonString) throws JSONException {
@@ -161,6 +176,7 @@ public class DetailActivity extends AppCompatActivity {
                                 //replace underscored with spaces to make keys readable
                                 key = key.replace("_", " ");
                                 result = result + key + ": " + value + "\n";
+                                details.add(new Detail(key, (String) value));
                             }
                             Log.d(LOG_TAG, "The key is: "+key+ " and the value is: "+value);
                         } catch (JSONException e) {
