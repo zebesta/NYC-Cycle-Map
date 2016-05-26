@@ -26,7 +26,7 @@
     <string name="default_start_date">January 2012</string>
     <string name="default_end_date">December 2016</string>
     <string name="clear_database">Clear database</string>
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">Details</string>
     <string name="unique_id_extra_key">UniqueID</string>
 
 </resources>

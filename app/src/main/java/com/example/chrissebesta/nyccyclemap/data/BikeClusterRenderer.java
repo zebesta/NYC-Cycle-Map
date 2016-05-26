@@ -51,7 +51,7 @@ public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
         }
         String outputDateStr = outputFormat.format(date);
         markerOptions.title(outputDateStr);
-        markerOptions.snippet("Click for more info.......\nID: "+String.valueOf(item.uniqueId));
+        markerOptions.snippet("Click for more info.....\nID: "+String.valueOf(item.uniqueId));
     }
 //
 //    @Override

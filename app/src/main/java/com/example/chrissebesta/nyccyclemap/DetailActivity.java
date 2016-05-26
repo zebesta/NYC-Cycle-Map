@@ -32,6 +32,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+/**
+ * Detail acitivity to pull the details around the specific accident selected by the user from the maps view and show them to the user
+ * This creates a JSON request from the NYC Open Data for the specific Unique Key already found and selected
+ * The activity uses an Async task to avoid insturrupting the UI thread and pulls the JSON agnostically
+ * The keys and values from the JSON array is then displayed to the user using the detail and detail array adpater classes
+ */
 public class DetailActivity extends AppCompatActivity {
     public final String LOG_TAG = DetailActivity.class.getSimpleName();
     //TextView textView;
@@ -154,12 +160,12 @@ public class DetailActivity extends AppCompatActivity {
                     while (iter.hasNext()) {
                         String key = iter.next();
                         try {
-                            Object value = accident.get(key);
+                            String value = accident.get(key).toString();
                             //ignore location value to display to user, this is repeated info
                             if(!key.contains("location")) {
                                 //If it is a date, format it
                                 if(key.contains("date")){
-                                    String inputDateStr = (String) value;
+                                    String inputDateStr = value;
                                     //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
                                     DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
                                     DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -176,7 +182,9 @@ public class DetailActivity extends AppCompatActivity {
                                 //replace underscored with spaces to make keys readable
                                 key = key.replace("_", " ");
                                 result = result + key + ": " + value + "\n";
-                                details.add(new Detail(key, (String) value));
+                                key = key.toUpperCase();
+                                value= value.toLowerCase();
+                                details.add(new Detail(key, value));
                             }
                             Log.d(LOG_TAG, "The key is: "+key+ " and the value is: "+value);
                         } catch (JSONException e) {
