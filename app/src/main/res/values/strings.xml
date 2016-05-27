@@ -19,7 +19,7 @@
     <string name="pref_previously_started">previouslystarted</string>
     <string name="mindatemonth">mindatemonth</string>
     <string name="maxdatemonth">maxdatemonth</string>
-    <string name="main_screen_header">Choose parameters for cycling incidents to map</string>
+    <string name="main_screen_header">Choose map settings</string>
     <string name="cameraposition">CameraPosition</string>
     <string name="syncing">syncing</string>
     <string name="datehyphen">-</string>

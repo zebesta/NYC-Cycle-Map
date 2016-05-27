@@ -175,7 +175,7 @@
         android:id="@+id/mapDatabase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View mapped data"
+        android:text="View on map"
         android:padding="10dp"
         android:layout_gravity="center"/>
 
