@@ -383,6 +383,8 @@ public class MainActivity extends AppCompatActivity {
         ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
         CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
 
+        //TODO ensure that this fix is actually making the update work right away
+        //Could use FetchCycleData for the first update and then set the cycle data sync adapter later
         CycleDataSyncAdapter.syncImmediately(getApplicationContext());
 
     }
