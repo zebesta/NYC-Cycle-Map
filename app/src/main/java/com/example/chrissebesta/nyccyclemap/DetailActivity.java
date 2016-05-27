@@ -161,8 +161,8 @@ public class DetailActivity extends AppCompatActivity {
                         String key = iter.next();
                         try {
                             String value = accident.get(key).toString();
-                            //ignore location value to display to user, this is repeated info
-                            if(!key.contains("location")) {
+                            //ignore location, lat, long, and unique key value to display to user, this is repeated info
+                            if(!key.contains("location")&&!key.contains("unique_key")&&!key.contains("latitude")&&!key.contains("longitude")) {
                                 //If it is a date, format it
                                 if(key.contains("date")){
                                     String inputDateStr = value;
