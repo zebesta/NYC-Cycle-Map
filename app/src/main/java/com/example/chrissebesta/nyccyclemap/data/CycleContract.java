@@ -27,7 +27,7 @@ public class CycleContract {
     // looking at weather data. content://com.example.android.sunshine.app/givemeroot/ will fail,
     // as the ContentProvider hasn't been given any information on what to do with "givemeroot".
     // At least, let's hope not.  Don't be that dev, reader.  Don't be that dev.
-    public static final String PATH_GEO = "geo";
+    public static final String PATH_CYCLE = "cycle";
 
 
     public CycleContract() {
@@ -80,11 +80,11 @@ public class CycleContract {
         public static final String COLUMN_LOCATION_STATE = "location_state";
 
         public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_GEO).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_CYCLE).build();
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GEO;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CYCLE;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GEO;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CYCLE;
 
         public static Uri buildGeoUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
