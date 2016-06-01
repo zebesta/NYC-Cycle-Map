@@ -222,15 +222,18 @@ public class MainActivity extends AppCompatActivity {
         materialRangeBar.setPinRadius(0);
         materialRangeBar.setDrawTicks(false);
         materialRangeBar.setTemporaryPins(false);
+        materialRangeBar.setRangePinsByValue(calculateStartPosition(startingYear, startingMonth), calculateEndPosition(endingYear, endingMonth));
         //set range bar values from preferences after checking they are within range
-        float leftPinValueFromPref = STARTING_YEAR_OF_DATA + (startingYear - STARTING_YEAR_OF_DATA) * 12f + startingMonth;
-        float rightPinValueFromPref = STARTING_YEAR_OF_DATA + (endingYearOfData - STARTING_YEAR_OF_DATA) * 12f + endingMonth;
-        if(leftPinValueFromPref>=materialRangeBar.getTickStart() && rightPinValueFromPref <= materialRangeBar.getTickEnd()) {
-            materialRangeBar.setRangePinsByValue(leftPinValueFromPref, rightPinValueFromPref);
-            materialRangeBar.refreshDrawableState();
-        }else{
-            Log.d(LOG_TAG, "Preferences were out of the range bars allowable range! Trying to set to " + leftPinValueFromPref + " and "+rightPinValueFromPref + " while the range is between "+ materialRangeBar.getTickStart()+ " and "+ materialRangeBar.getTickEnd());
-        }
+//        float leftPinValueFromPref = STARTING_YEAR_OF_DATA + (startingYear - STARTING_YEAR_OF_DATA) * 12f + startingMonth;
+//        float rightPinValueFromPref = STARTING_YEAR_OF_DATA + (endingYearOfData - STARTING_YEAR_OF_DATA) * 12f + endingMonth;
+//        if(leftPinValueFromPref>=materialRangeBar.getTickStart() && rightPinValueFromPref <= materialRangeBar.getTickEnd()) {
+//            materialRangeBar.setRangePinsByValue(leftPinValueFromPref, rightPinValueFromPref);
+//            materialRangeBar.refreshDrawableState();
+//            materialRangeBar.invalidate();
+//        }else{
+//            Log.d(LOG_TAG, "Preferences were out of the range bars allowable range! Trying to set to " + leftPinValueFromPref + " and "+rightPinValueFromPref + " while the range is between "+ materialRangeBar.getTickStart()+ " and "+ materialRangeBar.getTickEnd());
+//        }
+
         //Listen to user settings for the range bar here
         materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
@@ -479,5 +482,18 @@ public class MainActivity extends AppCompatActivity {
              */
         }
         return newAccount;
+    }
+
+    private float calculateStartPosition(int minDateYear, int minDateMonth) {
+        float startPosition;
+        startPosition = (float) (STARTING_YEAR_OF_DATA + (minDateYear - STARTING_YEAR_OF_DATA) * 12 + minDateMonth-1);
+        return startPosition;
+
+    }
+
+    private float calculateEndPosition(int maxDateYear, int maxDateMonth) {
+        float endPosition;
+        endPosition = (float) (STARTING_YEAR_OF_DATA + (maxDateYear - STARTING_YEAR_OF_DATA) * 12 + maxDateMonth-1);
+        return endPosition;
     }
 }
