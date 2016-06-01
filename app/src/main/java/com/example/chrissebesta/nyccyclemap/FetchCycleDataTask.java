@@ -228,6 +228,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
             Log.d(LOG_TAG, "Setting shared prefs sync to false");
             SharedPreferences.Editor edit = mSharedPreferences.edit();
             edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
+            edit.putBoolean(mContext.getString(R.string.pref_previously_started), Boolean.TRUE);
             edit.apply();
             //setting automatic sync frequency up:
             ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(mContext), mContext.getString(R.string.content_authority), true);
@@ -263,6 +264,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
                 Log.d(LOG_TAG, "Setting shared prefs sync to false");
                 SharedPreferences.Editor edit = mSharedPreferences.edit();
                 edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
+                edit.putBoolean(mContext.getString(R.string.pref_previously_started), Boolean.TRUE);
                 edit.apply();
                 //setting automatic sync frequency up since initial sync is done
                 ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(mContext), mContext.getString(R.string.content_authority), true);
