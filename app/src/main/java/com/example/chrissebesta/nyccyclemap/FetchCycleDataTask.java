@@ -1,265 +1,275 @@
-//package com.example.chrissebesta.nyccyclemap;
-//
-//import android.content.ContentValues;
-//import android.content.Context;
-//import android.database.Cursor;
-//import android.database.sqlite.SQLiteDatabase;
-//import android.os.AsyncTask;
-//import android.util.Log;
-//import android.view.View;
-//import android.widget.ProgressBar;
-//import android.widget.TextView;
-//import android.widget.Toast;
-//
-//import com.example.chrissebesta.nyccyclemap.data.CycleContract;
-//import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
-//
-//import org.json.JSONArray;
-//import org.json.JSONException;
-//import org.json.JSONObject;
-//
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.InputStream;
-//import java.io.InputStreamReader;
-//import java.net.HttpURLConnection;
-//import java.net.MalformedURLException;
-//import java.net.ProtocolException;
-//import java.net.URL;
-//
-///**
-// * Created by chrissebesta on 4/21/16.
-// * Async task to load the bicycle injury/death fdata from the NYC open data platform and load it in to a local SQLite database
-// */
-////TODO: need to make this persist even when the view or layout is changed, need to pull it off of connection to the visible activity
-//public class FetchCycleDataTask extends AsyncTask<String, Void, Void> {
-//    public final String LOG_TAG = FetchCycleDataTask.class.getSimpleName();
-//    public String jsonResponseString;
-//    public Context mContext;
-//    public ProgressBar mProgressBar;
-//    public TextView mTextView;
-//    public URL mUrlCycleData;
-//    public boolean mNoMoreDataToSync = false;
-//
-////    @Override
-////    protected void onPreExecute() {
-////        mProgressBar.setVisibility(View.VISIBLE);
-////        mTextView.setVisibility(View.VISIBLE);
-////        Log.d(LOG_TAG, "In the pre execute phase");
-////        super.onPreExecute();
-////    }
-//
-//    @Override
-//    protected Void doInBackground(String... params) {
-//        Log.d(LOG_TAG, "In the do in background phase");
-//
-//
-//        //Right now just hacking this all together in AsyncTask, needs to eventually take place in a SyncAdapter
-//        HttpURLConnection urlConnection = null;
-//        BufferedReader reader = null;
-//
-//        // Will contain the raw JSON response as a string.
-//        String nycPublicDataResponseString = null;
-//
-//        URL url = null;
-//        try {
-//            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json");
-//
-//
-//            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date%20between%20%272016-03-10T12:00:00%27%20and%20%272016-04-11T14:00:00%27");
-//            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=date between '2015-01-10T12:00:00' and '2015-01-11T14:00:00'");
-//            //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20%3C%20%272017-01-10T14:00:00%27%20&$limit=2000");
-//            //https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20AND%20latitude%20%3E%2040&$limit=100
-//            //increased limit since it was defaulting to a limit of 1000
-//            //url = new URL("https://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20AND%20latitude%20%3E%2040&$limit=5000");
-//            //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20%3E%20%272015-01-01T00:00:00%27%20&$limit=1000");
-//            url = mUrlCycleData;
-//            //url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_injured%20%3E%200%20and%20latitude%20%3E%200");
-//
-//            Log.d("FETCH", "Fetching cycle data with URL: " + mUrlCycleData);
-//            urlConnection = (HttpURLConnection) url.openConnection();
-//            urlConnection.setRequestMethod("GET");
-//            urlConnection.connect();
-//            InputStream inputStream = urlConnection.getInputStream();
-//            StringBuffer buffer = new StringBuffer();
-//            if (inputStream == null) {
-//                // Nothing to do.
-//                return null;
-//            }
-//            reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-//                // But it does make debugging a *lot* easier if you print out the completed
-//                // buffer for debugging.
-//                buffer.append(line + "\n");
-//            }
-//            if (buffer.length() == 0) {
-//                // Stream was empty.  No point in parsing.
-//                return null;
-//            }
-//            nycPublicDataResponseString = buffer.toString();
-//            Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
-//            jsonResponseString = nycPublicDataResponseString;
-//
-//            try {
-//                getCycleDataFromJson(jsonResponseString);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//            Log.d(LOG_TAG, "The URL used to fetch the JSON is: " + url);
-//        } catch (ProtocolException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (urlConnection != null) {
-//                urlConnection.disconnect();
-//            }
-//            if (reader != null) {
-//                try {
-//                    reader.close();
-//                } catch (final IOException e) {
-//                    Log.e(LOG_TAG, "Error closing stream", e);
-//                }
-//            }
-//        }
-//        // This will only happen if there was an error getting or parsing the forecast.
-//        return null;
-//    }
-//
+package com.example.chrissebesta.nyccyclemap;
+
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.chrissebesta.nyccyclemap.data.CycleContract;
+import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
+import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
+/**
+ * Created by chrissebesta on 4/21/16.
+ * Async task to load the bicycle injury/death fdata from the NYC open data platform and load it in to a local SQLite database
+ */
+//TODO: need to make this persist even when the view or layout is changed, need to pull it off of connection to the visible activity
+public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
+    public final String LOG_TAG = FetchCycleDataTask.class.getSimpleName();
+    public String jsonResponseString;
+    public Context mContext;
+    public ProgressBar mProgressBar;
+    public TextView mTextView;
+    public URL mUrlCycleData;
+    public boolean mNoMoreDataToSync = false;
+    private SharedPreferences mSharedPreferences;
+
 //    @Override
 //    protected void onPreExecute() {
+//        mProgressBar.setVisibility(View.VISIBLE);
+//        mTextView.setVisibility(View.VISIBLE);
+//        Log.d(LOG_TAG, "In the pre execute phase");
 //        super.onPreExecute();
 //    }
-//
-//    @Override
-//    protected void onPostExecute(Void aVoid) {
-//        //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + mLastThreadBoolean);
-//        if (mNoMoreDataToSync) {
-//            mProgressBar.setVisibility(View.INVISIBLE);
-//            mTextView.setVisibility(View.INVISIBLE);
-//            Log.d(LOG_TAG, "Databaase is up to date!");
-//            Toast.makeText(mContext, "Database is up to date!", Toast.LENGTH_SHORT).show();
-//        }else{
-//            //RECURSIVE CALL TO THIS ASYNC TASK UNTIL ALL DATA IS FETCHED
-//            final FetchCycleDataTask fetch = new FetchCycleDataTask();
-//            //TODO THIS IS PROBABLY A HORRIBLE WAY TO MESS WITH THE UI FROM ASYNC TASK! Look in to this
-//            //Pass UI effecting variable to the Asyc task
-//            mProgressBar.setVisibility(View.VISIBLE);
-//            mTextView.setVisibility(View.VISIBLE);
-//            fetch.mContext = mContext;
-//            fetch.mProgressBar = mProgressBar;
-//            fetch.mTextView = mTextView;
-//
-//            //get last unique key number in DB
-//            CycleDbHelper helper = new CycleDbHelper(mContext);
-//            SQLiteDatabase db = helper.getWritableDatabase();
-//            int lastUniqueNumber = 0;
-//
-//            //get most recent unique number currently stored in the database, only column necessary is date
-//            String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
-//            Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
-//            if (cursor.moveToFirst()) {
-//                lastUniqueNumber = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
-//            }
-//            //close up DB and cursor
-//            db.close();
-//            cursor.close();
-//
-//            try {
-//                //URL for both injured and killed cyclists
-//                //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-//                //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+lastUniqueNumberInDB+"%27%20and%20%27"+(endingYearOfData+1)+"-01-01T10:00:00%27");
-//                fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumber+"&$order=unique_key%20ASC");
-//                Log.d(LOG_TAG, "The URL being used now is: " + fetch.mUrlCycleData);
-//                //URL for only killed cyclists (useful for testing as it is much much faster)
-//                //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=number_of_cyclist_killed%20%3E%200%20and%20latitude%20%3E%200%20and%20date%20between%20%27"+year+"-01-01T10:00:00%27%20and%20%27"+(year+1)+"-01-01T10:00:00%27");
-//
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            }
-//
-//            fetch.execute();
-//        }
-//
-//
-//        super.onPostExecute(aVoid);
-//    }
-//
-//    public void getCycleDataFromJson(String cycleDataJsonString) throws JSONException {
-//        //Strings provided by API for JSON parsing
-//        final String NYC_DATE = "date"; //floating time stamp
-//        final String NYC_time = "time"; //text
-//        final String NYC_BOROUGH = "borough";
-//        final String NYC_ZIP_CODE = "zip_code";
-//        final String NYC_LATITUDE = "latitude"; //number
-//        final String NYC_LONGITUDE = "longitude";
-//        final String NYC_POINT = "point"; //point
-//        final String NYC_ON_STREET_NAME = "on_street_name"; //text
-//        final String NYC_OFF_STREET_NAME = "off_street_name";
-//        final String NYC_CROSS_STREET_NAME = "cross_street_name";
-//        final String NYC_NUMBER_OF_PERSONS_INJURED = "number_of_persons_injured"; //number
-//        final String NYC_NUMBER_OF_PERSONS_KILLED = "number_of_persons_killed";
-//        final String NYC_NUMBER_OF_PEDESTRIANS_INJURED = "number_of_pedestrians_injured";
-//        final String NYC_NUMBER_OF_PEDESTRIANS_KILLED = "number_of_pedestrians_killed";
-//        final String NYC_NUMBER_OF_CYCLIST_INJURED = "number_of_cyclist_injured";
-//        final String NYC_NUMBER_OF_CYCLIST_KILLED = "number_of_cyclist_killed";
-//        final String NYC_NUMBER_OF_MOTORIST_INJURED = "number_of_motorist_injured";
-//        final String NYC_NUMBER_OF_MOTORIST_KILLED = "number_of_motorist_killed";
-//        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_1 = "contributing_factor_vehicle_1"; //text
-//        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_2 = "contributing_factor_vehicle_2";
-//        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_3 = "contributing_factor_vehicle_3";
-//        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_4 = "contributing_factor_vehicle_4";
-//        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_5 = "contributing_factor_vehicle_5";
-//        final String NYC_UNIQUE_KEY = "unique_key"; //number
-//        final String NYC_VEHICLE_TYPE_CODE_1 = "vehicle_type_code1"; //text
-//        final String NYC_VEHICLE_TYPE_CODE_2 = "vehicle_type_code2";
-//        final String NYC_VEHICLE_TYPE_CODE_3 = "vehicle_type_code3";
-//        final String NYC_VEHICLE_TYPE_CODE_4 = "vehicle_type_code4";
-//        final String NYC_VEHICLE_TYPE_CODE_5 = "vehicle_type_code5";
-//        final String NYC_LOCATION_ZIP = "location_zip";
-//        final String NYC_LOCATION_CITY = "location_city";
-//        final String NYC_LOCATION_ADDRESS = "location_address";
-//        final String NYC_LOCATION_STATE = "location_state";
-//
-//        //pull data from JSON request response and put in to JSON array
-//        JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
-//        if (accidentJsonArray.length() == 0) {
-//            Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
-//            mNoMoreDataToSync = true;
-//        } else {
-//            CycleDbHelper helper = new CycleDbHelper(mContext);
-//            SQLiteDatabase db = helper.getWritableDatabase();
-//
-//            Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
-//            if (accidentJsonArray.length() < 1000) {
-//                mNoMoreDataToSync = true;
-//            }
-//            for (int i = 0; i < accidentJsonArray.length(); i++) {
-//                String arrayData = accidentJsonArray.getString(i);
-//                ContentValues contentValues = new ContentValues();
-//                //Log.d(LOG_TAG, "The array data at index " + i + " is: " + arrayData);
-//                JSONObject accident = accidentJsonArray.getJSONObject(i);
-//
-//
-//                contentValues.put(CycleContract.CycleEntry.COLUMN_DATE, accident.getString(NYC_DATE));
-//                contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED, accident.getString(NYC_NUMBER_OF_CYCLIST_INJURED));
-//                contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED, accident.getString(NYC_NUMBER_OF_CYCLIST_KILLED));
-//                contentValues.put(CycleContract.CycleEntry.COLUMN_LATITUDE, accident.getDouble(NYC_LATITUDE));
-//                contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
-//                contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
-//                db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
-//                contentValues.clear();
-//
-//            }
-//            //Close SQL database object
-//            db.close();
-//        }
-//    }
-//}
+
+    @Override
+    protected Void doInBackground(Void... params) {
+        mNoMoreDataToSync = false;
+        Log.d(LOG_TAG, "in doInBackground and mNoMoreDataToSync is: " + mNoMoreDataToSync);
+
+        //get Last unique number in current SQL database
+        CycleDbHelper helper = new CycleDbHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int lastUniqueNumberInDB = 0;
+
+        //get most recent unique number currently stored in the database, only column necessary is date
+        String[] columns = {CycleContract.CycleEntry.COLUMN_UNIQUE_KEY};
+        Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, columns, null, null, null, null, CycleContract.CycleEntry.COLUMN_UNIQUE_KEY + " DESC", String.valueOf(1));
+        if (cursor.moveToFirst()) {
+            lastUniqueNumberInDB = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
+        }
+
+        Log.d(LOG_TAG, "Last unique key number in the database is: " + lastUniqueNumberInDB);
+        //Close SQL database
+        db.close();
+
+        URL url = null;
+        //Build URL with latest unique Key
+        try {
+            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB+"&$order=unique_key%20ASC");
+            Log.d("FETCH", "Fetching cycle data with URL: " + url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+
+        //Right now just hacking this all together in AsyncTask, needs to eventually take place in a SyncAdapter
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+
+        // Will contain the raw JSON response as a string.
+        String nycPublicDataResponseString = null;
+
+        try {
+            //Log.d("FETCH", "Fetching cycle data with URL: " + url);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                // Nothing to do.
+                return null;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                // But it does make debugging a *lot* easier if you print out the completed
+                // buffer for debugging.
+                buffer.append(line + "\n");
+            }
+            if (buffer.length() == 0) {
+                // Stream was empty.  No point in parsing.
+                return null;
+            }
+            nycPublicDataResponseString = buffer.toString();
+            Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
+            String jsonResponseString = nycPublicDataResponseString;
+
+            //process the returned JSON string
+            try {
+                getCycleDataFromJson(jsonResponseString);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.d(LOG_TAG, "The URL used to fetch the JSON is: " + url);
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
+                }
+            }
+        }
+        Log.d(LOG_TAG, "Reaching the end of the sync data method or recursive call and mNoMoreDataToSync is: " + mNoMoreDataToSync);
+
+        //if there is still data left to sync, recursively call the method again, this will continue to be called until a JSON is returned with less than the 1000 limit
+        if(!mNoMoreDataToSync){
+            FetchCycleDataTask fetchRecursive = new FetchCycleDataTask();
+            fetchRecursive.mContext = this.mContext;
+            //noinspection ResourceType
+            fetchRecursive.execute();
+            //syncDatabase();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences.Editor edit = mSharedPreferences.edit();
+        edit.putBoolean(mContext.getString(R.string.syncing), Boolean.TRUE);
+        edit.apply();
+        super.onPreExecute();
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + mLastThreadBoolean);
+        if(mNoMoreDataToSync){
+            Toast.makeText(mContext, "Your database is up to date!", Toast.LENGTH_SHORT).show();
+        }
+        super.onPostExecute(aVoid);
+    }
+
+    /**
+     *
+     * @param cycleDataJsonString
+     * @throws JSONException
+     * Method to pull JSON data from NYC Online Data and put it in to the local SQLite database
+     */
+    public void getCycleDataFromJson(String cycleDataJsonString) throws JSONException {
+        //Strings provided by API for JSON parsing
+        final String NYC_DATE = "date"; //floating time stamp
+        final String NYC_time = "time"; //text
+        final String NYC_BOROUGH = "borough";
+        final String NYC_ZIP_CODE = "zip_code";
+        final String NYC_LATITUDE = "latitude"; //number
+        final String NYC_LONGITUDE = "longitude";
+        final String NYC_POINT = "point"; //point
+        final String NYC_ON_STREET_NAME = "on_street_name"; //text
+        final String NYC_OFF_STREET_NAME = "off_street_name";
+        final String NYC_CROSS_STREET_NAME = "cross_street_name";
+        final String NYC_NUMBER_OF_PERSONS_INJURED = "number_of_persons_injured"; //number
+        final String NYC_NUMBER_OF_PERSONS_KILLED = "number_of_persons_killed";
+        final String NYC_NUMBER_OF_PEDESTRIANS_INJURED = "number_of_pedestrians_injured";
+        final String NYC_NUMBER_OF_PEDESTRIANS_KILLED = "number_of_pedestrians_killed";
+        final String NYC_NUMBER_OF_CYCLIST_INJURED = "number_of_cyclist_injured";
+        final String NYC_NUMBER_OF_CYCLIST_KILLED = "number_of_cyclist_killed";
+        final String NYC_NUMBER_OF_MOTORIST_INJURED = "number_of_motorist_injured";
+        final String NYC_NUMBER_OF_MOTORIST_KILLED = "number_of_motorist_killed";
+        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_1 = "contributing_factor_vehicle_1"; //text
+        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_2 = "contributing_factor_vehicle_2";
+        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_3 = "contributing_factor_vehicle_3";
+        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_4 = "contributing_factor_vehicle_4";
+        final String NYC_CONTRIBUTING_FACTOR_VEHISCLE_5 = "contributing_factor_vehicle_5";
+        final String NYC_UNIQUE_KEY = "unique_key"; //number
+        final String NYC_VEHICLE_TYPE_CODE_1 = "vehicle_type_code1"; //text
+        final String NYC_VEHICLE_TYPE_CODE_2 = "vehicle_type_code2";
+        final String NYC_VEHICLE_TYPE_CODE_3 = "vehicle_type_code3";
+        final String NYC_VEHICLE_TYPE_CODE_4 = "vehicle_type_code4";
+        final String NYC_VEHICLE_TYPE_CODE_5 = "vehicle_type_code5";
+        final String NYC_LOCATION_ZIP = "location_zip";
+        final String NYC_LOCATION_CITY = "location_city";
+        final String NYC_LOCATION_ADDRESS = "location_address";
+        final String NYC_LOCATION_STATE = "location_state";
+
+        //pull data from JSON request response and put in to JSON array
+        JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
+        if (accidentJsonArray.length() == 0) {
+            Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
+            mNoMoreDataToSync = true;
+            //Set syncing shared preference to false
+            Log.d(LOG_TAG, "Setting shared prefs sync to false");
+            SharedPreferences.Editor edit = mSharedPreferences.edit();
+            edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
+            edit.apply();
+            //setting automatic sync frequency up:
+            ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(mContext), mContext.getString(R.string.content_authority), true);
+            CycleDataSyncAdapter.setSyncFrequency(mContext);
+        } else {
+            CycleDbHelper helper = new CycleDbHelper(mContext);
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
+            db.beginTransaction();
+            for (int i = 0; i < accidentJsonArray.length(); i++) {
+                String arrayData = accidentJsonArray.getString(i);
+                ContentValues contentValues = new ContentValues();
+                //Log.d(LOG_TAG, "The array data at index " + i + " is: " + arrayData);
+                JSONObject accident = accidentJsonArray.getJSONObject(i);
+
+
+                contentValues.put(CycleContract.CycleEntry.COLUMN_DATE, accident.getString(NYC_DATE));
+                contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED, accident.getString(NYC_NUMBER_OF_CYCLIST_INJURED));
+                contentValues.put(CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED, accident.getString(NYC_NUMBER_OF_CYCLIST_KILLED));
+                contentValues.put(CycleContract.CycleEntry.COLUMN_LATITUDE, accident.getDouble(NYC_LATITUDE));
+                contentValues.put(CycleContract.CycleEntry.COLUMN_LONGITUDE, accident.getDouble(NYC_LONGITUDE));
+                contentValues.put(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY, accident.getString(NYC_UNIQUE_KEY));
+                db.insert(CycleContract.CycleEntry.TABLE_NAME, null, contentValues);
+                contentValues.clear();
+
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            if (accidentJsonArray.length() < 1000) {
+                mNoMoreDataToSync = true;
+                //Set syncing shared preference to false
+                Log.d(LOG_TAG, "Setting shared prefs sync to false");
+                SharedPreferences.Editor edit = mSharedPreferences.edit();
+                edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
+                edit.apply();
+                //setting automatic sync frequency up since initial sync is done
+                ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(mContext), mContext.getString(R.string.content_authority), true);
+                CycleDataSyncAdapter.setSyncFrequency(mContext);
+            }
+            //Close SQL database object
+            db.close();
+        }
+    }
+}

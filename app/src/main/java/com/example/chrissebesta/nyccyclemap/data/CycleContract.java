@@ -86,7 +86,7 @@ public class CycleContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CYCLE;
 
-        public static Uri buildGeoUri(long id) {
+        public static Uri buildCycleUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 

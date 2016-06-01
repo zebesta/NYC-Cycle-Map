@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 /**
- * From the Sunshine exmaple application, used for NYC Cycle Map
+ * From the Sunshine example application, used for NYC Cycle Map
  * Manages "Authentication" to Sunshine's backend service.  The SyncAdapter framework
  * requires an authenticator object, so syncing to a service that doesn't need authentication
  * typically means creating a stub authenticator like this one.
