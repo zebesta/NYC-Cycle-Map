@@ -17,6 +17,9 @@ import java.util.Date;
 /**
  * Created by chrissebesta on 4/27/16.
  * Custom bike cluster renderer to allow for unique icons while using the default cluster renderer to handlt the clustering
+ *
+ * TODO Correct the white box appearing issue that was introduced by Google on the Google play services library
+ * More details about the white box issue can be found here: https://code.google.com/p/gmaps-api-issues/issues/detail?id=9765
  */
 public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
     //private Context mContext;
