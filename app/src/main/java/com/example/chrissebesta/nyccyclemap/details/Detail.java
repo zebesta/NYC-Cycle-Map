@@ -7,6 +7,12 @@ package com.example.chrissebesta.nyccyclemap.details;
 public class Detail {
     public String key;
     public String value;
+
+    /**
+     * Key and value pulled from the JSON returned by the NYC Open Data database
+     * @param key
+     * @param value
+     */
     public Detail(String key, String value){
         this.key = key;
         this.value = value;

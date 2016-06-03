@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 /**
  * Created by chrissebesta on 3/30/16.
+ * Content Provider for the Cycle database
  */
 public class CycleProvider extends ContentProvider {
 

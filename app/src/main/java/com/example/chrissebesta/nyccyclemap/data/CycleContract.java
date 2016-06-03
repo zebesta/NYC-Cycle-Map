@@ -7,8 +7,7 @@ import android.provider.BaseColumns;
 
 /**
  * Created by chrissebesta on 3/30/16.
- * TODO: Implement a real URI builder similar to the sunshine example app that builds URI based on user queries, or simply dowload entire JSON and save to SQL to locally parse for faster times
- *
+ * Contract to define the cycle incident data contained within the SQL Database
  *
  */
 public class CycleContract {

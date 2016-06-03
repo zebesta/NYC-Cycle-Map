@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class MyItemReader {
     private static final String LOG_TAG = MyItemReader.class.getSimpleName();
-    Context mContext;
+    private Context mContext;
 
     public MyItemReader(Context context) {
         mContext = context;
@@ -31,19 +31,8 @@ public class MyItemReader {
 
     public List<MyItem> read() {
         List<MyItem> items = new ArrayList<MyItem>();
-//        String json = new Scanner(inputStream).useDelimiter(REGEX_INPUT_BOUNDARY_BEGINNING).next();
-//        JSONArray array = new JSONArray(json);
-//        for (int i = 0; i < array.length(); i++) {
-//            JSONObject object = array.getJSONObject(i);
-//            double lat = object.getDouble("lat");
-//            double lng = object.getDouble("lng");
-//            items.add(new MyItem(lat, lng));
-//        }
         CycleDbHelper helper = new CycleDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
-        //Cursor cursor = db.rawQuery("SELECT * FROM " + CycleContract.CycleEntry.TABLE_NAME, null);
-        //40.7096637,-73.9662333
-        int startYear = 2015;
 
 
         //get min and max date from shared Preferences
@@ -104,9 +93,6 @@ public class MyItemReader {
             totalDbCursor.close();
 
         }
-//        Toast t = Toast.makeText(mContext, "Mapping "+cursor.getCount() + " data points!", Toast.LENGTH_SHORT);
-//        t.setGravity(Gravity.FILL_HORIZONTAL, t.getXOffset(), t.getYOffset());
-//        t.show();
         Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + "<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
         if (cursor.moveToFirst()) {
             do {

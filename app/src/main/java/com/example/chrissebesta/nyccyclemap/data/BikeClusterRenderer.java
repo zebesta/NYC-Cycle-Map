@@ -56,6 +56,8 @@ public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
         markerOptions.title(outputDateStr);
         markerOptions.snippet("Click for more info.....\nID: "+String.valueOf(item.uniqueId));
     }
+
+    //Temporary fix for the white box issue, is very memory intensive and creates its own issues
 //
 //    @Override
 //    protected void onBeforeClusterRendered(Cluster<MyItem> cluster, MarkerOptions markerOptions) {

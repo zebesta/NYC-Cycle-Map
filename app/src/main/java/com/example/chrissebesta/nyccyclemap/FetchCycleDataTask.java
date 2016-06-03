@@ -228,6 +228,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
             SQLiteDatabase db = helper.getWritableDatabase();
 
             Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
+            //Use manually controlled database transaction to reduce total number of writes by grouping them together
             db.beginTransaction();
             for (int i = 0; i < accidentJsonArray.length(); i++) {
                 String arrayData = accidentJsonArray.getString(i);
@@ -260,7 +261,6 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
                 ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(mContext), mContext.getString(R.string.content_authority), true);
                 CycleDataSyncAdapter.setSyncFrequency(mContext);
             }
-            //Close SQL database object
             db.close();
         }
     }

@@ -90,6 +90,11 @@ public class CycleDbHelper extends SQLiteOpenHelper {
         return tableString;
     }
 
+    /**
+     * Returned values contained within the cursor and a human readable string
+     * @param cursor
+     * @return
+     */
     public String cursorToString(Cursor cursor) {
         String cursorString = "";
         if (cursor.moveToFirst()) {
