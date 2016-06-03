@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.data.CycleContract;
@@ -37,13 +35,13 @@ import java.net.URL;
 //TODO: need to make this persist even when the view or layout is changed, need to pull it off of connection to the visible activity
 public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
     public final String LOG_TAG = FetchCycleDataTask.class.getSimpleName();
-    public String jsonResponseString;
-    public Context mContext;
-    public ProgressBar mProgressBar;
-    public TextView mTextView;
-    public URL mUrlCycleData;
-    public boolean mNoMoreDataToSync = false;
+    private Context mContext;
+    private boolean mNoMoreDataToSync = false;
     private SharedPreferences mSharedPreferences;
+
+    public FetchCycleDataTask(Context c){
+        mContext = c;
+    }
 
 //    @Override
 //    protected void onPreExecute() {
@@ -150,8 +148,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
 
         //if there is still data left to sync, recursively call the method again, this will continue to be called until a JSON is returned with less than the 1000 limit
         if(!mNoMoreDataToSync){
-            FetchCycleDataTask fetchRecursive = new FetchCycleDataTask();
-            fetchRecursive.mContext = this.mContext;
+            FetchCycleDataTask fetchRecursive = new FetchCycleDataTask(mContext);
             //noinspection ResourceType
             fetchRecursive.execute();
             //syncDatabase();
@@ -178,8 +175,8 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
     }
 
     /**
-     *
-     * @param cycleDataJsonString
+     *Pulls cycle data from Json and puts it in to the database
+     * @param cycleDataJsonString //JSON returned from NYC Open Data
      * @throws JSONException
      * Method to pull JSON data from NYC Online Data and put it in to the local SQLite database
      */

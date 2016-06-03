@@ -277,20 +277,8 @@ public class MainActivity extends AppCompatActivity {
     private void firstRun() {
         Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
         //Fetch data using the AsyncTask since the SyncAdapter is taking to long to start on the first run.
-        FetchCycleDataTask fetch = new FetchCycleDataTask();
-        fetch.mContext = getApplicationContext();
-        //fetch.mUrlCycleData = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" +0+"&$order=unique_key%20ASC");
+        FetchCycleDataTask fetch = new FetchCycleDataTask(getApplicationContext());
         fetch.execute();
-
-        //Toast.makeText(MainActivity.this, "Syncing data in background", Toast.LENGTH_LONG).show();
-        //Set up automated syncing by allowing it and set the sync frequency here
-        //ContentResolver.setSyncAutomatically(CycleDataSyncAdapter.getSyncAccount(getApplicationContext()), getApplicationContext().getString(R.string.content_authority), true);
-        //CycleDataSyncAdapter.setSyncFrequency(getApplicationContext());
-
-        //TODO ensure that this fix is actually making the update work right away
-        //Could use FetchCycleData for the first update and then set the cycle data sync adapter later
-        //CycleDataSyncAdapter.syncImmediately(getApplicationContext());
-
     }
 
 
