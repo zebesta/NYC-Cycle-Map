@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.chrissebesta.nyccyclemap.details.Detail;
 import com.example.chrissebesta.nyccyclemap.details.DetailAdapter;
@@ -71,10 +70,11 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-
-    public class FetchDetailsData extends AsyncTask<Integer, Void, String> {
+    /**
+     * AsyncTask to agnostically pull the details around the selected incident using the provided Unique Key
+     */
+    private class FetchDetailsData extends AsyncTask<Integer, Void, String> {
         public final String LOG_TAG = this.getClass().getSimpleName();
-        TextView detailsTextView;
 
         @Override
         protected void onPreExecute() {

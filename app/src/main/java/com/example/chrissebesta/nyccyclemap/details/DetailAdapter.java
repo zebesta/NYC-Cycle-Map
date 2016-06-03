@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Created by chrissebesta on 5/26/16.
+ * Used to populate a list view with information from the Details class
  */
 public class DetailAdapter extends BaseAdapter {
     private Context context;
