@@ -39,17 +39,10 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
     private boolean mNoMoreDataToSync = false;
     private SharedPreferences mSharedPreferences;
 
-    public FetchCycleDataTask(Context c){
+    public FetchCycleDataTask(Context c) {
         mContext = c;
     }
 
-//    @Override
-//    protected void onPreExecute() {
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        mTextView.setVisibility(View.VISIBLE);
-//        Log.d(LOG_TAG, "In the pre execute phase");
-//        super.onPreExecute();
-//    }
 
     @Override
     protected Void doInBackground(Void... params) {
@@ -75,7 +68,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
         URL url = null;
         //Build URL with latest unique Key
         try {
-            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB+"&$order=unique_key%20ASC");
+            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB + "&$order=unique_key%20ASC");
             Log.d("FETCH", "Fetching cycle data with URL: " + url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -147,7 +140,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
         Log.d(LOG_TAG, "Reaching the end of the sync data method or recursive call and mNoMoreDataToSync is: " + mNoMoreDataToSync);
 
         //if there is still data left to sync, recursively call the method again, this will continue to be called until a JSON is returned with less than the 1000 limit
-        if(!mNoMoreDataToSync){
+        if (!mNoMoreDataToSync) {
             FetchCycleDataTask fetchRecursive = new FetchCycleDataTask(mContext);
             //noinspection ResourceType
             fetchRecursive.execute();
@@ -168,17 +161,17 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         //Log.d(LOG_TAG, "In the post execute phase and the boolean flag for last thread is set to: " + mLastThreadBoolean);
-        if(mNoMoreDataToSync){
+        if (mNoMoreDataToSync) {
             Toast.makeText(mContext, "Your database is up to date!", Toast.LENGTH_SHORT).show();
         }
         super.onPostExecute(aVoid);
     }
 
     /**
-     *Pulls cycle data from Json and puts it in to the database
+     * Pulls cycle data from Json and puts it in to the database
+     *
      * @param cycleDataJsonString //JSON returned from NYC Open Data
-     * @throws JSONException
-     * Method to pull JSON data from NYC Online Data and put it in to the local SQLite database
+     * @throws JSONException Method to pull JSON data from NYC Online Data and put it in to the local SQLite database
      */
     public void getCycleDataFromJson(String cycleDataJsonString) throws JSONException {
         //Strings provided by API for JSON parsing
