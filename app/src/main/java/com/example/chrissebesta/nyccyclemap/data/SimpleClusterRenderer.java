@@ -28,6 +28,15 @@ import java.util.Date;
 
 /**
  * Created by chrissebesta on 6/6/16.
+ * Currently being used instead of BikeClusterRenderer as a work around for the white box issue
+ * Works in conjunction with CachedIconGenerator
+ *
+ * This issue is related to an error introduced in the google play services library
+ * More information on this error and this workaround can be found here:
+ * https://code.google.com/p/gmaps-api-issues/issues/detail?id=9765
+ *
+ * This solution is adapted from a solution provided here: http://stackoverflow.com/questions/37211274/google-map-marker-is-replaced-by-bounding-rectangle-on-zoom/37431561#37431561
+ *
  */
 public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
     private static final int CLUSTER_PADDING = 12;
