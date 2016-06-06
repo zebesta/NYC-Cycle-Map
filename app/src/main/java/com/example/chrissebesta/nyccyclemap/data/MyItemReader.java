@@ -81,25 +81,7 @@ public class MyItemReader {
 
 
         Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + " <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", null);
-        if (cursor.getCount() > 0) {
-            Toast.makeText(mContext, "Mapping " + cursor.getCount() + " data points!", Toast.LENGTH_SHORT).show();
-        } else {
-            //No items to show, test if database is completely empty
-            Cursor totalDbCursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, null, null, null, null, null, null);
-            if (totalDbCursor.getCount() > 0) {
-                Toast toast = Toast.makeText(mContext, "No items to show on map\nUpdate map settings!", Toast.LENGTH_LONG);
-                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-                if (v != null) v.setGravity(Gravity.CENTER);
-                toast.show();
-            } else {
-                Toast toast = Toast.makeText(mContext, "Database is empty!\nUpdate data from the settings menu!", Toast.LENGTH_LONG);
-                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-                if (v != null) v.setGravity(Gravity.CENTER);
-                toast.show();
-            }
-            totalDbCursor.close();
 
-        }
         Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + "<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
         if (cursor.moveToFirst()) {
             do {
@@ -123,6 +105,25 @@ public class MyItemReader {
 
             //if using cluster manager add :
             //mClusterManager.cluster();
+        }
+        if (cursor.getCount() > 0) {
+            Toast.makeText(mContext, "Showing " + items.size() + " data points!", Toast.LENGTH_SHORT).show();
+        } else {
+            //No items to show, test if database is completely empty
+            Cursor totalDbCursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, null, null, null, null, null, null);
+            if (totalDbCursor.getCount() > 0) {
+                Toast toast = Toast.makeText(mContext, "No items to show on map\nUpdate map settings!", Toast.LENGTH_LONG);
+                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                if (v != null) v.setGravity(Gravity.CENTER);
+                toast.show();
+            } else {
+                Toast toast = Toast.makeText(mContext, "Database is empty!\nUpdate data from the settings menu!", Toast.LENGTH_LONG);
+                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                if (v != null) v.setGravity(Gravity.CENTER);
+                toast.show();
+            }
+            totalDbCursor.close();
+
         }
 
         //close cursor and SQL database
