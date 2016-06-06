@@ -15,6 +15,7 @@ import java.util.List;
  * this will only show items that are within the maps bounds
  */
 public class CustomClusterManager<M> extends ClusterManager<MyItem> {
+    private static final String LOG_TAG = CustomClusterManager.class.getSimpleName();
     private Context mContext;
     private GoogleMap mMap;
     public CustomClusterManager(Context context, GoogleMap map) {
@@ -26,10 +27,11 @@ public class CustomClusterManager<M> extends ClusterManager<MyItem> {
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         //empty the existing item list and repopulate based on current map bounds
+        //this also requires a re-calculation for the clustering
         this.clearItems();
         List<MyItem> items = new MyItemReader(mContext, mMap).read();
         this.addItems(items);
-        super.onCameraChange(cameraPosition);
+        this.cluster();
     }
 
     @Override
