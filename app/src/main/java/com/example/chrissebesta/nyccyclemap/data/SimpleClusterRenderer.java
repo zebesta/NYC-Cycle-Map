@@ -14,6 +14,7 @@ import com.example.chrissebesta.nyccyclemap.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -46,9 +47,11 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
     private final Bitmap mIconItemBlack;
     private final IconGenerator mIconClusterGenerator;
     private final float mDensity;
+    private GoogleMap mMap;
 
     public SimpleClusterRenderer(Context context, GoogleMap map, ClusterManager<MyItem> clusterManager) {
         super(context, map, clusterManager);
+        mMap = map;
 
         mDensity = context.getResources().getDisplayMetrics().density;
 
@@ -68,40 +71,54 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
 
     @Override
     protected void onBeforeClusterItemRendered(MyItem item, MarkerOptions markerOptions) {
-        if (item.killed) {
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.blackwhitebike));
+        LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        //If item is within bounds, allow it to be shown, otherwise set it to invisble
+        if (bounds.contains(item.getPosition())) {
+            markerOptions.visible(true);
+            if (item.killed) {
+                //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.blackwhitebike));
 //            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
 //                    BitmapFactory.decodeResource(resources, R.drawable.blackwhitebike)));
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemBlack));
-        }else {
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemBlack));
+            } else {
 //            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
 //                    BitmapFactory.decodeResource(resources, R.drawable.redwhitebike)));
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemRed));
+                //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemRed));
+            }
+            String inputDateStr = item.date;
+            //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
+            DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
+            Date date = null;
+            try {
+                date = inputFormat.parse(inputDateStr);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            String outputDateStr = outputFormat.format(date);
+            markerOptions.title(outputDateStr);
+            markerOptions.snippet("Click for more info.....\nID: " + String.valueOf(item.uniqueId));
+        }else {
+            markerOptions.visible(false);
         }
-        String inputDateStr = item.date;
-        //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-        DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
-        Date date = null;
-        try {
-            date = inputFormat.parse(inputDateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        String outputDateStr = outputFormat.format(date);
-        markerOptions.title(outputDateStr);
-        markerOptions.snippet("Click for more info.....\nID: " + String.valueOf(item.uniqueId));
 
     }
 
     @Override
     protected void onBeforeClusterRendered(Cluster<MyItem> cluster, MarkerOptions markerOptions) {
         int clusterSize = getBucket(cluster);
+        LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        //If item is within bounds, allow it to be shown, otherwise set it to invisble
+        if (bounds.contains(cluster.getPosition())) {
+            markerOptions.visible(true);
 
-        mIconClusterGenerator.setBackground(makeClusterBackground(getColor(clusterSize)));
-        BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(mIconClusterGenerator.makeIcon(getClusterText(clusterSize)));
-        markerOptions.icon(descriptor);
+            mIconClusterGenerator.setBackground(makeClusterBackground(getColor(clusterSize)));
+            BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(mIconClusterGenerator.makeIcon(getClusterText(clusterSize)));
+            markerOptions.icon(descriptor);
+        }else{
+            markerOptions.visible(false);
+        }
     }
 
 //    @Override
