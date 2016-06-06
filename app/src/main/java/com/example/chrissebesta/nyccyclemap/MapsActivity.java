@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import com.example.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
+import com.example.chrissebesta.nyccyclemap.data.CustomClusterManager;
 import com.example.chrissebesta.nyccyclemap.data.MyItem;
 import com.example.chrissebesta.nyccyclemap.data.MyItemReader;
-import com.example.chrissebesta.nyccyclemap.data.SimpleClusterRenderer;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -16,14 +17,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements
         GoogleMap.OnInfoWindowClickListener,
         OnMapReadyCallback {
-    private ClusterManager<MyItem> mClusterManager;
+    private CustomClusterManager<MyItem> mClusterManager;
     public final String LOG_TAG = MapsActivity.class.getSimpleName();
 
     private GoogleMap mMap;
@@ -49,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     private void readItems() {
-        List<MyItem> items = new MyItemReader(getBaseContext()).read();
+        List<MyItem> items = new MyItemReader(getBaseContext(), mMap).read();
         mClusterManager.addItems(items);
     }
 
@@ -72,7 +72,7 @@ public class MapsActivity extends FragmentActivity implements
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 8));
         }
 
-        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+        mClusterManager = new CustomClusterManager<MyItem>(this, mMap);
 
         try {
             int v = getPackageManager().getPackageInfo("com.google.android.gms", 0 ).versionCode;
@@ -82,8 +82,8 @@ public class MapsActivity extends FragmentActivity implements
             e.printStackTrace();
         }
 
-        //mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
-        mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
+        mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
+        //mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
 
 
         mMap.setOnCameraChangeListener(mClusterManager);

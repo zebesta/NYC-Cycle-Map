@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chrissebesta.nyccyclemap.R;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,9 +26,14 @@ import java.util.List;
 public class MyItemReader {
     private static final String LOG_TAG = MyItemReader.class.getSimpleName();
     private Context mContext;
+    private GoogleMap mMap;
 
     public MyItemReader(Context context) {
         mContext = context;
+    }
+    public MyItemReader(Context context, GoogleMap map){
+        mContext = context;
+        mMap = map;
     }
 
     public List<MyItem> read() {
@@ -102,11 +109,16 @@ public class MyItemReader {
                 if (killedInt > 0) {
                     killedBoolean = true;
                 } else killedBoolean = false;
-                items.add(new MyItem(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)),
+                MyItem item = new MyItem(cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LATITUDE)),
                         cursor.getDouble(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_LONGITUDE)),
                         cursor.getString(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_DATE)),
                         killedBoolean,
-                        cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY))));
+                        cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY)));
+                //Only add item if it contained within bounds
+                LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                if(bounds.contains(item.getPosition())) {
+                    items.add(item);
+                }
             } while (cursor.moveToNext());
 
             //if using cluster manager add :
