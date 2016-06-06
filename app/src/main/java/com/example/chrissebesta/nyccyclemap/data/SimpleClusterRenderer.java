@@ -33,7 +33,8 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
     private static final int CLUSTER_PADDING = 12;
     private static final int ITEM_PADDING = 7;
 
-    private final Bitmap mIconItemGreen;
+    private final Bitmap mIconItemRed;
+    private final Bitmap mIconItemBlack;
     private final IconGenerator mIconClusterGenerator;
     private final float mDensity;
 
@@ -46,24 +47,29 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
         mIconClusterGenerator.setContentView(makeSquareTextView(context, CLUSTER_PADDING));
         mIconClusterGenerator.setTextAppearance(com.google.maps.android.R.style.ClusterIcon_TextAppearance);
 
-        IconGenerator iconItemGenerator = new IconGenerator(context);
-        iconItemGenerator.setContentView(makeSquareTextView(context, ITEM_PADDING));
-        iconItemGenerator.setBackground(makeClusterBackground(ContextCompat.getColor(context, R.color.colorPrimary)));
-        mIconItemGreen = iconItemGenerator.makeIcon();
+        IconGenerator iconItemGeneratorRed = new IconGenerator(context);
+        iconItemGeneratorRed.setContentView(makeSquareTextView(context, ITEM_PADDING));
+        iconItemGeneratorRed.setBackground(makeClusterBackground(ContextCompat.getColor(context, R.color.colorRed)));
+        mIconItemRed = iconItemGeneratorRed.makeIcon();
+        IconGenerator iconItemGeneratorBlack = new IconGenerator(context);
+        iconItemGeneratorBlack.setContentView(makeSquareTextView(context, ITEM_PADDING));
+        iconItemGeneratorBlack.setBackground(makeClusterBackground(ContextCompat.getColor(context, R.color.colorBlack)));
+        mIconItemBlack = iconItemGeneratorBlack.makeIcon();
     }
 
     @Override
     protected void onBeforeClusterItemRendered(MyItem item, MarkerOptions markerOptions) {
-//        if (item.killed) {
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.blackwhitebike));
-////            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
-////                    BitmapFactory.decodeResource(resources, R.drawable.blackwhitebike)));
-//        }else {
-////            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
-////                    BitmapFactory.decodeResource(resources, R.drawable.redwhitebike)));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
-//
-//        }
+        if (item.killed) {
+            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.blackwhitebike));
+//            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
+//                    BitmapFactory.decodeResource(resources, R.drawable.blackwhitebike)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemBlack));
+        }else {
+//            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
+//                    BitmapFactory.decodeResource(resources, R.drawable.redwhitebike)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemRed));
+        }
         String inputDateStr = item.date;
         //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
@@ -76,9 +82,8 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
         }
         String outputDateStr = outputFormat.format(date);
         markerOptions.title(outputDateStr);
-        markerOptions.snippet("Click for more info.....\nID: "+String.valueOf(item.uniqueId));
+        markerOptions.snippet("Click for more info.....\nID: " + String.valueOf(item.uniqueId));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemGreen));
     }
 
     @Override
