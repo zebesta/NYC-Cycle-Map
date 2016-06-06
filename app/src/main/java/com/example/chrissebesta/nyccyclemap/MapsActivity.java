@@ -1,6 +1,7 @@
 package com.example.chrissebesta.nyccyclemap;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -72,6 +73,15 @@ public class MapsActivity extends FragmentActivity implements
         }
 
         mClusterManager = new ClusterManager<MyItem>(this, mMap);
+
+        try {
+            int v = getPackageManager().getPackageInfo("com.google.android.gms", 0 ).versionCode;
+            String version = getPackageManager().getPackageInfo("com.google.android.gms", 0 ).versionName;
+            Log.d(LOG_TAG, "Google play services version is: "+v + " and the name is: "+version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
         //mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
 
