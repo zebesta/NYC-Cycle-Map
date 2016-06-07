@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.example.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
 import com.example.chrissebesta.nyccyclemap.data.MyItem;
 import com.example.chrissebesta.nyccyclemap.data.MyItemReader;
+import com.example.chrissebesta.nyccyclemap.data.SimpleClusterRenderer;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -86,7 +86,7 @@ public class MapsActivity extends FragmentActivity implements
         }
 
         //mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
-        mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
+        mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
 
 
         //mMap.setOnCameraChangeListener(mClusterManager);
