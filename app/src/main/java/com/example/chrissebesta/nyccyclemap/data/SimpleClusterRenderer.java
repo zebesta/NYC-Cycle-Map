@@ -100,7 +100,7 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
             markerOptions.title(outputDateStr);
             markerOptions.snippet("Click for more info.....\nID: " + String.valueOf(item.uniqueId));
         }else {
-            markerOptions.visible(false);
+            //markerOptions.visible(false);
         }
 
     }
@@ -117,7 +117,7 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
             BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(mIconClusterGenerator.makeIcon(getClusterText(clusterSize)));
             markerOptions.icon(descriptor);
         }else{
-            markerOptions.visible(false);
+            //markerOptions.visible(false);
         }
     }
 

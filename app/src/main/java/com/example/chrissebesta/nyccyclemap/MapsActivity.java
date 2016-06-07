@@ -2,6 +2,7 @@ package com.example.chrissebesta.nyccyclemap;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -28,6 +30,7 @@ public class MapsActivity extends FragmentActivity implements
 
     private GoogleMap mMap;
     private CameraPosition mSavedCameraPosition;
+    private List<MyItem> mItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +52,8 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     private void readItems() {
-        List<MyItem> items = new MyItemReader(getBaseContext()).read();
-        mClusterManager.addItems(items);
+        mItems = new MyItemReader(getBaseContext()).read();
+        mClusterManager.addItems(mItems);
     }
 
 
@@ -75,9 +78,9 @@ public class MapsActivity extends FragmentActivity implements
         mClusterManager = new ClusterManager<MyItem>(this, mMap);
 
         try {
-            int v = getPackageManager().getPackageInfo("com.google.android.gms", 0 ).versionCode;
-            String version = getPackageManager().getPackageInfo("com.google.android.gms", 0 ).versionName;
-            Log.d(LOG_TAG, "Google play services version is: "+v + " and the name is: "+version);
+            int v = getPackageManager().getPackageInfo("com.google.android.gms", 0).versionCode;
+            String version = getPackageManager().getPackageInfo("com.google.android.gms", 0).versionName;
+            Log.d(LOG_TAG, "Google play services version is: " + v + " and the name is: " + version);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -86,7 +89,13 @@ public class MapsActivity extends FragmentActivity implements
         mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
 
 
-        mMap.setOnCameraChangeListener(mClusterManager);
+        //mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                new DynamicallyAddMakerTask().execute(mMap.getProjection().getVisibleRegion().latLngBounds);
+            }
+        });
         mMap.setOnInfoWindowClickListener(this);
 
 
@@ -106,5 +115,25 @@ public class MapsActivity extends FragmentActivity implements
         Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
         intent.putExtra(getString(R.string.unique_id_extra_key), intValue);
         startActivity(intent);
+    }
+
+    private class DynamicallyAddMakerTask extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] params) {
+            mClusterManager.clearItems();
+            LatLngBounds bounds = (LatLngBounds) params[0];
+            Log.d(LOG_TAG, "In do in background for dynamically adding markers and lat lng bounds are: "+bounds);
+            for (int i = 0; i<mItems.size(); i++) {
+                if (bounds.contains(mItems.get(i).getPosition())) {
+                    mClusterManager.addItem(mItems.get(i));
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            mClusterManager.cluster();
+        }
     }
 }
