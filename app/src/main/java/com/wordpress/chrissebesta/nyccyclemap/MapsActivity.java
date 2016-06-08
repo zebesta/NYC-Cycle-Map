@@ -116,7 +116,16 @@ public class MapsActivity extends FragmentActivity implements
         startActivity(intent);
     }
 
+    /**
+     * An async task to populate the cluster managers Items list with
+     * only the markers that are in the cameras viewable bounds
+     */
     private class DynamicallyAddMakerTask extends AsyncTask {
+        /**
+         * empy the cluster manager items list and populate it with the new markers
+         * @param params
+         * @return
+         */
         @Override
         protected Object doInBackground(Object[] params) {
             mClusterManager.clearItems();
@@ -130,6 +139,10 @@ public class MapsActivity extends FragmentActivity implements
             return null;
         }
 
+        /**
+         * Updates the cluster manager by asking it to render the new markers
+         * @param o
+         */
         @Override
         protected void onPostExecute(Object o) {
             mClusterManager.cluster();

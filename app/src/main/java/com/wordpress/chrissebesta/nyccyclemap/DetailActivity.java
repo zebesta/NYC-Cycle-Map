@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -32,9 +31,9 @@ import java.util.Date;
 import java.util.Iterator;
 
 /**
- * Detail acitivity to pull the details around the specific accident selected by the user from the maps view and show them to the user
+ * Detail activity to pull the details around the specific accident selected by the user from the maps view and show them to the user
  * This creates a JSON request from the NYC Open Data for the specific Unique Key already found and selected
- * The activity uses an Async task to avoid insturrupting the UI thread and pulls the JSON agnostically
+ * The activity uses an Async task to avoid interrupting the UI thread and pulls the JSON agnostically
  * The keys and values from the JSON array is then displayed to the user using the detail and detail array adpater classes
  */
 public class DetailActivity extends AppCompatActivity {

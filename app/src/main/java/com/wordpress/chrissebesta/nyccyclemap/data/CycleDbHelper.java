@@ -4,10 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by chrissebesta on 3/30/16.
+ * Helper class for the cycle SQLite database
  */
 public class CycleDbHelper extends SQLiteOpenHelper {
     public final String LOG_TAG = this.getClass().getSimpleName();

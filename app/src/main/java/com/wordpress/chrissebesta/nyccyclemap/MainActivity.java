@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -319,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
      * Method to calculate the start position for the range bar
      * @param minDateYear
      * @param minDateMonth
-     * @return
+     * @return returns the start position on the range bar as a floating point number
      */
     private float calculateStartPosition(int minDateYear, int minDateMonth) {
         float startPosition;
@@ -332,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
      * Method to calculate the end position for the range bar
      * @param maxDateYear
      * @param maxDateMonth
-     * @return
+     * @return returns the end position on the range bar as a floating point number
      */
     private float calculateEndPosition(int maxDateYear, int maxDateMonth) {
         float endPosition;
