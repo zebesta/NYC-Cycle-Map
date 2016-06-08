@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap.details;
+package com.wordpress.chrissebesta.nyccyclemap.details;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.chrissebesta.nyccyclemap.R;
+import com.wordpress.chrissebesta.nyccyclemap.R;
 
 import java.util.ArrayList;
 

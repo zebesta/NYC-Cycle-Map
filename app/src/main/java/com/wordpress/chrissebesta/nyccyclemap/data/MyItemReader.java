@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap.data;
+package com.wordpress.chrissebesta.nyccyclemap.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,7 +10,7 @@ import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.chrissebesta.nyccyclemap.R;
+import com.wordpress.chrissebesta.nyccyclemap.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

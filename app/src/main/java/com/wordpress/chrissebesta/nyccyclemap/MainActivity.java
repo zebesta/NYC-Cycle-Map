@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap;
+package com.wordpress.chrissebesta.nyccyclemap;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -20,9 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appyvet.rangebar.RangeBar;
-import com.example.chrissebesta.nyccyclemap.data.CycleContract;
-import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
-import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
+import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
+import com.wordpress.chrissebesta.nyccyclemap.data.CycleDbHelper;
+import com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;

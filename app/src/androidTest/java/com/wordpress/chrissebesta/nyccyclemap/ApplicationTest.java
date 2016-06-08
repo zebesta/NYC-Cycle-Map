@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap;
+package com.wordpress.chrissebesta.nyccyclemap;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

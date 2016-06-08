@@ -1,9 +1,9 @@
-package com.example.chrissebesta.nyccyclemap.data;
+package com.wordpress.chrissebesta.nyccyclemap.data;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.chrissebesta.nyccyclemap.R;
+import com.wordpress.chrissebesta.nyccyclemap.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLngBounds;

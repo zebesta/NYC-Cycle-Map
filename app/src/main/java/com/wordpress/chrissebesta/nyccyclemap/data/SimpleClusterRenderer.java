@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap.data;
+package com.wordpress.chrissebesta.nyccyclemap.data;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,7 +10,7 @@ import android.graphics.drawable.shapes.OvalShape;
 import android.support.v4.content.ContextCompat;
 import android.view.ViewGroup;
 
-import com.example.chrissebesta.nyccyclemap.R;
+import com.wordpress.chrissebesta.nyccyclemap.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;

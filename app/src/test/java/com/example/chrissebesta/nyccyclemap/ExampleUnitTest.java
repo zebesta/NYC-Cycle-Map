@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap;
+package com.wordpress.chrissebesta.nyccyclemap;
 
 import org.junit.Test;
 

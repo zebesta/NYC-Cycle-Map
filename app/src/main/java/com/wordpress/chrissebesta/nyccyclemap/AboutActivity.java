@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap;
+package com.wordpress.chrissebesta.nyccyclemap;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

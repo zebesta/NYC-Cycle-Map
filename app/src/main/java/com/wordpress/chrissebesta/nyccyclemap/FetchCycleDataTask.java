@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap;
+package com.wordpress.chrissebesta.nyccyclemap;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -11,9 +11,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.chrissebesta.nyccyclemap.data.CycleContract;
-import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
-import com.example.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
+import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
+import com.wordpress.chrissebesta.nyccyclemap.data.CycleDbHelper;
+import com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;

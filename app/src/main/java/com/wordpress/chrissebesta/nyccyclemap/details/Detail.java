@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap.details;
+package com.wordpress.chrissebesta.nyccyclemap.details;
 
 /**
  * Created by chrissebesta on 5/26/16.

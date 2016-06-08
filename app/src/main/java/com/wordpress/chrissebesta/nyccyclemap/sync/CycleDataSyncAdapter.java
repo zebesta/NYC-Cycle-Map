@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap.sync;
+package com.wordpress.chrissebesta.nyccyclemap.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -15,9 +15,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.chrissebesta.nyccyclemap.R;
-import com.example.chrissebesta.nyccyclemap.data.CycleContract;
-import com.example.chrissebesta.nyccyclemap.data.CycleDbHelper;
+import com.wordpress.chrissebesta.nyccyclemap.R;
+import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
+import com.wordpress.chrissebesta.nyccyclemap.data.CycleDbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;

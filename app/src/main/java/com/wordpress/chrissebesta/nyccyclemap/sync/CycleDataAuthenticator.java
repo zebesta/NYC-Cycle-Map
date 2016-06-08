@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap.sync;
+package com.wordpress.chrissebesta.nyccyclemap.sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

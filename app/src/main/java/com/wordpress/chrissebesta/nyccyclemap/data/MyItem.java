@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.chrissebesta.nyccyclemap.data;
+package com.wordpress.chrissebesta.nyccyclemap.data;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;

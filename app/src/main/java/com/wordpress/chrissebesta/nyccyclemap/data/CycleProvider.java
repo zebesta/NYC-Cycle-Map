@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap.data;
+package com.wordpress.chrissebesta.nyccyclemap.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

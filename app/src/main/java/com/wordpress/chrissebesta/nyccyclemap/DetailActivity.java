@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap;
+package com.wordpress.chrissebesta.nyccyclemap;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,8 +9,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.example.chrissebesta.nyccyclemap.details.Detail;
-import com.example.chrissebesta.nyccyclemap.details.DetailAdapter;
+import com.wordpress.chrissebesta.nyccyclemap.details.Detail;
+import com.wordpress.chrissebesta.nyccyclemap.details.DetailAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;

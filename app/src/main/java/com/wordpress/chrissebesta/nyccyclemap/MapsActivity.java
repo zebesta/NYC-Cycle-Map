@@ -1,4 +1,4 @@
-package com.example.chrissebesta.nyccyclemap;
+package com.wordpress.chrissebesta.nyccyclemap;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.example.chrissebesta.nyccyclemap.data.MyItem;
-import com.example.chrissebesta.nyccyclemap.data.MyItemReader;
-import com.example.chrissebesta.nyccyclemap.data.SimpleClusterRenderer;
+import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -85,8 +85,10 @@ public class MapsActivity extends FragmentActivity implements
             e.printStackTrace();
         }
 
-        //mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
-        mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
+        //Cluster manager with unique bike icons
+        mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
+        //Cluster manager with generated icons using colored circled, removed white box issue at the cost of memory consumption
+        //mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
 
 
         //mMap.setOnCameraChangeListener(mClusterManager);
