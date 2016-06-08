@@ -29,15 +29,14 @@ import java.util.Date;
 
 /**
  * Created by chrissebesta on 6/6/16.
- * Currently being used instead of BikeClusterRenderer as a work around for the white box issue
+ * Currently being used instead of Bike Cluster Renderer as a work around for the white box issue
  * Works in conjunction with CachedIconGenerator
- *
+ * <p/>
  * This issue is related to an error introduced in the google play services library
  * More information on this error and this workaround can be found here:
  * https://code.google.com/p/gmaps-api-issues/issues/detail?id=9765
- *
+ * <p/>
  * This solution is adapted from a solution provided here: http://stackoverflow.com/questions/37211274/google-map-marker-is-replaced-by-bounding-rectangle-on-zoom/37431561#37431561
- *
  */
 public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
     private static final int CLUSTER_PADDING = 12;
@@ -73,35 +72,35 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
     protected void onBeforeClusterItemRendered(MyItem item, MarkerOptions markerOptions) {
         LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         //If item is within bounds, allow it to be shown, otherwise set it to invisble
-        if (bounds.contains(item.getPosition())) {
-            markerOptions.visible(true);
-            if (item.killed) {
-                //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.blackwhitebike));
+//        if (bounds.contains(item.getPosition())) {
+//            markerOptions.visible(true);
+        if (item.killed) {
+            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.blackwhitebike));
 //            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
 //                    BitmapFactory.decodeResource(resources, R.drawable.blackwhitebike)));
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemBlack));
-            } else {
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemBlack));
+        } else {
 //            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
 //                    BitmapFactory.decodeResource(resources, R.drawable.redwhitebike)));
-                //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemRed));
-            }
-            String inputDateStr = item.date;
-            //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
-            DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-            DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
-            Date date = null;
-            try {
-                date = inputFormat.parse(inputDateStr);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            String outputDateStr = outputFormat.format(date);
-            markerOptions.title(outputDateStr);
-            markerOptions.snippet("Click for more info.....\nID: " + String.valueOf(item.uniqueId));
-        }else {
-            //markerOptions.visible(false);
+            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.redwhitebike));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mIconItemRed));
         }
+        String inputDateStr = item.date;
+        //Convert date format, this is done here to prevent doing it for every marker, only done on click instead
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
+        Date date = null;
+        try {
+            date = inputFormat.parse(inputDateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String outputDateStr = outputFormat.format(date);
+        markerOptions.title(outputDateStr);
+        markerOptions.snippet("Click for more info.....\nID: " + String.valueOf(item.uniqueId));
+//        }else {
+//            //markerOptions.visible(false);
+//        }
 
     }
 
@@ -110,15 +109,15 @@ public class SimpleClusterRenderer extends DefaultClusterRenderer<MyItem> {
         int clusterSize = getBucket(cluster);
         LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         //If item is within bounds, allow it to be shown, otherwise set it to invisble
-        if (bounds.contains(cluster.getPosition())) {
-            markerOptions.visible(true);
+//        if (bounds.contains(cluster.getPosition())) {
+//            markerOptions.visible(true);
 
-            mIconClusterGenerator.setBackground(makeClusterBackground(getColor(clusterSize)));
-            BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(mIconClusterGenerator.makeIcon(getClusterText(clusterSize)));
-            markerOptions.icon(descriptor);
-        }else{
-            //markerOptions.visible(false);
-        }
+        mIconClusterGenerator.setBackground(makeClusterBackground(getColor(clusterSize)));
+        BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(mIconClusterGenerator.makeIcon(getClusterText(clusterSize)));
+        markerOptions.icon(descriptor);
+//        }else{
+//            //markerOptions.visible(false);
+//        }
     }
 
 //    @Override

@@ -7,9 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
-import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
-import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,6 +16,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
+import com.wordpress.chrissebesta.nyccyclemap.data.SimpleClusterRenderer;
 
 import java.util.List;
 
@@ -85,8 +85,9 @@ public class MapsActivity extends FragmentActivity implements
             e.printStackTrace();
         }
 
-        //Cluster manager with unique bike icons
-        mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
+        //Cluster manager, select between generated icone or bike icons by changing this
+        //Generated icons avoid the white box issue
+        mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
 
         //mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {

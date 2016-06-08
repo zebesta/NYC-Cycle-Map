@@ -4,7 +4,7 @@
 
     To get one, follow this link, follow the directions and press "Create" at the end:
 
-    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=82:52:D5:F7:46:90:8C:5F:EC:00:18:2D:4D:06:C9:60:DC:17:41:B1%3Bcom.example.chrissebesta.nyccyclemap
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=82:52:D5:F7:46:90:8C:5F:EC:00:18:2D:4D:06:C9:60:DC:17:41:B1%3Bcom.wordpress.chrissebesta.nyccyclemap
 
     You can also add your credentials to an existing key, using this line:
     82:52:D5:F7:46:90:8C:5F:EC:00:18:2D:4D:06:C9:60:DC:17:41:B1;com.example.chrissebesta.nyccyclemap
