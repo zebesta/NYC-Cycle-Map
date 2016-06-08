@@ -87,9 +87,6 @@ public class MapsActivity extends FragmentActivity implements
 
         //Cluster manager with unique bike icons
         mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
-        //Cluster manager with generated icons using colored circled, removed white box issue at the cost of memory consumption
-        //mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
-
 
         //mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
@@ -110,10 +107,10 @@ public class MapsActivity extends FragmentActivity implements
         String snippetString = marker.getSnippet();
         String intValueString = snippetString.replaceAll("[^0-9]", "");
         int intValue = Integer.parseInt(intValueString);
-        Log.d(LOG_TAG, "The intValueString is: " + intValueString + " and the inValue is: " + intValue + " and the snippet string is: " + snippetString);
+//        Log.d(LOG_TAG, "The intValueString is: " + intValueString + " and the inValue is: " + intValue + " and the snippet string is: " + snippetString);
 //        Toast.makeText(this, "Info window clicked, ID = " + intValueString,
 //                Toast.LENGTH_SHORT).show();
-        Log.d(LOG_TAG, "Info window has been clicked!");
+//        Log.d(LOG_TAG, "Info window has been clicked!");
         Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
         intent.putExtra(getString(R.string.unique_id_extra_key), intValue);
         startActivity(intent);
@@ -124,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements
         protected Object doInBackground(Object[] params) {
             mClusterManager.clearItems();
             LatLngBounds bounds = (LatLngBounds) params[0];
-            Log.d(LOG_TAG, "In do in background for dynamically adding markers and lat lng bounds are: "+bounds);
+//            Log.d(LOG_TAG, "In do in background for dynamically adding markers and lat lng bounds are: "+bounds);
             for (int i = 0; i<mItems.size(); i++) {
                 if (bounds.contains(mItems.get(i).getPosition())) {
                     mClusterManager.addItem(mItems.get(i));

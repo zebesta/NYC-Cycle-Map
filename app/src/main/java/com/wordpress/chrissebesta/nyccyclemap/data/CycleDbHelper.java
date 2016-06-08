@@ -22,7 +22,6 @@ public class CycleDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-//TODO temporarily limiting the number of colums to get it quickly up and running with lat and lng
         final String SQL_CREATE_CYCLE_TABLE = "CREATE TABLE " + CycleContract.CycleEntry.TABLE_NAME + " (" +
                 CycleContract.CycleEntry._ID + " INTEGER PRIMARY KEY," +
                 CycleContract.CycleEntry.COLUMN_DATE + " TEXT NOT NULL, " +
@@ -45,7 +44,7 @@ public class CycleDbHelper extends SQLiteOpenHelper {
         //+");";
 
         sqLiteDatabase.execSQL(SQL_CREATE_CYCLE_TABLE);
-        Log.d("SQL STRING IS: ", SQL_CREATE_CYCLE_TABLE);
+//        Log.d("SQL STRING IS: ", SQL_CREATE_CYCLE_TABLE);
 
     }
 
@@ -72,7 +71,7 @@ public class CycleDbHelper extends SQLiteOpenHelper {
      * @return the table tableName as a string
      */
     public String getTableAsString(SQLiteDatabase db, String tableName) {
-        Log.d(LOG_TAG, "getTableAsString called");
+//        Log.d(LOG_TAG, "getTableAsString called");
         String tableString = String.format("Table %s:\n", tableName);
         Cursor allRows = db.rawQuery("SELECT * FROM " + tableName, null);
         if (allRows.moveToFirst()) {

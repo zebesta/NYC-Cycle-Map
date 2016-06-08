@@ -69,7 +69,7 @@ public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
         } else {
             //set Item to be invisible if its outside of the visible range on the Map
             markerOptions.visible(false);
-            Log.d(LOG_TAG, "Setting item to invisible at " + markerOptions.getPosition());
+//            Log.d(LOG_TAG, "Setting item to invisible at " + markerOptions.getPosition());
         }
     }
 
@@ -82,7 +82,7 @@ public class BikeClusterRenderer extends DefaultClusterRenderer<MyItem> {
         if (bounds.contains(cluster.getPosition())) {
             markerOptions.visible(true);
         } else {
-            Log.d(LOG_TAG, "Setting cluster to invisible at " + markerOptions.getPosition());
+//            Log.d(LOG_TAG, "Setting cluster to invisible at " + markerOptions.getPosition());
             markerOptions.visible(false);
         }
     }

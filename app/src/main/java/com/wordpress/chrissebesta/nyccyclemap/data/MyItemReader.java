@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,11 +47,11 @@ public class MyItemReader {
         //Get comparably formated date so that the database can be queried with the right strings
         String startDateString = new SimpleDateFormat("yyyy-MM-dd").format(startDate.getTime());
         String endDateString = new SimpleDateFormat("yyyy-MM-dd").format(endDate.getTime());
-        Log.d(LOG_TAG, "starting date is: " + startDate.getTime() + " Formated as: " + startDateString);
-        Log.d(LOG_TAG, "ending date is: " + endDate.getTime() + " Formated as: " + endDateString);
+//        Log. d(LOG_TAG, "starting date is: " + startDate.getTime() + " Formated as: " + startDateString);
+//        Log.d(LOG_TAG, "ending date is: " + endDate.getTime() + " Formated as: " + endDateString);
         boolean injured = sharedPreferences.getBoolean(mContext.getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(mContext.getString(R.string.killedcyclists), true);
-        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: " + minDateYear + " and " + maxDateYear + " and injured is " + injured + " while killed is " + killed);
+//        Log.d(LOG_TAG, "In Item Reader Shared preference are showing dates between: " + minDateYear + " and " + maxDateYear + " and injured is " + injured + " while killed is " + killed);
         String injuredArgs;
         String killedArgs;
         //increment max date by one year and look for dates that are lower than it (effectively, looks at everything less than year 2013 if max date is 2012, catches all dates in 2012
@@ -70,7 +69,7 @@ public class MyItemReader {
 
         //New month included date query arguments:
         String[] args = new String[]{startDateString, endDateString, injuredArgs, killedArgs};
-        Log.d(LOG_TAG, "InjuredArgs is: " + injuredArgs + " and killedArgs is: " + killedArgs);
+//        Log.d(LOG_TAG, "InjuredArgs is: " + injuredArgs + " and killedArgs is: " + killedArgs);
 
 
         Cursor cursor = db.query(CycleContract.CycleEntry.TABLE_NAME, null, CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + " <? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)", args, null, null, CycleContract.CycleEntry.COLUMN_DATE + " DESC", null);
@@ -93,7 +92,7 @@ public class MyItemReader {
             totalDbCursor.close();
 
         }
-        Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + "<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
+//        Log.d(LOG_TAG, "The query statement is: " + CycleContract.CycleEntry.COLUMN_DATE + ">=? AND " + CycleContract.CycleEntry.COLUMN_DATE + "<? AND (" + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_INJURED + ">? OR " + CycleContract.CycleEntry.COLUMN_NUMBER_OF_CYCLIST_KILLED + ">?)");
         if (cursor.moveToFirst()) {
             do {
                 //Get the LatLng of the next item to be added

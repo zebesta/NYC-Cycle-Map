@@ -65,14 +65,14 @@ public class MainActivity extends AppCompatActivity {
                 CycleDbHelper helper = new CycleDbHelper(getBaseContext());
                 SQLiteDatabase db = helper.getWritableDatabase();
                 db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-                Log.d(LOG_TAG, "Clearing Database");
+//                Log.d(LOG_TAG, "Clearing Database");
 
                 //close SQL Database
                 db.close();
                 return true;
             case R.id.update_settings:
                 //update the NYC cycle data dababase
-                Log.d(LOG_TAG, "Syncing immediately");
+//                Log.d(LOG_TAG, "Syncing immediately");
                 //Toast.makeText(MainActivity.this, "Updating data in background!", Toast.LENGTH_SHORT).show();
                 CycleDataSyncAdapter.syncImmediately(getApplicationContext());
                 return true;
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                                   String key) {
                 // your stuff here
-                Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: " + key);
+//                Log.d(LOG_TAG, "THERE WAS A CHANGE TO SHARED PREFERENCES: " + key);
                 if (key == getString(R.string.syncing)) {
                     //Update the view to show the user whether new data is being loaded in the background or not
                     Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Set up range bar
         final float tickEnd = (STARTING_YEAR_OF_DATA + (endingYearOfData - STARTING_YEAR_OF_DATA) * 12f + endingMonthOfData);
-        Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
+//        Log.d(LOG_TAG, "Tick end will equal" + tickEnd);
         assert materialRangeBar != null;
         materialRangeBar.setTickEnd(tickEnd);
         materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
      * This method syncs the database for the first time and sets the sync frequency for the sync adapter to update the database
      */
     private void firstRun() {
-        Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
+//        Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
         //Fetch data using the AsyncTask since the SyncAdapter is taking to long to start on the first run.
         FetchCycleDataTask fetch = new FetchCycleDataTask(getApplicationContext());
         fetch.execute();

@@ -57,7 +57,7 @@ public class DetailActivity extends AppCompatActivity {
 
         //get unique ID from intent
         int uniqueId = getIntent().getIntExtra(getString(R.string.unique_id_extra_key), 0);
-        Log.d(LOG_TAG, "The unique ID is: "+uniqueId);
+//        Log.d(LOG_TAG, "The unique ID is: "+uniqueId);
 //        textView = (TextView) findViewById(R.id.detail_activity_text_view);
 //        if (textView != null) {
 //            textView.setText("" + uniqueId);
@@ -84,7 +84,7 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Integer... params) {
             String returnString=null;
-            Log.d(LOG_TAG, "In the do in background phase");
+//            Log.d(LOG_TAG, "In the do in background phase");
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String nycPublicDataResponseString = null;
@@ -116,7 +116,7 @@ public class DetailActivity extends AppCompatActivity {
                     return null;
                 }
                 nycPublicDataResponseString = buffer.toString();
-                Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
+//                Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
                 try {
                     returnString = getCycleDataFromJson(nycPublicDataResponseString);
                 } catch (JSONException e) {
@@ -141,8 +141,8 @@ public class DetailActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             //textView.setVisibility(View.VISIBLE);
             detailsListView.setAdapter(detailAdapter);
-            Log.d(LOG_TAG, "The size of the details array is: " + details.size());
-            Log.d(LOG_TAG, "The size of the list view count is: "+detailsListView.getAdapter().getCount());
+//            Log.d(LOG_TAG, "The size of the details array is: " + details.size());
+//            Log.d(LOG_TAG, "The size of the list view count is: "+detailsListView.getAdapter().getCount());
 
         }
 
@@ -152,7 +152,7 @@ public class DetailActivity extends AppCompatActivity {
             //pull data from JSON request response and put in to JSON array
             JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
             if (accidentJsonArray.length() == 0) {
-                Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
+//                Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
             } else {
                 for (int i = 0; i < accidentJsonArray.length(); i++) {
                     JSONObject accident = accidentJsonArray.getJSONObject(i);
@@ -186,7 +186,7 @@ public class DetailActivity extends AppCompatActivity {
                                 value= value.toLowerCase();
                                 details.add(new Detail(key, value));
                             }
-                            Log.d(LOG_TAG, "The key is: "+key+ " and the value is: "+value);
+//                            Log.d(LOG_TAG, "The key is: "+key+ " and the value is: "+value);
                         } catch (JSONException e) {
                             // Something went wrong!
                         }

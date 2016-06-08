@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
@@ -47,7 +46,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         mNoMoreDataToSync = false;
-        Log.d(LOG_TAG, "in doInBackground and mNoMoreDataToSync is: " + mNoMoreDataToSync);
+//        Log.d(LOG_TAG, "in doInBackground and mNoMoreDataToSync is: " + mNoMoreDataToSync);
 
         //get Last unique number in current SQL database
         CycleDbHelper helper = new CycleDbHelper(mContext);
@@ -61,7 +60,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
             lastUniqueNumberInDB = cursor.getInt(cursor.getColumnIndex(CycleContract.CycleEntry.COLUMN_UNIQUE_KEY));
         }
 
-        Log.d(LOG_TAG, "Last unique key number in the database is: " + lastUniqueNumberInDB);
+//        Log.d(LOG_TAG, "Last unique key number in the database is: " + lastUniqueNumberInDB);
         //Close SQL database
         db.close();
 
@@ -69,7 +68,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
         //Build URL with latest unique Key
         try {
             url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB + "&$order=unique_key%20ASC");
-            Log.d("FETCH", "Fetching cycle data with URL: " + url);
+//            Log.d("FETCH", "Fetching cycle data with URL: " + url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -107,7 +106,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
                 return null;
             }
             nycPublicDataResponseString = buffer.toString();
-            Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
+//            Log.d("JSON", "The buffer is showing: " + nycPublicDataResponseString);
             String jsonResponseString = nycPublicDataResponseString;
 
             //process the returned JSON string
@@ -120,7 +119,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            Log.d(LOG_TAG, "The URL used to fetch the JSON is: " + url);
+//            Log.d(LOG_TAG, "The URL used to fetch the JSON is: " + url);
         } catch (ProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -133,11 +132,11 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+//                    Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
         }
-        Log.d(LOG_TAG, "Reaching the end of the sync data method or recursive call and mNoMoreDataToSync is: " + mNoMoreDataToSync);
+//        Log.d(LOG_TAG, "Reaching the end of the sync data method or recursive call and mNoMoreDataToSync is: " + mNoMoreDataToSync);
 
         //if there is still data left to sync, recursively call the method again, this will continue to be called until a JSON is returned with less than the 1000 limit
         if (!mNoMoreDataToSync) {
@@ -212,10 +211,10 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
         //pull data from JSON request response and put in to JSON array
         JSONArray accidentJsonArray = new JSONArray(cycleDataJsonString);
         if (accidentJsonArray.length() == 0) {
-            Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
+//            Log.d(LOG_TAG, "THE RETURNED JSON ARRAY IS EMPTY!");
             mNoMoreDataToSync = true;
             //Set syncing shared preference to false
-            Log.d(LOG_TAG, "Setting shared prefs sync to false");
+//            Log.d(LOG_TAG, "Setting shared prefs sync to false");
             SharedPreferences.Editor edit = mSharedPreferences.edit();
             edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
             edit.putBoolean(mContext.getString(R.string.pref_previously_started), Boolean.TRUE);
@@ -227,7 +226,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
             CycleDbHelper helper = new CycleDbHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
 
-            Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
+//            Log.d(LOG_TAG, "Adding " + accidentJsonArray.length() + " items to the database");
             //Use manually controlled database transaction to reduce total number of writes by grouping them together
             db.beginTransaction();
             for (int i = 0; i < accidentJsonArray.length(); i++) {
@@ -252,7 +251,7 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
             if (accidentJsonArray.length() < 1000) {
                 mNoMoreDataToSync = true;
                 //Set syncing shared preference to false
-                Log.d(LOG_TAG, "Setting shared prefs sync to false");
+//                Log.d(LOG_TAG, "Setting shared prefs sync to false");
                 SharedPreferences.Editor edit = mSharedPreferences.edit();
                 edit.putBoolean(mContext.getString(R.string.syncing), Boolean.FALSE);
                 edit.putBoolean(mContext.getString(R.string.pref_previously_started), Boolean.TRUE);
