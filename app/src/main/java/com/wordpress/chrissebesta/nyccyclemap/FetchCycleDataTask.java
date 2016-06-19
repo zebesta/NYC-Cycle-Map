@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
@@ -67,8 +68,8 @@ public class FetchCycleDataTask extends AsyncTask<Void, Void, Void> {
         URL url = null;
         //Build URL with latest unique Key
         try {
-            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB + "&$order=unique_key%20ASC");
-//            Log.d("FETCH", "Fetching cycle data with URL: " + url);
+            url = new URL("http://data.cityofnewyork.us/resource/qiz3-axqb.json?$where=(number_of_cyclist_killed%20%3E%200%20or%20number_of_cyclist_injured%20%3E%200)%20and%20latitude%20%3E%200%20and%20unique_key%20>%20" + lastUniqueNumberInDB + "&$order=unique_key%20ASC"+"&$$app_token="+mContext.getString(R.string.app_token));
+            Log.d("FETCH", "Fetching cycle data with URL: " + url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
