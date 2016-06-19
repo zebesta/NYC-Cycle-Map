@@ -28,5 +28,6 @@
     <string name="clear_database">Clear database</string>
     <string name="title_activity_detail">Details</string>
     <string name="unique_id_extra_key">UniqueID</string>
+    <string name="app_token">3mx7VkvZunWhmDgpSUwreVmxO</string>
 
 </resources>
