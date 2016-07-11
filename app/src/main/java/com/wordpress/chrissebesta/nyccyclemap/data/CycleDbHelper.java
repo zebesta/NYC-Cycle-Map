@@ -91,6 +91,7 @@ public class CycleDbHelper extends SQLiteOpenHelper {
 
     /**
      * Returned values contained within the cursor and a human readable string
+     *
      * @param cursor
      * @return
      */
