@@ -87,10 +87,7 @@ public class MapsActivity extends FragmentActivity implements
 
         //Cluster manager with unique bike icons
         mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
-        //Cluster manager with generated icons using colored circled, removed white box issue at the cost of memory consumption
-        //mClusterManager.setRenderer(new SimpleClusterRenderer(this, mMap, mClusterManager));
-
-
+       
         //mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
