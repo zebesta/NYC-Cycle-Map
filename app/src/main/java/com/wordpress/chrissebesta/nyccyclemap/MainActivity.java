@@ -6,20 +6,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Slide;
+import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appyvet.rangebar.RangeBar;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
 import com.wordpress.chrissebesta.nyccyclemap.data.CycleDbHelper;
 import com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
@@ -27,7 +40,9 @@ import com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private static final String MAP_FRAGMENT_TAG = "map";
     public final String LOG_TAG = MainActivity.class.getSimpleName();
     // Constants
     // The authority for the sync adapter's content provider
@@ -44,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     //Views that need to be accessible outside of onCreate
     ProgressBar mProgressBar;
     TextView mLoadingText;
+    LinearLayout mLoadingViews;
+    boolean mTwoPane;
+    FrameLayout mFrameContainer;
     //Button mInitialButton;
     //RangeBar mMaterialRangeBar;
 
@@ -105,6 +123,38 @@ public class MainActivity extends AppCompatActivity {
         final TextView startDatTextView = (TextView) findViewById(R.id.startDateTextView);
         final TextView endDateTextView = (TextView) findViewById(R.id.endDateTextView);
         mLoadingText = loadingText;
+        mLoadingViews = (LinearLayout) findViewById(R.id.loading_views);
+        if (findViewById(R.id.map_fragment_container) != null) {
+            mTwoPane = true;
+//            mFrameContainer = (FrameLayout) findViewById(R.id.map_fragment_container);
+//            Log.d("Two pane", "Two pane is set to true, need to create fragment");
+//
+//            FragmentManager fm = getFragmentManager();
+//            Fragment f = fm.findFragmentById(R.id.map);
+//            getFragmentManager().beginTransaction()
+//                    .replace(R.id.map_fragment_container, f, MAPFRAGMENT_TAG)
+//                    .commit();
+            SupportMapFragment mapFragment = (SupportMapFragment)
+                    getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
+
+            // We only create a fragment if it doesn't already exist.
+            if (mapFragment == null) {
+                // To programmatically add the map, we first create a SupportMapFragment.
+                mapFragment = SupportMapFragment.newInstance();
+
+                // Then we add it using a FragmentTransaction.
+                FragmentTransaction fragmentTransaction =
+                        getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.map_fragment_container, mapFragment, MAP_FRAGMENT_TAG);
+                fragmentTransaction.commit();
+            }
+            mapFragment.getMapAsync(this);
+
+        } else {
+            Log.d("Two pane", "Two pane is set to false");
+            mTwoPane = false;
+        }
+
         //final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
         TextView startYearTextView = (TextView) findViewById(R.id.startYearTextView);
         if (startYearTextView != null) {
@@ -264,8 +314,43 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Show user that map is loading while datapoints are being populated on the UI thread (can be time consuming for larger sets)
                 Toast.makeText(MainActivity.this, "Loading map....", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                startActivity(intent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    TransitionManager.beginDelayedTransition(mLoadingViews, new Slide(Gravity.RIGHT));
+                }
+
+                if (mTwoPane) {
+                    Log.d(LOG_TAG, "Adding arguments to the details fragment");
+                    //MapsActivity mapsActivity = new MapsActivity();
+                    mFrameContainer = (FrameLayout) findViewById(R.id.map_fragment_container);
+                    Log.d("Two pane", "Two pane is set to true, need to create fragment");
+
+                    // java.lang.NullPointerException: Attempt to write to field 'android.app.FragmentManagerImpl android.app.Fragment.mFragmentManager' on a null object reference
+                    //Need the on Map ready call back here?!?
+                    //TODO make this work
+                    // It isn't possible to set a fragment's id programmatically so we set a tag instead and
+                    // search for it using that.
+                    SupportMapFragment mapFragment = (SupportMapFragment)
+                            getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
+
+                    // We only create a fragment if it doesn't already exist.
+                    if (mapFragment == null) {
+                        // To programmatically add the map, we first create a SupportMapFragment.
+                        mapFragment = SupportMapFragment.newInstance();
+
+                        // Then we add it using a FragmentTransaction.
+                        FragmentTransaction fragmentTransaction =
+                                getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.add(android.R.id.content, mapFragment, MAP_FRAGMENT_TAG);
+                        fragmentTransaction.commit();
+                    }
+
+
+                } else {
+                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                }
+//                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+//                startActivity(intent);
             }
         });
     }
@@ -317,26 +402,40 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Method to calculate the start position for the range bar
+     *
      * @param minDateYear
      * @param minDateMonth
      * @return
      */
     private float calculateStartPosition(int minDateYear, int minDateMonth) {
         float startPosition;
-        startPosition = (float) (STARTING_YEAR_OF_DATA + (minDateYear - STARTING_YEAR_OF_DATA) * 12 + minDateMonth-1);
+        startPosition = (float) (STARTING_YEAR_OF_DATA + (minDateYear - STARTING_YEAR_OF_DATA) * 12 + minDateMonth - 1);
         return startPosition;
 
     }
 
     /**
      * Method to calculate the end position for the range bar
+     *
      * @param maxDateYear
      * @param maxDateMonth
      * @return
      */
     private float calculateEndPosition(int maxDateYear, int maxDateMonth) {
         float endPosition;
-        endPosition = (float) (STARTING_YEAR_OF_DATA + (maxDateYear - STARTING_YEAR_OF_DATA) * 12 + maxDateMonth-1);
+        endPosition = (float) (STARTING_YEAR_OF_DATA + (maxDateYear - STARTING_YEAR_OF_DATA) * 12 + maxDateMonth - 1);
         return endPosition;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        LatLng sydney = new LatLng(-33.867, 151.206);
+
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+
+        map.addMarker(new MarkerOptions()
+                .title("Sydney")
+                .snippet("The most populous city in Australia.")
+                .position(sydney));
     }
 }

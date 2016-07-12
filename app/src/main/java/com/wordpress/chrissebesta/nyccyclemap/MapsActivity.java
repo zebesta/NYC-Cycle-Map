@@ -7,9 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
-import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
-import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,6 +16,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
+import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 
 import java.util.List;
 
@@ -31,6 +31,10 @@ public class MapsActivity extends FragmentActivity implements
     private GoogleMap mMap;
     private CameraPosition mSavedCameraPosition;
     private List<MyItem> mItems;
+
+    public MapsActivity(){
+        Log.d(LOG_TAG, "Calling the maps activity constructor");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +103,7 @@ public class MapsActivity extends FragmentActivity implements
 
 
         readItems();
+//        FragmentManager fm = getFragmentManager();
 
     }
 

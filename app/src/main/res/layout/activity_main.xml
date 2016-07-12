@@ -180,6 +180,7 @@
         android:layout_gravity="center"/>
 
     <LinearLayout
+        android:id="@+id/loading_views"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
