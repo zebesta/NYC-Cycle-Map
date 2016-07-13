@@ -5,7 +5,9 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -31,17 +33,26 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.clustering.ClusterManager;
+import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
 import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
 import com.wordpress.chrissebesta.nyccyclemap.data.CycleDbHelper;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
+import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 import com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements
+        OnMapReadyCallback,
+        GoogleMap.OnInfoWindowClickListener {
     private static final String MAP_FRAGMENT_TAG = "map";
     public final String LOG_TAG = MainActivity.class.getSimpleName();
     // Constants
@@ -69,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     SharedPreferences sharedPreferences;
     //shared preference mListener declaured to avoid garbage collection
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
+
+    //Map related member variables:
+    private GoogleMap mMap;
+    private CameraPosition mSavedCameraPosition;
+    private List<MyItem> mItems;
+    private ClusterManager<MyItem> mClusterManager;
 
 
     @Override
@@ -126,29 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLoadingViews = (LinearLayout) findViewById(R.id.loading_views);
         if (findViewById(R.id.map_fragment_container) != null) {
             mTwoPane = true;
-//            mFrameContainer = (FrameLayout) findViewById(R.id.map_fragment_container);
-//            Log.d("Two pane", "Two pane is set to true, need to create fragment");
-//
-//            FragmentManager fm = getFragmentManager();
-//            Fragment f = fm.findFragmentById(R.id.map);
-//            getFragmentManager().beginTransaction()
-//                    .replace(R.id.map_fragment_container, f, MAPFRAGMENT_TAG)
-//                    .commit();
-            SupportMapFragment mapFragment = (SupportMapFragment)
-                    getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
-
-            // We only create a fragment if it doesn't already exist.
-            if (mapFragment == null) {
-                // To programmatically add the map, we first create a SupportMapFragment.
-                mapFragment = SupportMapFragment.newInstance();
-
-                // Then we add it using a FragmentTransaction.
-                FragmentTransaction fragmentTransaction =
-                        getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.map_fragment_container, mapFragment, MAP_FRAGMENT_TAG);
-                fragmentTransaction.commit();
-            }
-            mapFragment.getMapAsync(this);
+            createNewMapFrag();
 
         } else {
             Log.d("Two pane", "Two pane is set to false");
@@ -319,30 +314,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 if (mTwoPane) {
-                    Log.d(LOG_TAG, "Adding arguments to the details fragment");
-                    //MapsActivity mapsActivity = new MapsActivity();
-                    mFrameContainer = (FrameLayout) findViewById(R.id.map_fragment_container);
-                    Log.d("Two pane", "Two pane is set to true, need to create fragment");
-
-                    // java.lang.NullPointerException: Attempt to write to field 'android.app.FragmentManagerImpl android.app.Fragment.mFragmentManager' on a null object reference
-                    //Need the on Map ready call back here?!?
-                    //TODO make this work
-                    // It isn't possible to set a fragment's id programmatically so we set a tag instead and
-                    // search for it using that.
-                    SupportMapFragment mapFragment = (SupportMapFragment)
-                            getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
-
-                    // We only create a fragment if it doesn't already exist.
-                    if (mapFragment == null) {
-                        // To programmatically add the map, we first create a SupportMapFragment.
-                        mapFragment = SupportMapFragment.newInstance();
-
-                        // Then we add it using a FragmentTransaction.
-                        FragmentTransaction fragmentTransaction =
-                                getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.add(android.R.id.content, mapFragment, MAP_FRAGMENT_TAG);
-                        fragmentTransaction.commit();
-                    }
+//                    Log.d(LOG_TAG, "Adding arguments to the details fragment");
+//                    //MapsActivity mapsActivity = new MapsActivity();
+//                    mFrameContainer = (FrameLayout) findViewById(R.id.map_fragment_container);
+//                    Log.d("Two pane", "Two pane is set to true, need to create fragment");
+//
+//                    // java.lang.NullPointerException: Attempt to write to field 'android.app.FragmentManagerImpl android.app.Fragment.mFragmentManager' on a null object reference
+//                    //Need the on Map ready call back here?!?
+//                    //TODO make this work
+//                    // It isn't possible to set a fragment's id programmatically so we set a tag instead and
+//                    // search for it using that.
+//                    SupportMapFragment mapFragment = (SupportMapFragment)
+//                            getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
+//
+//                    // We only create a fragment if it doesn't already exist.
+//                    if (mapFragment == null) {
+//                        // To programmatically add the map, we first create a SupportMapFragment.
+//                        mapFragment = SupportMapFragment.newInstance();
+//
+//                        // Then we add it using a FragmentTransaction.
+//                        FragmentTransaction fragmentTransaction =
+//                                getSupportFragmentManager().beginTransaction();
+//                        fragmentTransaction.add(android.R.id.content, mapFragment, MAP_FRAGMENT_TAG);
+//                        fragmentTransaction.commit();
+//                    }
+                    //empty existing list, and then refresh
+                    mItems.clear();
+                    mMap.clear();
+                    createNewMapFrag();
 
 
                 } else {
@@ -353,6 +352,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                startActivity(intent);
             }
         });
+    }
+
+    private void createNewMapFrag() {
+        SupportMapFragment mapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
+
+        // We only create a fragment if it doesn't already exist.
+        if (mapFragment == null) {
+            Log.d("MAPCREATION", "Creating new map");
+            // To programmatically add the map, we first create a SupportMapFragment.
+            mapFragment = SupportMapFragment.newInstance();
+
+            // Then we add it using a FragmentTransaction.
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.map_fragment_container, mapFragment, MAP_FRAGMENT_TAG);
+            fragmentTransaction.commit();
+        }
+        mapFragment.getMapAsync(this);
     }
 
     /**
@@ -428,14 +446,75 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(-33.867, 151.206);
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        if (mSavedCameraPosition != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mSavedCameraPosition));
+        } else {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 8));
+        }
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+        mClusterManager = new ClusterManager<MyItem>(this, mMap);
 
-        map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
-                .position(sydney));
+        try {
+            int v = getPackageManager().getPackageInfo("com.google.android.gms", 0).versionCode;
+            String version = getPackageManager().getPackageInfo("com.google.android.gms", 0).versionName;
+            Log.d(LOG_TAG, "Google play services version is: " + v + " and the name is: " + version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //Cluster manager with unique bike icons
+        mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
+
+        //mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                new DynamicallyAddMakerTask().execute(mMap.getProjection().getVisibleRegion().latLngBounds);
+            }
+        });
+        mMap.setOnInfoWindowClickListener(this);
+
+
+        readItems();
+    }
+    private void readItems() {
+        mItems = new MyItemReader(getBaseContext()).read();
+        mClusterManager.addItems(mItems);
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        String snippetString = marker.getSnippet();
+        String intValueString = snippetString.replaceAll("[^0-9]", "");
+        int intValue = Integer.parseInt(intValueString);
+        Log.d(LOG_TAG, "The intValueString is: " + intValueString + " and the inValue is: " + intValue + " and the snippet string is: " + snippetString);
+//        Toast.makeText(this, "Info window clicked, ID = " + intValueString,
+//                Toast.LENGTH_SHORT).show();
+        Log.d(LOG_TAG, "Info window has been clicked!");
+        Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+        intent.putExtra(getString(R.string.unique_id_extra_key), intValue);
+        startActivity(intent);
+    }
+
+    private class DynamicallyAddMakerTask extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] params) {
+            mClusterManager.clearItems();
+            LatLngBounds bounds = (LatLngBounds) params[0];
+            Log.d(LOG_TAG, "In do in background for dynamically adding markers and lat lng bounds are: "+bounds);
+            for (int i = 0; i<mItems.size(); i++) {
+                if (bounds.contains(mItems.get(i).getPosition())) {
+                    mClusterManager.addItem(mItems.get(i));
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            mClusterManager.cluster();
+        }
     }
 }
