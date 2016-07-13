@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements
     private CameraPosition mSavedCameraPosition;
     private List<MyItem> mItems;
     private ClusterManager<MyItem> mClusterManager;
+    private LatLngBounds mLatLngBounds;
 
 
     @Override
@@ -472,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 new DynamicallyAddMakerTask().execute(mMap.getProjection().getVisibleRegion().latLngBounds);
+                mSavedCameraPosition = mMap.getCameraPosition();
             }
         });
         mMap.setOnInfoWindowClickListener(this);
