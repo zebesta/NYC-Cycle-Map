@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleMap.OnInfoWindowClickListener {
     private static final String MAP_FRAGMENT_TAG = "map";
+    public static android.support.v4.app.FragmentManager fragmentManager;
     public final String LOG_TAG = MainActivity.class.getSimpleName();
     // Constants
     // The authority for the sync adapter's content provider
@@ -81,12 +82,11 @@ public class MainActivity extends AppCompatActivity implements
     //shared preference mListener declaured to avoid garbage collection
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
 
-    //Map related member variables:
+    //Map related member variables incase the device is set up in landscape or tablet UI mode:
     private GoogleMap mMap;
     private CameraPosition mSavedCameraPosition;
     private List<MyItem> mItems;
     private ClusterManager<MyItem> mClusterManager;
-    private LatLngBounds mLatLngBounds;
 
 
     @Override
@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements
         //set icon
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.toolbar_space);
+        fragmentManager = getSupportFragmentManager();
 
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -315,30 +316,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 if (mTwoPane) {
-//                    Log.d(LOG_TAG, "Adding arguments to the details fragment");
-//                    //MapsActivity mapsActivity = new MapsActivity();
-//                    mFrameContainer = (FrameLayout) findViewById(R.id.map_fragment_container);
-//                    Log.d("Two pane", "Two pane is set to true, need to create fragment");
-//
-//                    // java.lang.NullPointerException: Attempt to write to field 'android.app.FragmentManagerImpl android.app.Fragment.mFragmentManager' on a null object reference
-//                    //Need the on Map ready call back here?!?
-//                    //TODO make this work
-//                    // It isn't possible to set a fragment's id programmatically so we set a tag instead and
-//                    // search for it using that.
-//                    SupportMapFragment mapFragment = (SupportMapFragment)
-//                            getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
-//
-//                    // We only create a fragment if it doesn't already exist.
-//                    if (mapFragment == null) {
-//                        // To programmatically add the map, we first create a SupportMapFragment.
-//                        mapFragment = SupportMapFragment.newInstance();
-//
-//                        // Then we add it using a FragmentTransaction.
-//                        FragmentTransaction fragmentTransaction =
-//                                getSupportFragmentManager().beginTransaction();
-//                        fragmentTransaction.add(android.R.id.content, mapFragment, MAP_FRAGMENT_TAG);
-//                        fragmentTransaction.commit();
-//                    }
                     //empty existing list, and then refresh
                     mItems.clear();
                     mMap.clear();
@@ -347,6 +324,9 @@ public class MainActivity extends AppCompatActivity implements
 
                 } else {
                     Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                    if(mMap!=null) {
+                        intent.putExtra(getString(R.string.cameraposition), mMap.getCameraPosition());
+                    }
                     startActivity(intent);
                 }
 //                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
@@ -430,7 +410,6 @@ public class MainActivity extends AppCompatActivity implements
         float startPosition;
         startPosition = (float) (STARTING_YEAR_OF_DATA + (minDateYear - STARTING_YEAR_OF_DATA) * 12 + minDateMonth - 1);
         return startPosition;
-
     }
 
     /**
