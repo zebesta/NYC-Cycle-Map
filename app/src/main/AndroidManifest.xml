@@ -20,9 +20,9 @@
         android:logo="@drawable/redwhitebike"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="com.wordpress.chrissebesta.nyccyclemap.MainActivity">
-            <!--android:screenOrientation="portrait">-->
+        <activity android:name=".MainActivity">
+
+            <!-- android:screenOrientation="portrait"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,17 +42,17 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.wordpress.chrissebesta.nyccyclemap.MapsActivity"
+            android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name="com.wordpress.chrissebesta.nyccyclemap.AboutActivity"
-            android:parentActivityName="com.wordpress.chrissebesta.nyccyclemap.MainActivity">
+            android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wordpress.chrissebesta.nyccyclemap.MainActivity" />
         </activity>
 
-        <service android:name="com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataAuthenticatorService">
+        <service android:name=".sync.CycleDataAuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -63,13 +63,13 @@
         </service>
 
         <provider
-            android:name="com.wordpress.chrissebesta.nyccyclemap.data.CycleProvider"
+            android:name=".data.CycleProvider"
             android:authorities="@string/content_authority"
             android:exported="false"
             android:syncable="true" />
         <!-- The SyncAdapter service -->
         <service
-            android:name="com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncService"
+            android:name=".sync.CycleDataSyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -81,14 +81,15 @@
         </service>
 
         <activity
-            android:name="com.wordpress.chrissebesta.nyccyclemap.DetailActivity"
+            android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName="com.wordpress.chrissebesta.nyccyclemap.MapsActivity"
+            android:parentActivityName=".MapsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wordpress.chrissebesta.nyccyclemap.MapsActivity" />
         </activity>
+        <activity android:name=".NewMapActivity"></activity>
     </application>
 
 </manifest>

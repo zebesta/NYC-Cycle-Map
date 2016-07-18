@@ -34,7 +34,7 @@ public class NewMap extends android.app.Fragment implements
 
 
     private static final String LOG_TAG = "NewMap";
-    private static final String ARG_CAMPOS = "arg camera position";
+    public static final String ARG_CAMPOS = "arg camera position";
     private GoogleMap mMap;
     private CameraPosition mSavedCameraPosition;
     private List<MyItem> mItems;

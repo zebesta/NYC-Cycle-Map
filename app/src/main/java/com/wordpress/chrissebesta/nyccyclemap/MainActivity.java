@@ -328,10 +328,19 @@ public class MainActivity extends AppCompatActivity implements
 
 
                 } else {
-                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                    if (mMap != null) {
-                        intent.putExtra(getString(R.string.cameraposition), mMap.getCameraPosition());
+                    //Using old maps activity without fragment
+//                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+//                    if (mMap != null) {
+//                        intent.putExtra(getString(R.string.cameraposition), mMap.getCameraPosition());
+//                    }
+
+                    //Using new mapsactivity with fragment
+                    Intent intent = new Intent(MainActivity.this, NewMapActivity.class);
+                    if(mSavedCameraPosition!= null){
+                        intent.putExtra("arg camera position", mSavedCameraPosition);
                     }
+
+                    //launch the intent
                     startActivity(intent);
                 }
 //                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
