@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Slide;
 import android.transition.TransitionManager;
@@ -32,7 +31,6 @@ import com.appyvet.rangebar.RangeBar;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -145,7 +143,13 @@ public class MainActivity extends AppCompatActivity implements
         mLoadingViews = (LinearLayout) findViewById(R.id.loading_views);
         if (findViewById(R.id.map_fragment_container) != null) {
             mTwoPane = true;
-            createNewMapFrag();
+            //used to create map within this activity
+            //createNewMapFrag();
+
+            //create map using a true fragment
+//            getFragmentManager().beginTransaction()
+//                    .replace(R.id.map_fragment_container, new NewMap(), MAP_FRAGMENT_TAG)
+//                    .commit();
 
         } else {
             Log.d("Two pane", "Two pane is set to false");
@@ -317,8 +321,8 @@ public class MainActivity extends AppCompatActivity implements
 
                 if (mTwoPane) {
                     //empty existing list, and then refresh
-                    mItems.clear();
-                    mMap.clear();
+//                    mItems.clear();
+//                    mMap.clear();
                     createNewMapFrag();
 
 
@@ -336,22 +340,26 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void createNewMapFrag() {
-        SupportMapFragment mapFragment = (SupportMapFragment)
-                getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
+//        SupportMapFragment mapFragment = (SupportMapFragment)
+//                getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
+//
+//        // We only create a fragment if it doesn't already exist.
+//        if (mapFragment == null) {
+//            Log.d("MAPCREATION", "Creating new map");
+//            // To programmatically add the map, we first create a SupportMapFragment.
+//            mapFragment = SupportMapFragment.newInstance();
+//
+//            // Then we add it using a FragmentTransaction.
+//            FragmentTransaction fragmentTransaction =
+//                    getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.add(R.id.map_fragment_container, mapFragment, MAP_FRAGMENT_TAG);
+//            fragmentTransaction.commit();
+//        }
+//        mapFragment.getMapAsync(this);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.map_fragment_container, new NewMap(), MAP_FRAGMENT_TAG)
+                .commit();
 
-        // We only create a fragment if it doesn't already exist.
-        if (mapFragment == null) {
-            Log.d("MAPCREATION", "Creating new map");
-            // To programmatically add the map, we first create a SupportMapFragment.
-            mapFragment = SupportMapFragment.newInstance();
-
-            // Then we add it using a FragmentTransaction.
-            FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.map_fragment_container, mapFragment, MAP_FRAGMENT_TAG);
-            fragmentTransaction.commit();
-        }
-        mapFragment.getMapAsync(this);
     }
 
     /**
