@@ -50,7 +50,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
-        GoogleMap.OnInfoWindowClickListener {
+        GoogleMap.OnInfoWindowClickListener,
+        NewMap.OnMapCameraChangedListener {
     private static final String MAP_FRAGMENT_TAG = "map";
     public static android.support.v4.app.FragmentManager fragmentManager;
     public final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements
         if (findViewById(R.id.map_fragment_container) != null) {
             mTwoPane = true;
             //used to create map within this activity
-            //createNewMapFrag();
+            createNewMapFrag();
 
             //create map using a true fragment
 //            getFragmentManager().beginTransaction()
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements
 
                 } else {
                     Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                    if(mMap!=null) {
+                    if (mMap != null) {
                         intent.putExtra(getString(R.string.cameraposition), mMap.getCameraPosition());
                     }
                     startActivity(intent);
@@ -357,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements
 //        }
 //        mapFragment.getMapAsync(this);
         getFragmentManager().beginTransaction()
-                .replace(R.id.map_fragment_container, new NewMap(), MAP_FRAGMENT_TAG)
+                .replace(R.id.map_fragment_container, NewMap.newInstance(mSavedCameraPosition), MAP_FRAGMENT_TAG)
                 .commit();
 
     }
@@ -468,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements
 
         readItems();
     }
+
     private void readItems() {
         mItems = new MyItemReader(getBaseContext()).read();
         mClusterManager.addItems(mItems);
@@ -487,13 +489,18 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
+    @Override
+    public void onMapChanged(CameraPosition cameraPosition) {
+        mSavedCameraPosition = cameraPosition;
+    }
+
     private class DynamicallyAddMakerTask extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] params) {
             mClusterManager.clearItems();
             LatLngBounds bounds = (LatLngBounds) params[0];
-            Log.d(LOG_TAG, "In do in background for dynamically adding markers and lat lng bounds are: "+bounds);
-            for (int i = 0; i<mItems.size(); i++) {
+            Log.d(LOG_TAG, "In do in background for dynamically adding markers and lat lng bounds are: " + bounds);
+            for (int i = 0; i < mItems.size(); i++) {
                 if (bounds.contains(mItems.get(i).getPosition())) {
                     mClusterManager.addItem(mItems.get(i));
                 }

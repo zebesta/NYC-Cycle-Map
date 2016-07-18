@@ -1,6 +1,8 @@
 package com.wordpress.chrissebesta.nyccyclemap;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -32,25 +34,85 @@ public class NewMap extends android.app.Fragment implements
 
 
     private static final String LOG_TAG = "NewMap";
+    private static final String ARG_CAMPOS = "arg camera position";
     private GoogleMap mMap;
     private CameraPosition mSavedCameraPosition;
     private List<MyItem> mItems;
     private ClusterManager<MyItem> mClusterManager;
     private MapView mapView;
+    private OnMapCameraChangedListener mCallback;
 
 
     public NewMap() {
         // Required empty public constructor
     }
 
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param cameraPosition Saved camera position or requested camera position to launch map with
+     * @return A new instance of fragment BlankFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static NewMap newInstance(CameraPosition cameraPosition) {
+        Log.d(LOG_TAG, "Calling new instance");
+        NewMap fragment = new NewMap();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_CAMPOS, cameraPosition);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public interface OnMapCameraChangedListener {
+        public void onMapChanged(CameraPosition cameraPosition);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d(LOG_TAG, "Calling on attach - context");
+        if (context instanceof OnMapCameraChangedListener) {
+            mCallback = (OnMapCameraChangedListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Log.d(LOG_TAG, "Calling on attach - activity");
+        if (activity instanceof OnMapCameraChangedListener) {
+            mCallback = (OnMapCameraChangedListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(LOG_TAG, "Calling on detach");
+        mCallback = null;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "Calling on Create");
+        if (getArguments() != null) {
+            mSavedCameraPosition = getArguments().getParcelable(ARG_CAMPOS);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "Calling on create view");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_new_map, container, false);
     }
@@ -68,7 +130,10 @@ public class NewMap extends android.app.Fragment implements
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.d(LOG_TAG, "Calling on map ready");
         mMap = googleMap;
+        CameraPosition cp;
+//        mSavedCameraPosition = ((MainActivity) getActivity()).getmSavedCameraPosition();
         if (mSavedCameraPosition != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mSavedCameraPosition));
         } else {
@@ -86,6 +151,10 @@ public class NewMap extends android.app.Fragment implements
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 new DynamicallyAddMakerTask().execute(mMap.getProjection().getVisibleRegion().latLngBounds);
+                Log.d(LOG_TAG, "Calling callback to update camera position in the activity");
+                Log.d(LOG_TAG, "Camera position is = "+mMap.getCameraPosition());
+                mCallback.onMapChanged(mMap.getCameraPosition());
+                //mMap.getCameraPosition();
             }
         });
         mMap.setOnInfoWindowClickListener(this);
