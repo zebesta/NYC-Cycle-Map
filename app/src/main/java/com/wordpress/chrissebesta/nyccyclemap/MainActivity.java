@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
 import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
@@ -464,6 +465,20 @@ public class MainActivity extends AppCompatActivity implements
 
         //Cluster manager with unique bike icons
         mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
+        mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyItem>() {
+            @Override
+            public boolean onClusterClick(Cluster<MyItem> cluster) {
+                Log.d("CLUSTER", "Cluster was clicked at "+cluster.getPosition());
+                return false;
+            }
+        });
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
+            @Override
+            public boolean onClusterItemClick(MyItem myItem) {
+                Log.d("CLUSTER", "Cluster item was clicked at "+myItem.getPosition());
+                return false;
+            }
+        });
 
         //mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {

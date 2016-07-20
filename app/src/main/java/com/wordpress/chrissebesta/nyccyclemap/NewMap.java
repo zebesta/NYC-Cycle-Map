@@ -146,6 +146,7 @@ public class NewMap extends android.app.Fragment implements
         mClusterManager.setRenderer(new BikeClusterRenderer(getActivity().getBaseContext(), mMap, mClusterManager));
 
 
+
         //mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
