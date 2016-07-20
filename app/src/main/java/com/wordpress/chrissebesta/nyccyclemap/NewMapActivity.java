@@ -32,7 +32,7 @@ public class NewMapActivity extends AppCompatActivity implements NewMap.OnMapCam
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         double lat = longBitsToDouble(sharedPreferences.getLong("latitude", Double.doubleToRawLongBits(40.7119042)));
         double lon = longBitsToDouble(sharedPreferences.getLong("longitude", Double.doubleToRawLongBits(-74.0066549)));
-        float zoom = sharedPreferences.getFloat("zoom", 8);
+        float zoom = sharedPreferences.getFloat("zoom", (float)8);
         mSavedCameraPosition = new CameraPosition(new LatLng(lat, lon), zoom,0,0);
 
 

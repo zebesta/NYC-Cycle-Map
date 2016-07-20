@@ -48,6 +48,8 @@ import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.List;
 
+import static java.lang.Double.longBitsToDouble;
+
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -337,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements
 
                     //Using new mapsactivity with fragment
                     Intent intent = new Intent(MainActivity.this, NewMapActivity.class);
-                    if(mSavedCameraPosition!= null){
+                    if (mSavedCameraPosition != null) {
                         intent.putExtra("arg camera position", mSavedCameraPosition);
                     }
 
@@ -367,6 +369,11 @@ public class MainActivity extends AppCompatActivity implements
 //            fragmentTransaction.commit();
 //        }
 //        mapFragment.getMapAsync(this);
+        double lat = longBitsToDouble(sharedPreferences.getLong("latitude", Double.doubleToRawLongBits(40.7119042)));
+        double lon = longBitsToDouble(sharedPreferences.getLong("longitude", Double.doubleToRawLongBits(-74.0066549)));
+        float zoom = sharedPreferences.getFloat("zoom", (float)8);
+        mSavedCameraPosition = new CameraPosition(new LatLng(lat, lon), zoom, 0, 0);
+
         getFragmentManager().beginTransaction()
                 .replace(R.id.map_fragment_container, NewMap.newInstance(mSavedCameraPosition), MAP_FRAGMENT_TAG)
                 .commit();
@@ -468,14 +475,14 @@ public class MainActivity extends AppCompatActivity implements
         mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyItem>() {
             @Override
             public boolean onClusterClick(Cluster<MyItem> cluster) {
-                Log.d("CLUSTER", "Cluster was clicked at "+cluster.getPosition());
+                Log.d("CLUSTER", "Cluster was clicked at " + cluster.getPosition());
                 return false;
             }
         });
         mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
             @Override
             public boolean onClusterItemClick(MyItem myItem) {
-                Log.d("CLUSTER", "Cluster item was clicked at "+myItem.getPosition());
+                Log.d("CLUSTER", "Cluster item was clicked at " + myItem.getPosition());
                 return false;
             }
         });
@@ -515,6 +522,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMapChanged(CameraPosition cameraPosition) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong("latitude", Double.doubleToRawLongBits(mSavedCameraPosition.target.latitude));
+        editor.putLong("longitude", Double.doubleToRawLongBits(mSavedCameraPosition.target.longitude));
+        editor.putFloat("zoom", mSavedCameraPosition.zoom);
+        editor.commit();
         mSavedCameraPosition = cameraPosition;
     }
 
