@@ -71,9 +71,10 @@ public class MainActivity extends AppCompatActivity implements
     public final int endingYearOfData = Calendar.getInstance().get(Calendar.YEAR);
     public final int endingMonthOfData = Calendar.getInstance().get(Calendar.MONTH) + 1;
     //Views that need to be accessible outside of onCreate
-    ProgressBar mProgressBar;
-    TextView mLoadingText;
-    LinearLayout mLoadingViews;
+    private FrameLayout mOptionsSelection;
+    private ProgressBar mProgressBar;
+    private TextView mLoadingText;
+    private LinearLayout mLoadingViews;
     boolean mTwoPane;
     FrameLayout mFrameContainer;
     //Button mInitialButton;
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar = progressBar;
+        mOptionsSelection = (FrameLayout) findViewById(R.id.option_selection);
         final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
         final TextView startDatTextView = (TextView) findViewById(R.id.startDateTextView);
         final TextView endDateTextView = (TextView) findViewById(R.id.endDateTextView);
@@ -328,6 +330,11 @@ public class MainActivity extends AppCompatActivity implements
 //                    mItems.clear();
 //                    mMap.clear();
                     createNewMapFrag();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Log.d(LOG_TAG, "Animating transition to push view out of the way");
+                        TransitionManager.beginDelayedTransition(mOptionsSelection, new Slide());
+                        mOptionsSelection.setVisibility(View.GONE);
+                    }
 
 
                 } else {
