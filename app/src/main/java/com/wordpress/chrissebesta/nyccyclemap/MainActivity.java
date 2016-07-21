@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //dummy account for sync adapter
         Account account = CreateSyncAccount(this);
         setContentView(R.layout.activity_main);
@@ -174,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements
 
         //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
         //sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //If sync is already in progress when on create is called (unlikely but possible to force) show loading views and ensure syncing is happening
         //this will trigger if app was killed while it was loading cycle data
         Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);

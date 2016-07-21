@@ -41,6 +41,7 @@ public class NewMap extends android.app.Fragment implements
     private ClusterManager<MyItem> mClusterManager;
     private MapView mapView;
     private OnMapCameraChangedListener mCallback;
+    private Context mContext;
 
 
     public NewMap() {
@@ -71,6 +72,7 @@ public class NewMap extends android.app.Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        //mContext = context;
         Log.d(LOG_TAG, "Calling on attach - context");
         if (context instanceof OnMapCameraChangedListener) {
             mCallback = (OnMapCameraChangedListener) context;
@@ -104,6 +106,7 @@ public class NewMap extends android.app.Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "Calling on Create");
+        mContext = getActivity().getApplicationContext();
         if (getArguments() != null) {
             mSavedCameraPosition = getArguments().getParcelable(ARG_CAMPOS);
         }
@@ -140,11 +143,10 @@ public class NewMap extends android.app.Fragment implements
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 8));
         }
 
-        mClusterManager = new ClusterManager<MyItem>(getActivity().getBaseContext(), mMap);
-
+        Log.d(LOG_TAG, "Context is = "+mContext);
+        mClusterManager = new ClusterManager<MyItem>(mContext, mMap);
         //Cluster manager with unique bike icons
-        mClusterManager.setRenderer(new BikeClusterRenderer(getActivity().getBaseContext(), mMap, mClusterManager));
-
+        mClusterManager.setRenderer(new BikeClusterRenderer(mContext, mMap, mClusterManager));
 
 
         //mMap.setOnCameraChangeListener(mClusterManager);
@@ -153,7 +155,7 @@ public class NewMap extends android.app.Fragment implements
             public void onCameraChange(CameraPosition cameraPosition) {
                 new DynamicallyAddMakerTask().execute(mMap.getProjection().getVisibleRegion().latLngBounds);
                 Log.d(LOG_TAG, "Calling callback to update camera position in the activity");
-                Log.d(LOG_TAG, "Camera position is = "+mMap.getCameraPosition());
+                Log.d(LOG_TAG, "Camera position is = " + mMap.getCameraPosition());
                 mCallback.onMapChanged(mMap.getCameraPosition());
                 //mMap.getCameraPosition();
             }
@@ -166,7 +168,7 @@ public class NewMap extends android.app.Fragment implements
     }
 
     private void readItems() {
-        mItems = new MyItemReader(getActivity().getBaseContext()).read();
+        mItems = new MyItemReader(mContext).read();
         mClusterManager.addItems(mItems);
 
     }
@@ -180,7 +182,7 @@ public class NewMap extends android.app.Fragment implements
 //        Toast.makeText(this, "Info window clicked, ID = " + intValueString,
 //                Toast.LENGTH_SHORT).show();
         Log.d(LOG_TAG, "Info window has been clicked!");
-        Intent intent = new Intent(getActivity().getBaseContext(), DetailActivity.class);
+        Intent intent = new Intent(mContext, DetailActivity.class);
         intent.putExtra(getString(R.string.unique_id_extra_key), intValue);
         startActivity(intent);
 
