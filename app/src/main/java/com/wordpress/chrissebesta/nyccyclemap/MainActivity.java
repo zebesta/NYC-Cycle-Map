@@ -22,8 +22,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,11 +72,13 @@ public class MainActivity extends AppCompatActivity implements
     public final int STARTING_YEAR_OF_DATA = 2012;
     public final int endingYearOfData = Calendar.getInstance().get(Calendar.YEAR);
     public final int endingMonthOfData = Calendar.getInstance().get(Calendar.MONTH) + 1;
-    //Views that need to be accessible outside of onCreate
+    //Views that need to be accessible
+    private SlidingDrawer mDrawer;
     private FrameLayout mOptionsSelection;
     private ProgressBar mProgressBar;
     private TextView mLoadingText;
     private LinearLayout mLoadingViews;
+    private ImageView mDrawerArrow;
     boolean mTwoPane;
     FrameLayout mFrameContainer;
     //Button mInitialButton;
@@ -139,52 +143,21 @@ public class MainActivity extends AppCompatActivity implements
         getSupportActionBar().setIcon(R.drawable.toolbar_space);
         fragmentManager = getSupportFragmentManager();
 
+        //Load views
         Button mapDatabase = (Button) findViewById(R.id.mapDatabase);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar = progressBar;
         mOptionsSelection = (FrameLayout) findViewById(R.id.option_selection);
-        final TextView loadingText = (TextView) findViewById(R.id.loadingTextView);
+        mLoadingText = (TextView) findViewById(R.id.loadingTextView);
+        mDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer);
+        mDrawerArrow = (ImageView) findViewById(R.id.drawerArrow);
+
         final TextView startDatTextView = (TextView) findViewById(R.id.startDateTextView);
         final TextView endDateTextView = (TextView) findViewById(R.id.endDateTextView);
-        mLoadingText = loadingText;
+//        mLoadingText = loadingText;
         mLoadingViews = (LinearLayout) findViewById(R.id.loading_views);
-        if (findViewById(R.id.map_fragment_container) != null) {
-            mTwoPane = true;
-            //used to create map within this activity
-            createNewMapFrag();
 
-            //create map using a true fragment
-//            getFragmentManager().beginTransaction()
-//                    .replace(R.id.map_fragment_container, new NewMap(), MAP_FRAGMENT_TAG)
-//                    .commit();
 
-        } else {
-            Log.d("Two pane", "Two pane is set to false");
-            mTwoPane = false;
-        }
-
-        //final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
-        TextView startYearTextView = (TextView) findViewById(R.id.startYearTextView);
-        if (startYearTextView != null) {
-            startYearTextView.setText(String.valueOf(STARTING_YEAR_OF_DATA));
-        }
-        TextView endYearTextView = (TextView) findViewById(R.id.endYearTextView);
-        if (endYearTextView != null) {
-            endYearTextView.setText(String.valueOf(endingYearOfData));
-        }
-        final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
-        //mMaterialRangeBar = materialRangeBar;
-
-        //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
-        //sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
-        //If sync is already in progress when on create is called (unlikely but possible to force) show loading views and ensure syncing is happening
-        //this will trigger if app was killed while it was loading cycle data
-        Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
-        if (showSyncing) {
-            CycleDataSyncAdapter.syncImmediately(getApplicationContext());
-            mProgressBar.setVisibility(View.VISIBLE);
-            mLoadingText.setVisibility(View.VISIBLE);
-        }
         //set shared preference on change mListener
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -213,6 +186,39 @@ public class MainActivity extends AppCompatActivity implements
             firstRun();
         }
 
+        //Populate map fragment based on layout style, set boolean to make this distinction
+        if (findViewById(R.id.map_fragment_container) != null) {
+            mTwoPane = true;
+            //used to create map within this activity
+            createNewMapFrag();
+        } else {
+            Log.d("Two pane", "Two pane is set to false");
+            mTwoPane = false;
+        }
+
+        //final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
+        TextView startYearTextView = (TextView) findViewById(R.id.startYearTextView);
+        if (startYearTextView != null) {
+            startYearTextView.setText(String.valueOf(STARTING_YEAR_OF_DATA));
+        }
+        TextView endYearTextView = (TextView) findViewById(R.id.endYearTextView);
+        if (endYearTextView != null) {
+            endYearTextView.setText(String.valueOf(endingYearOfData));
+        }
+        final RangeBar materialRangeBar = (RangeBar) findViewById(R.id.materialRangeBarWithDates);
+        //mMaterialRangeBar = materialRangeBar;
+
+        //update the injured/killed checkedTextViews based on what was previously set in the shared preferences, default to true
+        //sharedPreferences = getSharedPreferences(getString(R.string.sharedpreference), Context.MODE_PRIVATE);
+        //If sync is already in progress when on create is called (unlikely but possible to force) show loading views and ensure syncing is happening
+        //this will trigger if app was killed while it was loading cycle data
+        Boolean showSyncing = sharedPreferences.getBoolean(getString(R.string.syncing), false);
+        if (showSyncing) {
+            CycleDataSyncAdapter.syncImmediately(getApplicationContext());
+            mProgressBar.setVisibility(View.VISIBLE);
+            mLoadingText.setVisibility(View.VISIBLE);
+        }
+
         //Set up check boxes for injured and killed cyclists
         final CheckedTextView injuredCheckedTextView = (CheckedTextView) findViewById(R.id.injuredCheckedTextView);
         assert injuredCheckedTextView != null;
@@ -239,7 +245,6 @@ public class MainActivity extends AppCompatActivity implements
         assert materialRangeBar != null;
         materialRangeBar.setTickEnd(tickEnd);
         materialRangeBar.setTickStart(STARTING_YEAR_OF_DATA);
-        //materialRangeBar.setTickInterval(1);
         materialRangeBar.setBarWeight(8);
         materialRangeBar.setPinRadius(0);
         materialRangeBar.setDrawTicks(false);
@@ -247,6 +252,22 @@ public class MainActivity extends AppCompatActivity implements
         materialRangeBar.setRangePinsByValue(calculateStartPosition(startingYear, startingMonth), calculateEndPosition(endingYear, endingMonth));
 
 
+        /**
+         * Set up listeners for the user inputs (range bar, checked boxes, etc)
+         */
+        mDrawer.setOnDrawerOpenListener(new SlidingDrawer.OnDrawerOpenListener() {
+            @Override
+            public void onDrawerOpened() {
+                mDrawerArrow.setImageResource(R.drawable.arrow_icon_down);
+
+            }
+        });
+        mDrawer.setOnDrawerCloseListener(new SlidingDrawer.OnDrawerCloseListener() {
+            @Override
+            public void onDrawerClosed() {
+                mDrawerArrow.setImageResource(R.drawable.arrow_icon_up);
+            }
+        });
         //Listen to user settings for the range bar here
         materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
@@ -273,17 +294,12 @@ public class MainActivity extends AppCompatActivity implements
                 int endingMonth = (rightPinValueInt - STARTING_YEAR_OF_DATA) % 12 + 1;
                 int startingYear = (leftPinValueInt - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
                 int endingYear = (rightPinValueInt - STARTING_YEAR_OF_DATA) / 12 + STARTING_YEAR_OF_DATA;
-                //Log.d("RANGEBAR", "starting month and ending month are: " + startingMonth +"and" +endingMonth);
-                //Log.d("RANGEBAR", "starting year and ending year are: " + startingYear +"and" +endingYear);
                 editor.putInt(getString(R.string.mindateyear), startingYear);
                 editor.putInt(getString(R.string.maxdateyear), endingYear);
                 editor.putInt(getString(R.string.mindatemonth), startingMonth);
                 editor.putInt(getString(R.string.maxdatemonth), endingMonth);
-                //Log.d("RANGEBAR", "Range bar is now set to look between " + leftPinValue + " and " + rightPinValue);
                 String startingMonthString = new DateFormatSymbols().getMonths()[startingMonth - 1];
                 String endingMonthString = new DateFormatSymbols().getMonths()[endingMonth - 1];
-
-                //yearMappingTextView.setText(textForYearsToBeMapped[0]);
                 startDatTextView.setText("" + startingMonthString + " " + startingYear);
                 endDateTextView.setText("" + endingMonthString + " " + endingYear);
                 //editor.commit();
@@ -326,17 +342,11 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 if (mTwoPane) {
-                    //empty existing list, and then refresh
-//                    mItems.clear();
-//                    mMap.clear();
-                    createNewMapFrag();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Log.d(LOG_TAG, "Animating transition to push view out of the way");
-                        TransitionManager.beginDelayedTransition(mOptionsSelection, new Slide());
-                        mOptionsSelection.setVisibility(View.GONE);
+                    //close drawer and update map
+                    if(mDrawer!=null) {
+                        mDrawer.animateClose();
                     }
-
-
+                    createNewMapFrag();
                 } else {
                     //Using old maps activity without fragment
 //                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
@@ -360,22 +370,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void createNewMapFrag() {
-//        SupportMapFragment mapFragment = (SupportMapFragment)
-//                getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
-//
-//        // We only create a fragment if it doesn't already exist.
-//        if (mapFragment == null) {
-//            Log.d("MAPCREATION", "Creating new map");
-//            // To programmatically add the map, we first create a SupportMapFragment.
-//            mapFragment = SupportMapFragment.newInstance();
-//
-//            // Then we add it using a FragmentTransaction.
-//            FragmentTransaction fragmentTransaction =
-//                    getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.add(R.id.map_fragment_container, mapFragment, MAP_FRAGMENT_TAG);
-//            fragmentTransaction.commit();
-//        }
-//        mapFragment.getMapAsync(this);
+
+        //Build a camera position from shared preferences and send it to the
         double lat = longBitsToDouble(sharedPreferences.getLong("latitude", Double.doubleToRawLongBits(40.7119042)));
         double lon = longBitsToDouble(sharedPreferences.getLong("longitude", Double.doubleToRawLongBits(-74.0066549)));
         float zoom = sharedPreferences.getFloat("zoom", (float)8);

@@ -18,7 +18,7 @@
 
     <SlidingDrawer
         android:id="@+id/slidingDrawer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:content="@+id/linearLayout"
         android:handle="@+id/drawerHandle">
@@ -247,19 +247,20 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/drawerHandle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/colorBlack"
+            android:orientation="vertical"
+            android:background="@color/colorWhite"
             android:alpha="0.5">
-            <Button
-                android:id="@+id/handleButton"
-                android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/drawerArrow"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Open map settings"/>
-        </LinearLayout>
+                android:src="@drawable/arrow_icon_up"
+                android:layout_gravity="center"/>
+        </FrameLayout>
     </SlidingDrawer>
 
 

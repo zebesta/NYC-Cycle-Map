@@ -23,11 +23,11 @@
         <activity android:name=".MainActivity">
 
             <!-- android:screenOrientation="portrait"> -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -89,7 +89,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wordpress.chrissebesta.nyccyclemap.MapsActivity" />
         </activity>
-        <activity android:name=".NewMapActivity"></activity>
+        <activity android:name=".NewMapActivity" />
+        <activity android:name=".MainUpdate">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
