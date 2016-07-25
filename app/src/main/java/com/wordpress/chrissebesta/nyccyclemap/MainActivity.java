@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,8 +39,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
-import com.wordpress.chrissebesta.nyccyclemap.data.CycleContract;
-import com.wordpress.chrissebesta.nyccyclemap.data.CycleDbHelper;
 import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
 import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 import com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
@@ -102,16 +99,20 @@ public class MainActivity extends AppCompatActivity implements
 //                //TODO make a settings activity to set the sync frequency and anything else that makes sense
 //                Toast.makeText(MainActivity.this, "selected settings!", Toast.LENGTH_SHORT).show();
 //                return true;
+//            //Show the drawer
+//            case R.id.show_options_settings:
+//                mDrawer.open();
+//                return true;
             //Clear the database from the settings menu
-            case R.id.clear_database_settings:
-                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
-                SQLiteDatabase db = helper.getWritableDatabase();
-                db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
-                Log.d(LOG_TAG, "Clearing Database");
-
-                //close SQL Database
-                db.close();
-                return true;
+//            case R.id.clear_database_settings:
+//                CycleDbHelper helper = new CycleDbHelper(getBaseContext());
+//                SQLiteDatabase db = helper.getWritableDatabase();
+//                db.delete(CycleContract.CycleEntry.TABLE_NAME, null, null);
+//                Log.d(LOG_TAG, "Clearing Database");
+//
+//                //close SQL Database
+//                db.close();
+//                return true;
             case R.id.update_settings:
                 //update the NYC cycle data dababase
                 Log.d(LOG_TAG, "Syncing immediately");

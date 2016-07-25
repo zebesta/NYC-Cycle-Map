@@ -6,19 +6,24 @@
         <!--android:orderInCategory="100"-->
         <!--android:title="@string/action_settings"-->
         <!--app:showAsAction="never" />-->
-    <item
-        android:id="@+id/clear_database_settings"
-        android:orderInCategory="101"
-        android:title="@string/clear_database"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/show_options_settings"-->
+        <!--android:orderInCategory="101"-->
+        <!--android:title="Show map options"-->
+        <!--app:showAsAction="never"/>-->
+    <!--<item-->
+        <!--android:id="@+id/clear_database_settings"-->
+        <!--android:orderInCategory="102"-->
+        <!--android:title="@string/clear_database"-->
+        <!--app:showAsAction="never" />-->
     <item
         android:id="@+id/update_settings"
-        android:orderInCategory="101"
+        android:orderInCategory="103"
         android:title="@string/update_settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/about_settings"
-        android:orderInCategory="102"
+        android:orderInCategory="104"
         android:title="@string/about"
         app:showAsAction="never" />
 </menu>
