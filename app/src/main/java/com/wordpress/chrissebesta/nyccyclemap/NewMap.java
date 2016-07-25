@@ -123,10 +123,12 @@ public class NewMap extends android.app.Fragment implements
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mapView = (MapView) view.findViewById(R.id.map);
-        mapView.onCreate(savedInstanceState);
-        mapView.onResume();
-        mapView.getMapAsync(this);//when you already implement OnMapReadyCallback in your fragment
+        if(mSavedCameraPosition!=null) {
+            mapView = (MapView) view.findViewById(R.id.map);
+            mapView.onCreate(savedInstanceState);
+            mapView.onResume();
+            mapView.getMapAsync(this);//when you already implement OnMapReadyCallback in your fragment
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)

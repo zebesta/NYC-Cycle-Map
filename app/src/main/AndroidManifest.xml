@@ -24,9 +24,9 @@
 
             <!-- android:screenOrientation="portrait"> -->
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
         <!--
@@ -90,7 +90,9 @@
                 android:value="com.wordpress.chrissebesta.nyccyclemap.MapsActivity" />
         </activity>
         <activity android:name=".NewMapActivity" />
-        <activity android:name=".MainUpdate">
+        <activity
+            android:name=".MainUpdate"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

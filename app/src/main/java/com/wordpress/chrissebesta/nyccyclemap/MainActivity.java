@@ -79,8 +79,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mLoadingText;
     private LinearLayout mLoadingViews;
     private ImageView mDrawerArrow;
-    boolean mTwoPane;
-    FrameLayout mFrameContainer;
+    boolean mContainsMapFrag;
     //Button mInitialButton;
     //RangeBar mMaterialRangeBar;
 
@@ -188,12 +187,11 @@ public class MainActivity extends AppCompatActivity implements
 
         //Populate map fragment based on layout style, set boolean to make this distinction
         if (findViewById(R.id.map_fragment_container) != null) {
-            mTwoPane = true;
+            mContainsMapFrag = true;
             //used to create map within this activity
             createNewMapFrag();
         } else {
-            Log.d("Two pane", "Two pane is set to false");
-            mTwoPane = false;
+            mContainsMapFrag = false;
         }
 
         //final TextView yearMappingTextView = (TextView) findViewById(R.id.yearMappingTextView);
@@ -255,19 +253,22 @@ public class MainActivity extends AppCompatActivity implements
         /**
          * Set up listeners for the user inputs (range bar, checked boxes, etc)
          */
-        mDrawer.setOnDrawerOpenListener(new SlidingDrawer.OnDrawerOpenListener() {
-            @Override
-            public void onDrawerOpened() {
-                mDrawerArrow.setImageResource(R.drawable.arrow_icon_down);
+        if (mDrawer != null) {
+            mDrawer.setOnDrawerOpenListener(new SlidingDrawer.OnDrawerOpenListener() {
+                @Override
+                public void onDrawerOpened() {
+                    mDrawerArrow.setImageResource(R.drawable.arrow_icon_down);
 
-            }
-        });
-        mDrawer.setOnDrawerCloseListener(new SlidingDrawer.OnDrawerCloseListener() {
-            @Override
-            public void onDrawerClosed() {
-                mDrawerArrow.setImageResource(R.drawable.arrow_icon_up);
-            }
-        });
+                }
+            });
+            mDrawer.setOnDrawerCloseListener(new SlidingDrawer.OnDrawerCloseListener() {
+                @Override
+                public void onDrawerClosed() {
+                    mDrawerArrow.setImageResource(R.drawable.arrow_icon_up);
+                }
+            });
+        }
+
         //Listen to user settings for the range bar here
         materialRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
@@ -341,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements
                     TransitionManager.beginDelayedTransition(mLoadingViews, new Slide(Gravity.RIGHT));
                 }
 
-                if (mTwoPane) {
+                if (mContainsMapFrag) {
                     //close drawer and update map
                     if(mDrawer!=null) {
                         mDrawer.animateClose();
@@ -370,6 +371,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void createNewMapFrag() {
+        Log.d(LOG_TAG, "Calling create new map frag");
 
         //Build a camera position from shared preferences and send it to the
         double lat = longBitsToDouble(sharedPreferences.getLong("latitude", Double.doubleToRawLongBits(40.7119042)));
