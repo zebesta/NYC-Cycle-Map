@@ -13,6 +13,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import static java.lang.Double.longBitsToDouble;
 
+/**
+ * Activity to host an instance of the New Map Activity.
+ */
 public class NewMapActivity extends AppCompatActivity implements NewMap.OnMapCameraChangedListener {
     private static final String MAP_FRAGMENT_TAG = "map";
     private static final String LOG_TAG = "NewMapActivity";

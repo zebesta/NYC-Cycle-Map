@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.SlidingDrawer;
 
 /**
- * Created by chrissebesta on 7/27/16.
+ * A sliding drawer capable of setting size limits based on wrap content instead of match parent
  */
 public class WrappingSlidingDrawer extends SlidingDrawer {
 

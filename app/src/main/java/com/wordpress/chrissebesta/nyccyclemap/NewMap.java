@@ -53,7 +53,7 @@ public class NewMap extends android.app.Fragment implements
      * this fragment using the provided parameters.
      *
      * @param cameraPosition Saved camera position or requested camera position to launch map with
-     * @return A new instance of fragment BlankFragment.
+     * @return A new instance of fragment NewMap.
      */
     public static NewMap newInstance(CameraPosition cameraPosition) {
         Log.d(LOG_TAG, "Calling new instance");

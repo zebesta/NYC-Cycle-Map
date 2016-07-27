@@ -11,35 +11,14 @@
         android:id="@+id/option_selection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2">
+        android:layout_weight="2"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!--<Button-->
-            <!--android:id="@+id/initialDataButton"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Get initial cycle data" />-->
-            <!--<Button-->
-            <!--android:id="@+id/refreshbutton"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/update" />-->
-
-            <!--<Button-->
-            <!--android:id="@+id/brooklynButton"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Brooklyn" />-->
-
-            <!--<Button-->
-            <!--android:id="@+id/clearSQL"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Clear SQL DB" />-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,11 +31,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:background="#737373" />
-            <!--<ImageView-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:src="@android:drawable/divider_horizontal_dim_dark" />-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -115,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:background="#737373" />
-            <!--TODO: center text here at the - marker instead of the entire text field-->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -151,16 +125,6 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
-            <!--<TextView-->
-            <!--android:id="@+id/yearMappingTextView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="4dp"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:textStyle="bold"-->
-            <!--android:textSize="20sp"-->
-            <!--android:textAlignment="center"-->
-            <!--android:paddingTop="20dp"/>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -222,18 +186,11 @@
         </LinearLayout>
     </FrameLayout>
 
-
-    <!--<fragment-->
-        <!--class="com.google.android.gms.maps.MapFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
     <FrameLayout
         android:id="@+id/map_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="16dp"
-        android:layout_weight="1">
-    </FrameLayout>
+        android:layout_weight="1"></FrameLayout>
 
 
 </LinearLayout>

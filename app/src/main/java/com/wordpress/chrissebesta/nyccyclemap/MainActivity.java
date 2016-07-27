@@ -423,11 +423,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onMapChanged(CameraPosition cameraPosition) {
         Log.d(LOG_TAG, "Calling on map changed listener from main activity");
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("latitude", Double.doubleToRawLongBits(cameraPosition.target.latitude));
-        editor.putLong("longitude", Double.doubleToRawLongBits(cameraPosition.target.longitude));
-        editor.putFloat("zoom", cameraPosition.zoom);
-        editor.commit();
         mSavedCameraPosition = cameraPosition;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong("latitude", Double.doubleToRawLongBits(mSavedCameraPosition.target.latitude));
+        editor.putLong("longitude", Double.doubleToRawLongBits(mSavedCameraPosition.target.longitude));
+        editor.putFloat("zoom", mSavedCameraPosition.zoom);
+        editor.commit();
     }
 }
