@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements
         mProgressBar = progressBar;
         mOptionsSelection = (FrameLayout) findViewById(R.id.option_selection);
         mLoadingText = (TextView) findViewById(R.id.loadingTextView);
-        mDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer);
+        mDrawer = (WrappingSlidingDrawer) findViewById(R.id.slidingDrawer);
         mDrawerArrow = (ImageView) findViewById(R.id.drawerArrow);
 
         final TextView startDatTextView = (TextView) findViewById(R.id.startDateTextView);
@@ -345,9 +345,9 @@ public class MainActivity extends AppCompatActivity implements
 
                 if (mContainsMapFrag) {
                     //close drawer and update map
-                    if(mDrawer!=null) {
-                        mDrawer.animateClose();
-                    }
+//                    if(mDrawer!=null) {
+//                        mDrawer.animateClose();
+//                    }
                     createNewMapFrag();
                 } else {
                     //Using old maps activity without fragment
@@ -380,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements
         float zoom = sharedPreferences.getFloat("zoom", (float)8);
         mSavedCameraPosition = new CameraPosition(new LatLng(lat, lon), zoom, 0, 0);
 
+        //TODO: Look in to returning the tagged fragment, and if not null using the existing frag instead of creting a new one
         getFragmentManager().beginTransaction()
                 .replace(R.id.map_fragment_container, NewMap.newInstance(mSavedCameraPosition), MAP_FRAGMENT_TAG)
                 .commit();

@@ -198,7 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:padding="10dp"
-                    android:text="View on map" />
+                    android:text="@string/update_map_text" />
 
                 <LinearLayout
                     android:id="@+id/loading_views"

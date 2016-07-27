@@ -12,12 +12,13 @@
         android:layout_height="match_parent"/>
 
 
-    <SlidingDrawer
+    <com.wordpress.chrissebesta.nyccyclemap.WrappingSlidingDrawer
         android:id="@+id/slidingDrawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:content="@+id/linearLayout"
-        android:handle="@+id/drawerHandle">
+        android:handle="@+id/drawerHandle"
+        android:layout_gravity="bottom">
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -214,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:padding="10dp"
-                        android:text="View on map" />
+                        android:text="@string/update_map_text" />
 
                     <LinearLayout
                         android:id="@+id/loading_views"
@@ -258,7 +259,7 @@
                 android:src="@drawable/arrow_icon_up"
                 android:layout_gravity="center"/>
         </FrameLayout>
-    </SlidingDrawer>
+    </com.wordpress.chrissebesta.nyccyclemap.WrappingSlidingDrawer>
 
 
 </FrameLayout>
