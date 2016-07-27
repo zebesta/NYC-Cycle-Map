@@ -5,16 +5,10 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Slide;
-import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,30 +23,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appyvet.rangebar.RangeBar;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterManager;
-import com.wordpress.chrissebesta.nyccyclemap.data.BikeClusterRenderer;
-import com.wordpress.chrissebesta.nyccyclemap.data.MyItem;
-import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 import com.wordpress.chrissebesta.nyccyclemap.sync.CycleDataSyncAdapter;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
-import java.util.List;
 
 import static java.lang.Double.longBitsToDouble;
 
 
 public class MainActivity extends AppCompatActivity implements
-        OnMapReadyCallback,
-        GoogleMap.OnInfoWindowClickListener,
         NewMap.OnMapCameraChangedListener {
     private static final String MAP_FRAGMENT_TAG = "map";
     public static android.support.v4.app.FragmentManager fragmentManager;
@@ -86,10 +67,7 @@ public class MainActivity extends AppCompatActivity implements
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
 
     //Map related member variables incase the device is set up in landscape or tablet UI mode:
-    private GoogleMap mMap;
     private CameraPosition mSavedCameraPosition;
-    private List<MyItem> mItems;
-    private ClusterManager<MyItem> mClusterManager;
 
 
     @Override
@@ -181,10 +159,7 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferences.registerOnSharedPreferenceChangeListener(mListener);
         boolean injured = sharedPreferences.getBoolean(getString(R.string.injuredcyclists), true);
         boolean killed = sharedPreferences.getBoolean(getString(R.string.killedcyclists), true);
-        boolean previouslyStarted = sharedPreferences.getBoolean(getString(R.string.pref_previously_started), false);
-        if (!previouslyStarted) {
-            firstRun();
-        }
+
 
         //Populate map fragment based on layout style, set boolean to make this distinction
         if (findViewById(R.id.map_fragment_container) != null) {
@@ -339,15 +314,12 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 //Show user that map is loading while datapoints are being populated on the UI thread (can be time consuming for larger sets)
                 Toast.makeText(MainActivity.this, "Loading map....", Toast.LENGTH_SHORT).show();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    TransitionManager.beginDelayedTransition(mLoadingViews, new Slide(Gravity.RIGHT));
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    TransitionManager.beginDelayedTransition(mLoadingViews, new Slide(Gravity.RIGHT));
+//                }
 
                 if (mContainsMapFrag) {
-                    //close drawer and update map
-//                    if(mDrawer!=null) {
-//                        mDrawer.animateClose();
-//                    }
+                    //update map here, could also close drawer if desired, but not for now.
                     createNewMapFrag();
                 } else {
                     //Using old maps activity without fragment
@@ -387,16 +359,6 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    /**
-     * Run this method only the first time the app is opened (detected by shared preferences)
-     * This method syncs the database for the first time and sets the sync frequency for the sync adapter to update the database
-     */
-    private void firstRun() {
-        Log.d(LOG_TAG, "First run detecting, setting up sync and sync parameters");
-        //Fetch data using the AsyncTask since the SyncAdapter is taking to long to start on the first run.
-        FetchCycleDataTask fetch = new FetchCycleDataTask(getApplicationContext());
-        fetch.execute();
-    }
 
 
     /**
@@ -459,101 +421,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        if (mSavedCameraPosition != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mSavedCameraPosition));
-        } else {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.7119042, -74.0066549), 8));
-        }
-
-        mClusterManager = new ClusterManager<MyItem>(this, mMap);
-
-        try {
-            int v = getPackageManager().getPackageInfo("com.google.android.gms", 0).versionCode;
-            String version = getPackageManager().getPackageInfo("com.google.android.gms", 0).versionName;
-            Log.d(LOG_TAG, "Google play services version is: " + v + " and the name is: " + version);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        //Cluster manager with unique bike icons
-        mClusterManager.setRenderer(new BikeClusterRenderer(this, mMap, mClusterManager));
-        mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyItem>() {
-            @Override
-            public boolean onClusterClick(Cluster<MyItem> cluster) {
-                Log.d("CLUSTER", "Cluster was clicked at " + cluster.getPosition());
-                return false;
-            }
-        });
-        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
-            @Override
-            public boolean onClusterItemClick(MyItem myItem) {
-                Log.d("CLUSTER", "Cluster item was clicked at " + myItem.getPosition());
-                return false;
-            }
-        });
-
-        //mMap.setOnCameraChangeListener(mClusterManager);
-        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                new DynamicallyAddMakerTask().execute(mMap.getProjection().getVisibleRegion().latLngBounds);
-                mSavedCameraPosition = mMap.getCameraPosition();
-            }
-        });
-        mMap.setOnInfoWindowClickListener(this);
-
-
-        readItems();
-    }
-
-    private void readItems() {
-        mItems = new MyItemReader(getBaseContext()).read();
-        mClusterManager.addItems(mItems);
-    }
-
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        String snippetString = marker.getSnippet();
-        String intValueString = snippetString.replaceAll("[^0-9]", "");
-        int intValue = Integer.parseInt(intValueString);
-        Log.d(LOG_TAG, "The intValueString is: " + intValueString + " and the inValue is: " + intValue + " and the snippet string is: " + snippetString);
-//        Toast.makeText(this, "Info window clicked, ID = " + intValueString,
-//                Toast.LENGTH_SHORT).show();
-        Log.d(LOG_TAG, "Info window has been clicked!");
-        Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
-        intent.putExtra(getString(R.string.unique_id_extra_key), intValue);
-        startActivity(intent);
-    }
-
-    @Override
     public void onMapChanged(CameraPosition cameraPosition) {
+        Log.d(LOG_TAG, "Calling on map changed listener from main activity");
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("latitude", Double.doubleToRawLongBits(mSavedCameraPosition.target.latitude));
-        editor.putLong("longitude", Double.doubleToRawLongBits(mSavedCameraPosition.target.longitude));
-        editor.putFloat("zoom", mSavedCameraPosition.zoom);
+        editor.putLong("latitude", Double.doubleToRawLongBits(cameraPosition.target.latitude));
+        editor.putLong("longitude", Double.doubleToRawLongBits(cameraPosition.target.longitude));
+        editor.putFloat("zoom", cameraPosition.zoom);
         editor.commit();
         mSavedCameraPosition = cameraPosition;
-    }
-
-    private class DynamicallyAddMakerTask extends AsyncTask {
-        @Override
-        protected Object doInBackground(Object[] params) {
-            mClusterManager.clearItems();
-            LatLngBounds bounds = (LatLngBounds) params[0];
-            Log.d(LOG_TAG, "In do in background for dynamically adding markers and lat lng bounds are: " + bounds);
-            for (int i = 0; i < mItems.size(); i++) {
-                if (bounds.contains(mItems.get(i).getPosition())) {
-                    mClusterManager.addItem(mItems.get(i));
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            mClusterManager.cluster();
-        }
     }
 }
