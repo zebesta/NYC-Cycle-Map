@@ -322,11 +322,7 @@ public class MainActivity extends AppCompatActivity implements
                     //update map here, could also close drawer if desired, but not for now.
                     createNewMapFrag();
                 } else {
-                    //Using old maps activity without fragment
-//                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-//                    if (mMap != null) {
-//                        intent.putExtra(getString(R.string.cameraposition), mMap.getCameraPosition());
-//                    }
+
 
                     //Using new mapsactivity with fragment
                     Intent intent = new Intent(MainActivity.this, NewMapActivity.class);
@@ -337,8 +333,6 @@ public class MainActivity extends AppCompatActivity implements
                     //launch the intent
                     startActivity(intent);
                 }
-//                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-//                startActivity(intent);
             }
         });
     }

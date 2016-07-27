@@ -28,6 +28,11 @@ import com.wordpress.chrissebesta.nyccyclemap.data.MyItemReader;
 
 import java.util.List;
 
+/**
+ * Fragment to generage a map that implemented the custom bike cluster renderer
+ * Dynamically adjusts the markers being rendered based on the visible bounds
+ * If map marker info window is clicked, will launch the details acitivity to show event details to user
+ */
 public class NewMap extends android.app.Fragment implements
         OnMapReadyCallback,
         GoogleMap.OnInfoWindowClickListener {

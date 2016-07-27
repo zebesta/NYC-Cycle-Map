@@ -42,9 +42,6 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity
             android:name=".AboutActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -83,11 +80,11 @@
         <activity
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MapsActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wordpress.chrissebesta.nyccyclemap.MapsActivity" />
+                android:value="com.wordpress.chrissebesta.nyccyclemap.MainActivity" />
         </activity>
         <activity android:name=".NewMapActivity" />
         <activity
